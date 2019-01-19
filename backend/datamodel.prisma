@@ -1,4 +1,30 @@
 type User {
   id: ID! @unique
   name: String!
+  email: String!
+  password: String!
+  domains: [Domain]!
+}
+
+type Domain {
+  pages: [Page]!
+  url: String!
+}
+
+type Page {
+  url: String!
+  pageName: String!
+  links: [Link]!
+}
+
+type Link {
+  url: String!
+  affiliateTagged: Boolean!
+  affiliateTagName: String
+  product: Product
+}
+
+type Product {
+  name: String!
+  asin: String!
 }
