@@ -3,12 +3,12 @@ type User {
   name: String!
   email: String!
   password: String!
-  domains: [Domain]! @relation(link: INLINE)
+  domains: [Domain]!
 }
 
 type Domain {
   id: ID! @id @unique
-  pages: [Page]! @relation(link: INLINE)
+  pages: [Page]!
   url: String!
 }
 
@@ -16,7 +16,7 @@ type Page {
   id: ID! @id @unique
   url: String!
   pageName: String!
-  links: [Link]! @relation(link: INLINE)
+  links: [Link]! 
 }
 
 type Link {
@@ -24,7 +24,7 @@ type Link {
   url: String!
   affiliateTagged: Boolean!
   affiliateTagName: String
-  product: Product @relation(link: INLINE)
+  product: Product 
 }
 
 type Product {

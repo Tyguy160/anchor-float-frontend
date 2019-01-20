@@ -1,5 +1,5 @@
-# source: http://206.189.199.243:4466
-# timestamp: Sat Jan 19 2019 22:13:05 GMT-0500 (EST)
+# source: http://localhost:4466
+# timestamp: Sun Jan 20 2019 03:48:04 GMT+0000 (UTC)
 
 type AggregateDomain {
   count: Int!
@@ -26,7 +26,8 @@ type BatchPayload {
   count: Long!
 }
 
-type Domain {
+type Domain implements Node {
+  id: ID!
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
   url: String!
 }
@@ -48,6 +49,7 @@ input DomainCreateInput {
 
 input DomainCreateManyInput {
   create: [DomainCreateInput!]
+  connect: [DomainWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -60,10 +62,10 @@ type DomainEdge {
 }
 
 enum DomainOrderByInput {
-  url_ASC
-  url_DESC
   id_ASC
   id_DESC
+  url_ASC
+  url_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -71,6 +73,7 @@ enum DomainOrderByInput {
 }
 
 type DomainPreviousValues {
+  id: ID!
   url: String!
 }
 
@@ -83,6 +86,46 @@ input DomainScalarWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [DomainScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   url: String
 
   """All values that are not equal to given value."""
@@ -164,14 +207,29 @@ input DomainSubscriptionWhereInput {
   node: DomainWhereInput
 }
 
+input DomainUpdateDataInput {
+  url: String
+  pages: PageUpdateManyInput
+}
+
+input DomainUpdateInput {
+  url: String
+  pages: PageUpdateManyInput
+}
+
 input DomainUpdateManyDataInput {
   url: String
 }
 
 input DomainUpdateManyInput {
   create: [DomainCreateInput!]
+  connect: [DomainWhereUniqueInput!]
+  disconnect: [DomainWhereUniqueInput!]
+  delete: [DomainWhereUniqueInput!]
+  update: [DomainUpdateWithWhereUniqueNestedInput!]
   updateMany: [DomainUpdateManyWithWhereNestedInput!]
   deleteMany: [DomainScalarWhereInput!]
+  upsert: [DomainUpsertWithWhereUniqueNestedInput!]
 }
 
 input DomainUpdateManyMutationInput {
@@ -183,6 +241,17 @@ input DomainUpdateManyWithWhereNestedInput {
   data: DomainUpdateManyDataInput!
 }
 
+input DomainUpdateWithWhereUniqueNestedInput {
+  where: DomainWhereUniqueInput!
+  data: DomainUpdateDataInput!
+}
+
+input DomainUpsertWithWhereUniqueNestedInput {
+  where: DomainWhereUniqueInput!
+  update: DomainUpdateDataInput!
+  create: DomainCreateInput!
+}
+
 input DomainWhereInput {
   """Logical AND on all given filters."""
   AND: [DomainWhereInput!]
@@ -192,6 +261,46 @@ input DomainWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [DomainWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   url: String
 
   """All values that are not equal to given value."""
@@ -237,7 +346,12 @@ input DomainWhereInput {
   pages_none: PageWhereInput
 }
 
-type Link {
+input DomainWhereUniqueInput {
+  id: ID
+}
+
+type Link implements Node {
+  id: ID!
   url: String!
   affiliateTagged: Boolean!
   affiliateTagName: String
@@ -263,6 +377,7 @@ input LinkCreateInput {
 
 input LinkCreateManyInput {
   create: [LinkCreateInput!]
+  connect: [LinkWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -275,14 +390,14 @@ type LinkEdge {
 }
 
 enum LinkOrderByInput {
+  id_ASC
+  id_DESC
   url_ASC
   url_DESC
   affiliateTagged_ASC
   affiliateTagged_DESC
   affiliateTagName_ASC
   affiliateTagName_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -290,9 +405,145 @@ enum LinkOrderByInput {
 }
 
 type LinkPreviousValues {
+  id: ID!
   url: String!
   affiliateTagged: Boolean!
   affiliateTagName: String
+}
+
+input LinkScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [LinkScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [LinkScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [LinkScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
+  affiliateTagged: Boolean
+
+  """All values that are not equal to given value."""
+  affiliateTagged_not: Boolean
+  affiliateTagName: String
+
+  """All values that are not equal to given value."""
+  affiliateTagName_not: String
+
+  """All values that are contained in given list."""
+  affiliateTagName_in: [String!]
+
+  """All values that are not contained in given list."""
+  affiliateTagName_not_in: [String!]
+
+  """All values less than the given value."""
+  affiliateTagName_lt: String
+
+  """All values less than or equal the given value."""
+  affiliateTagName_lte: String
+
+  """All values greater than the given value."""
+  affiliateTagName_gt: String
+
+  """All values greater than or equal the given value."""
+  affiliateTagName_gte: String
+
+  """All values containing the given string."""
+  affiliateTagName_contains: String
+
+  """All values not containing the given string."""
+  affiliateTagName_not_contains: String
+
+  """All values starting with the given string."""
+  affiliateTagName_starts_with: String
+
+  """All values not starting with the given string."""
+  affiliateTagName_not_starts_with: String
+
+  """All values ending with the given string."""
+  affiliateTagName_ends_with: String
+
+  """All values not ending with the given string."""
+  affiliateTagName_not_ends_with: String
 }
 
 type LinkSubscriptionPayload {
@@ -334,10 +585,57 @@ input LinkSubscriptionWhereInput {
   node: LinkWhereInput
 }
 
+input LinkUpdateDataInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductUpdateOneInput
+}
+
+input LinkUpdateInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductUpdateOneInput
+}
+
+input LinkUpdateManyDataInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+}
+
+input LinkUpdateManyInput {
+  create: [LinkCreateInput!]
+  connect: [LinkWhereUniqueInput!]
+  disconnect: [LinkWhereUniqueInput!]
+  delete: [LinkWhereUniqueInput!]
+  update: [LinkUpdateWithWhereUniqueNestedInput!]
+  updateMany: [LinkUpdateManyWithWhereNestedInput!]
+  deleteMany: [LinkScalarWhereInput!]
+  upsert: [LinkUpsertWithWhereUniqueNestedInput!]
+}
+
 input LinkUpdateManyMutationInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
+}
+
+input LinkUpdateManyWithWhereNestedInput {
+  where: LinkScalarWhereInput!
+  data: LinkUpdateManyDataInput!
+}
+
+input LinkUpdateWithWhereUniqueNestedInput {
+  where: LinkWhereUniqueInput!
+  data: LinkUpdateDataInput!
+}
+
+input LinkUpsertWithWhereUniqueNestedInput {
+  where: LinkWhereUniqueInput!
+  update: LinkUpdateDataInput!
+  create: LinkCreateInput!
 }
 
 input LinkWhereInput {
@@ -349,6 +647,46 @@ input LinkWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [LinkWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   url: String
 
   """All values that are not equal to given value."""
@@ -436,6 +774,10 @@ input LinkWhereInput {
   product: ProductWhereInput
 }
 
+input LinkWhereUniqueInput {
+  id: ID
+}
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -449,8 +791,20 @@ type Mutation {
   createDomain(data: DomainCreateInput!): Domain!
   createPage(data: PageCreateInput!): Page!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateLink(data: LinkUpdateInput!, where: LinkWhereUniqueInput!): Link
+  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
+  updateDomain(data: DomainUpdateInput!, where: DomainWhereUniqueInput!): Domain
+  updatePage(data: PageUpdateInput!, where: PageWhereUniqueInput!): Page
   deleteUser(where: UserWhereUniqueInput!): User
+  deleteLink(where: LinkWhereUniqueInput!): Link
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteDomain(where: DomainWhereUniqueInput!): Domain
+  deletePage(where: PageWhereUniqueInput!): Page
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
+  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
+  upsertDomain(where: DomainWhereUniqueInput!, create: DomainCreateInput!, update: DomainUpdateInput!): Domain!
+  upsertPage(where: PageWhereUniqueInput!, create: PageCreateInput!, update: PageUpdateInput!): Page!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyLinks(data: LinkUpdateManyMutationInput!, where: LinkWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -475,7 +829,8 @@ interface Node {
   id: ID!
 }
 
-type Page {
+type Page implements Node {
+  id: ID!
   url: String!
   pageName: String!
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
@@ -499,6 +854,7 @@ input PageCreateInput {
 
 input PageCreateManyInput {
   create: [PageCreateInput!]
+  connect: [PageWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -526,12 +882,12 @@ type PageInfo {
 }
 
 enum PageOrderByInput {
+  id_ASC
+  id_DESC
   url_ASC
   url_DESC
   pageName_ASC
   pageName_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -539,8 +895,140 @@ enum PageOrderByInput {
 }
 
 type PagePreviousValues {
+  id: ID!
   url: String!
   pageName: String!
+}
+
+input PageScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PageScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PageScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PageScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
+  pageName: String
+
+  """All values that are not equal to given value."""
+  pageName_not: String
+
+  """All values that are contained in given list."""
+  pageName_in: [String!]
+
+  """All values that are not contained in given list."""
+  pageName_not_in: [String!]
+
+  """All values less than the given value."""
+  pageName_lt: String
+
+  """All values less than or equal the given value."""
+  pageName_lte: String
+
+  """All values greater than the given value."""
+  pageName_gt: String
+
+  """All values greater than or equal the given value."""
+  pageName_gte: String
+
+  """All values containing the given string."""
+  pageName_contains: String
+
+  """All values not containing the given string."""
+  pageName_not_contains: String
+
+  """All values starting with the given string."""
+  pageName_starts_with: String
+
+  """All values not starting with the given string."""
+  pageName_not_starts_with: String
+
+  """All values ending with the given string."""
+  pageName_ends_with: String
+
+  """All values not ending with the given string."""
+  pageName_not_ends_with: String
 }
 
 type PageSubscriptionPayload {
@@ -582,9 +1070,53 @@ input PageSubscriptionWhereInput {
   node: PageWhereInput
 }
 
+input PageUpdateDataInput {
+  url: String
+  pageName: String
+  links: LinkUpdateManyInput
+}
+
+input PageUpdateInput {
+  url: String
+  pageName: String
+  links: LinkUpdateManyInput
+}
+
+input PageUpdateManyDataInput {
+  url: String
+  pageName: String
+}
+
+input PageUpdateManyInput {
+  create: [PageCreateInput!]
+  connect: [PageWhereUniqueInput!]
+  disconnect: [PageWhereUniqueInput!]
+  delete: [PageWhereUniqueInput!]
+  update: [PageUpdateWithWhereUniqueNestedInput!]
+  updateMany: [PageUpdateManyWithWhereNestedInput!]
+  deleteMany: [PageScalarWhereInput!]
+  upsert: [PageUpsertWithWhereUniqueNestedInput!]
+}
+
 input PageUpdateManyMutationInput {
   url: String
   pageName: String
+}
+
+input PageUpdateManyWithWhereNestedInput {
+  where: PageScalarWhereInput!
+  data: PageUpdateManyDataInput!
+}
+
+input PageUpdateWithWhereUniqueNestedInput {
+  where: PageWhereUniqueInput!
+  data: PageUpdateDataInput!
+}
+
+input PageUpsertWithWhereUniqueNestedInput {
+  where: PageWhereUniqueInput!
+  update: PageUpdateDataInput!
+  create: PageCreateInput!
 }
 
 input PageWhereInput {
@@ -596,6 +1128,46 @@ input PageWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [PageWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   url: String
 
   """All values that are not equal to given value."""
@@ -681,7 +1253,12 @@ input PageWhereInput {
   links_none: LinkWhereInput
 }
 
-type Product {
+input PageWhereUniqueInput {
+  id: ID
+}
+
+type Product implements Node {
+  id: ID!
   name: String!
   asin: String!
 }
@@ -703,6 +1280,7 @@ input ProductCreateInput {
 
 input ProductCreateOneInput {
   create: ProductCreateInput
+  connect: ProductWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -715,12 +1293,12 @@ type ProductEdge {
 }
 
 enum ProductOrderByInput {
+  id_ASC
+  id_DESC
   name_ASC
   name_DESC
   asin_ASC
   asin_DESC
-  id_ASC
-  id_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -728,6 +1306,7 @@ enum ProductOrderByInput {
 }
 
 type ProductPreviousValues {
+  id: ID!
   name: String!
   asin: String!
 }
@@ -771,9 +1350,33 @@ input ProductSubscriptionWhereInput {
   node: ProductWhereInput
 }
 
+input ProductUpdateDataInput {
+  name: String
+  asin: String
+}
+
+input ProductUpdateInput {
+  name: String
+  asin: String
+}
+
 input ProductUpdateManyMutationInput {
   name: String
   asin: String
+}
+
+input ProductUpdateOneInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ProductUpdateDataInput
+  upsert: ProductUpsertNestedInput
+}
+
+input ProductUpsertNestedInput {
+  update: ProductUpdateDataInput!
+  create: ProductCreateInput!
 }
 
 input ProductWhereInput {
@@ -785,6 +1388,46 @@ input ProductWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [ProductWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
   name: String
 
   """All values that are not equal to given value."""
@@ -867,6 +1510,10 @@ input ProductWhereInput {
   asin_not_ends_with: String
 }
 
+input ProductWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link]!
@@ -874,6 +1521,10 @@ type Query {
   domains(where: DomainWhereInput, orderBy: DomainOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Domain]!
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page]!
   user(where: UserWhereUniqueInput!): User
+  link(where: LinkWhereUniqueInput!): Link
+  product(where: ProductWhereUniqueInput!): Product
+  domain(where: DomainWhereUniqueInput!): Domain
+  page(where: PageWhereUniqueInput!): Page
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   linksConnection(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
