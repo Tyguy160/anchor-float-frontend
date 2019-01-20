@@ -1,6 +1,6 @@
 const Mutations = {
-  async createLink(parent, args, context, info) {
-    const link = await context.db.mutation.createLink(
+  async createUser(parent, args, context, info) {
+    const user = await context.db.mutation.createUser(
       {
         data: {
           ...args,
@@ -8,7 +8,7 @@ const Mutations = {
       },
       info
     );
-    return link;
+    return user;
   },
 };
 
