@@ -5,8 +5,8 @@ type Mutation {
     url: String!
     affiliateTagged: Boolean!
     affiliateTagName: String
-    product: Product
-  ): Link!
+  ): # product: Product
+  Link!
 }
 
 type Query {
