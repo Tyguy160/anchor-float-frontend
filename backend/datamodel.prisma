@@ -8,15 +8,15 @@ type User {
 
 type Domain {
   id: ID! @id @unique
-  pages: [Page]!
   url: String!
+  pages: [Page]!
 }
 
 type Page {
   id: ID! @id @unique
   url: String!
   pageName: String!
-  links: [Link]! 
+  links: [Link]!
 }
 
 type Link {
@@ -24,7 +24,7 @@ type Link {
   url: String!
   affiliateTagged: Boolean!
   affiliateTagName: String
-  product: Product 
+  product: Product
 }
 
 type Product {
