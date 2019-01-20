@@ -1,15 +1,14 @@
 # import * from './generated/prisma.graphql'
 
 type Mutation {
-  createLink(
-    url: String!
-    affiliateTagged: Boolean!
-    affiliateTagName: String
-  ): # product: Product
-  Link!
+  createUser(
+    name: String!
+    email: String!
+    password: String! # domains: [Domain]!
+  ): User!
 }
 
 type Query {
-  links: [Link]!
-  link(where: LinkWhereUniqueInput!): Link
+  users: [User]!
+  user(where: UserWhereUniqueInput!): User
 }
