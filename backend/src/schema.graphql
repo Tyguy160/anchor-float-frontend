@@ -1,4 +1,4 @@
-# import * from './generate/prisma.graphql'
+# import * from './generated/prisma.graphql'
 
 type Mutation {
   createLink(
