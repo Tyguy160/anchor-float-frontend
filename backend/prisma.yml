@@ -1,6 +1,6 @@
-endpoint: 'http://206.189.199.243:4466/'
+endpoint: ${env:PRISMA_ENDPOINT}
 datamodel: datamodel.prisma
-# secret: ${env:PRISMA_SECRET}
+secret: ${env:PRISMA_SECRET}
 
 hooks:
   post-deploy:
