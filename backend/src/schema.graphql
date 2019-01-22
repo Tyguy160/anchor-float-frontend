@@ -1,11 +1,35 @@
 # import * from './generated/prisma.graphql'
 
 type Mutation {
+  #------------------- User Mutations ------------------#
+
   createUser(
     name: String!
     email: String!
     password: String! # domains: [Domain]!
   ): User!
+
+  # TODO: Update a user
+
+  # TODO: Destroy a user 💣
+
+  #------------------- Domain Mutations ------------------#
+
+  # createDomain(url: String!, sitemapUrl: String, pages: [Page]!): Domain!
+
+  # TODO: Update a domain
+
+  # TODO: Destroy a domain 💣
+
+  #------------------- Page Mutations ------------------#
+
+  # createPage(url: String!, pageName: String!): Page!
+
+  # TODO: Update a page
+
+  # TODO: Destroy a page 💣
+
+  #-----------------------------------------------------#
 }
 
 type Query {

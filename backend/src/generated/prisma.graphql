@@ -1,5 +1,5 @@
 # source: http://206.189.199.243:4466
-# timestamp: Sat Jan 19 2019 23:35:15 GMT-0500 (EST)
+# timestamp: Mon Jan 21 2019 20:46:37 GMT-0500 (EST)
 
 type AggregateDomain {
   count: Int!
@@ -30,6 +30,7 @@ type Domain implements Node {
   id: ID!
   url: String!
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
+  sitemapUrl: String
 }
 
 """A connection to a list of items."""
@@ -44,6 +45,7 @@ type DomainConnection {
 
 input DomainCreateInput {
   url: String!
+  sitemapUrl: String
   pages: PageCreateManyInput
 }
 
@@ -66,6 +68,8 @@ enum DomainOrderByInput {
   id_DESC
   url_ASC
   url_DESC
+  sitemapUrl_ASC
+  sitemapUrl_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -75,6 +79,7 @@ enum DomainOrderByInput {
 type DomainPreviousValues {
   id: ID!
   url: String!
+  sitemapUrl: String
 }
 
 input DomainScalarWhereInput {
@@ -166,6 +171,46 @@ input DomainScalarWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
+  sitemapUrl: String
+
+  """All values that are not equal to given value."""
+  sitemapUrl_not: String
+
+  """All values that are contained in given list."""
+  sitemapUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  sitemapUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  sitemapUrl_lt: String
+
+  """All values less than or equal the given value."""
+  sitemapUrl_lte: String
+
+  """All values greater than the given value."""
+  sitemapUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  sitemapUrl_gte: String
+
+  """All values containing the given string."""
+  sitemapUrl_contains: String
+
+  """All values not containing the given string."""
+  sitemapUrl_not_contains: String
+
+  """All values starting with the given string."""
+  sitemapUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  sitemapUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  sitemapUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  sitemapUrl_not_ends_with: String
 }
 
 type DomainSubscriptionPayload {
@@ -209,16 +254,19 @@ input DomainSubscriptionWhereInput {
 
 input DomainUpdateDataInput {
   url: String
+  sitemapUrl: String
   pages: PageUpdateManyInput
 }
 
 input DomainUpdateInput {
   url: String
+  sitemapUrl: String
   pages: PageUpdateManyInput
 }
 
 input DomainUpdateManyDataInput {
   url: String
+  sitemapUrl: String
 }
 
 input DomainUpdateManyInput {
@@ -234,6 +282,7 @@ input DomainUpdateManyInput {
 
 input DomainUpdateManyMutationInput {
   url: String
+  sitemapUrl: String
 }
 
 input DomainUpdateManyWithWhereNestedInput {
@@ -341,6 +390,46 @@ input DomainWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
+  sitemapUrl: String
+
+  """All values that are not equal to given value."""
+  sitemapUrl_not: String
+
+  """All values that are contained in given list."""
+  sitemapUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  sitemapUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  sitemapUrl_lt: String
+
+  """All values less than or equal the given value."""
+  sitemapUrl_lte: String
+
+  """All values greater than the given value."""
+  sitemapUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  sitemapUrl_gte: String
+
+  """All values containing the given string."""
+  sitemapUrl_contains: String
+
+  """All values not containing the given string."""
+  sitemapUrl_not_contains: String
+
+  """All values starting with the given string."""
+  sitemapUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  sitemapUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  sitemapUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  sitemapUrl_not_ends_with: String
   pages_every: PageWhereInput
   pages_some: PageWhereInput
   pages_none: PageWhereInput
@@ -356,6 +445,7 @@ type Link implements Node {
   affiliateTagged: Boolean!
   affiliateTagName: String
   product: Product
+  pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
 }
 
 """A connection to a list of items."""
@@ -372,12 +462,32 @@ input LinkCreateInput {
   url: String!
   affiliateTagged: Boolean!
   affiliateTagName: String
-  product: ProductCreateOneInput
+  product: ProductCreateOneWithoutLinksInput
+  pages: PageCreateManyWithoutLinksInput
 }
 
-input LinkCreateManyInput {
-  create: [LinkCreateInput!]
+input LinkCreateManyWithoutPagesInput {
+  create: [LinkCreateWithoutPagesInput!]
   connect: [LinkWhereUniqueInput!]
+}
+
+input LinkCreateManyWithoutProductInput {
+  create: [LinkCreateWithoutProductInput!]
+  connect: [LinkWhereUniqueInput!]
+}
+
+input LinkCreateWithoutPagesInput {
+  url: String!
+  affiliateTagged: Boolean!
+  affiliateTagName: String
+  product: ProductCreateOneWithoutLinksInput
+}
+
+input LinkCreateWithoutProductInput {
+  url: String!
+  affiliateTagged: Boolean!
+  affiliateTagName: String
+  pages: PageCreateManyWithoutLinksInput
 }
 
 """An edge in a connection."""
@@ -585,18 +695,12 @@ input LinkSubscriptionWhereInput {
   node: LinkWhereInput
 }
 
-input LinkUpdateDataInput {
-  url: String
-  affiliateTagged: Boolean
-  affiliateTagName: String
-  product: ProductUpdateOneInput
-}
-
 input LinkUpdateInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
-  product: ProductUpdateOneInput
+  product: ProductUpdateOneWithoutLinksInput
+  pages: PageUpdateManyWithoutLinksInput
 }
 
 input LinkUpdateManyDataInput {
@@ -605,21 +709,32 @@ input LinkUpdateManyDataInput {
   affiliateTagName: String
 }
 
-input LinkUpdateManyInput {
-  create: [LinkCreateInput!]
-  connect: [LinkWhereUniqueInput!]
-  disconnect: [LinkWhereUniqueInput!]
-  delete: [LinkWhereUniqueInput!]
-  update: [LinkUpdateWithWhereUniqueNestedInput!]
-  updateMany: [LinkUpdateManyWithWhereNestedInput!]
-  deleteMany: [LinkScalarWhereInput!]
-  upsert: [LinkUpsertWithWhereUniqueNestedInput!]
-}
-
 input LinkUpdateManyMutationInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
+}
+
+input LinkUpdateManyWithoutPagesInput {
+  create: [LinkCreateWithoutPagesInput!]
+  connect: [LinkWhereUniqueInput!]
+  disconnect: [LinkWhereUniqueInput!]
+  delete: [LinkWhereUniqueInput!]
+  update: [LinkUpdateWithWhereUniqueWithoutPagesInput!]
+  updateMany: [LinkUpdateManyWithWhereNestedInput!]
+  deleteMany: [LinkScalarWhereInput!]
+  upsert: [LinkUpsertWithWhereUniqueWithoutPagesInput!]
+}
+
+input LinkUpdateManyWithoutProductInput {
+  create: [LinkCreateWithoutProductInput!]
+  connect: [LinkWhereUniqueInput!]
+  disconnect: [LinkWhereUniqueInput!]
+  delete: [LinkWhereUniqueInput!]
+  update: [LinkUpdateWithWhereUniqueWithoutProductInput!]
+  updateMany: [LinkUpdateManyWithWhereNestedInput!]
+  deleteMany: [LinkScalarWhereInput!]
+  upsert: [LinkUpsertWithWhereUniqueWithoutProductInput!]
 }
 
 input LinkUpdateManyWithWhereNestedInput {
@@ -627,15 +742,40 @@ input LinkUpdateManyWithWhereNestedInput {
   data: LinkUpdateManyDataInput!
 }
 
-input LinkUpdateWithWhereUniqueNestedInput {
-  where: LinkWhereUniqueInput!
-  data: LinkUpdateDataInput!
+input LinkUpdateWithoutPagesDataInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductUpdateOneWithoutLinksInput
 }
 
-input LinkUpsertWithWhereUniqueNestedInput {
+input LinkUpdateWithoutProductDataInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  pages: PageUpdateManyWithoutLinksInput
+}
+
+input LinkUpdateWithWhereUniqueWithoutPagesInput {
   where: LinkWhereUniqueInput!
-  update: LinkUpdateDataInput!
-  create: LinkCreateInput!
+  data: LinkUpdateWithoutPagesDataInput!
+}
+
+input LinkUpdateWithWhereUniqueWithoutProductInput {
+  where: LinkWhereUniqueInput!
+  data: LinkUpdateWithoutProductDataInput!
+}
+
+input LinkUpsertWithWhereUniqueWithoutPagesInput {
+  where: LinkWhereUniqueInput!
+  update: LinkUpdateWithoutPagesDataInput!
+  create: LinkCreateWithoutPagesInput!
+}
+
+input LinkUpsertWithWhereUniqueWithoutProductInput {
+  where: LinkWhereUniqueInput!
+  update: LinkUpdateWithoutProductDataInput!
+  create: LinkCreateWithoutProductInput!
 }
 
 input LinkWhereInput {
@@ -772,6 +912,9 @@ input LinkWhereInput {
   """All values not ending with the given string."""
   affiliateTagName_not_ends_with: String
   product: ProductWhereInput
+  pages_every: PageWhereInput
+  pages_some: PageWhereInput
+  pages_none: PageWhereInput
 }
 
 input LinkWhereUniqueInput {
@@ -849,12 +992,22 @@ type PageConnection {
 input PageCreateInput {
   url: String!
   pageName: String!
-  links: LinkCreateManyInput
+  links: LinkCreateManyWithoutPagesInput
 }
 
 input PageCreateManyInput {
   create: [PageCreateInput!]
   connect: [PageWhereUniqueInput!]
+}
+
+input PageCreateManyWithoutLinksInput {
+  create: [PageCreateWithoutLinksInput!]
+  connect: [PageWhereUniqueInput!]
+}
+
+input PageCreateWithoutLinksInput {
+  url: String!
+  pageName: String!
 }
 
 """An edge in a connection."""
@@ -1073,13 +1226,13 @@ input PageSubscriptionWhereInput {
 input PageUpdateDataInput {
   url: String
   pageName: String
-  links: LinkUpdateManyInput
+  links: LinkUpdateManyWithoutPagesInput
 }
 
 input PageUpdateInput {
   url: String
   pageName: String
-  links: LinkUpdateManyInput
+  links: LinkUpdateManyWithoutPagesInput
 }
 
 input PageUpdateManyDataInput {
@@ -1103,9 +1256,25 @@ input PageUpdateManyMutationInput {
   pageName: String
 }
 
+input PageUpdateManyWithoutLinksInput {
+  create: [PageCreateWithoutLinksInput!]
+  connect: [PageWhereUniqueInput!]
+  disconnect: [PageWhereUniqueInput!]
+  delete: [PageWhereUniqueInput!]
+  update: [PageUpdateWithWhereUniqueWithoutLinksInput!]
+  updateMany: [PageUpdateManyWithWhereNestedInput!]
+  deleteMany: [PageScalarWhereInput!]
+  upsert: [PageUpsertWithWhereUniqueWithoutLinksInput!]
+}
+
 input PageUpdateManyWithWhereNestedInput {
   where: PageScalarWhereInput!
   data: PageUpdateManyDataInput!
+}
+
+input PageUpdateWithoutLinksDataInput {
+  url: String
+  pageName: String
 }
 
 input PageUpdateWithWhereUniqueNestedInput {
@@ -1113,10 +1282,21 @@ input PageUpdateWithWhereUniqueNestedInput {
   data: PageUpdateDataInput!
 }
 
+input PageUpdateWithWhereUniqueWithoutLinksInput {
+  where: PageWhereUniqueInput!
+  data: PageUpdateWithoutLinksDataInput!
+}
+
 input PageUpsertWithWhereUniqueNestedInput {
   where: PageWhereUniqueInput!
   update: PageUpdateDataInput!
   create: PageCreateInput!
+}
+
+input PageUpsertWithWhereUniqueWithoutLinksInput {
+  where: PageWhereUniqueInput!
+  update: PageUpdateWithoutLinksDataInput!
+  create: PageCreateWithoutLinksInput!
 }
 
 input PageWhereInput {
@@ -1255,12 +1435,14 @@ input PageWhereInput {
 
 input PageWhereUniqueInput {
   id: ID
+  url: String
 }
 
 type Product implements Node {
   id: ID!
   name: String!
   asin: String!
+  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
 }
 
 """A connection to a list of items."""
@@ -1276,11 +1458,17 @@ type ProductConnection {
 input ProductCreateInput {
   name: String!
   asin: String!
+  links: LinkCreateManyWithoutProductInput
 }
 
-input ProductCreateOneInput {
-  create: ProductCreateInput
+input ProductCreateOneWithoutLinksInput {
+  create: ProductCreateWithoutLinksInput
   connect: ProductWhereUniqueInput
+}
+
+input ProductCreateWithoutLinksInput {
+  name: String!
+  asin: String!
 }
 
 """An edge in a connection."""
@@ -1350,14 +1538,10 @@ input ProductSubscriptionWhereInput {
   node: ProductWhereInput
 }
 
-input ProductUpdateDataInput {
-  name: String
-  asin: String
-}
-
 input ProductUpdateInput {
   name: String
   asin: String
+  links: LinkUpdateManyWithoutProductInput
 }
 
 input ProductUpdateManyMutationInput {
@@ -1365,18 +1549,23 @@ input ProductUpdateManyMutationInput {
   asin: String
 }
 
-input ProductUpdateOneInput {
-  create: ProductCreateInput
+input ProductUpdateOneWithoutLinksInput {
+  create: ProductCreateWithoutLinksInput
   connect: ProductWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: ProductUpdateDataInput
-  upsert: ProductUpsertNestedInput
+  update: ProductUpdateWithoutLinksDataInput
+  upsert: ProductUpsertWithoutLinksInput
 }
 
-input ProductUpsertNestedInput {
-  update: ProductUpdateDataInput!
-  create: ProductCreateInput!
+input ProductUpdateWithoutLinksDataInput {
+  name: String
+  asin: String
+}
+
+input ProductUpsertWithoutLinksInput {
+  update: ProductUpdateWithoutLinksDataInput!
+  create: ProductCreateWithoutLinksInput!
 }
 
 input ProductWhereInput {
@@ -1508,10 +1697,14 @@ input ProductWhereInput {
 
   """All values not ending with the given string."""
   asin_not_ends_with: String
+  links_every: LinkWhereInput
+  links_some: LinkWhereInput
+  links_none: LinkWhereInput
 }
 
 input ProductWhereUniqueInput {
   id: ID
+  asin: String
 }
 
 type Query {

@@ -10,11 +10,12 @@ type Domain {
   id: ID! @id @unique
   url: String!
   pages: [Page]!
+  sitemapUrl: String
 }
 
 type Page {
   id: ID! @id @unique
-  url: String!
+  url: String! @unique
   pageName: String!
   links: [Link]!
 }
@@ -25,10 +26,12 @@ type Link {
   affiliateTagged: Boolean!
   affiliateTagName: String
   product: Product
+  pages: [Page]!
 }
 
 type Product {
   id: ID! @id @unique
   name: String!
-  asin: String!
+  asin: String! @unique
+  links: [Link]!
 }
