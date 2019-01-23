@@ -5,12 +5,13 @@
   "scripts": {
     "start": "nodemon -e js,graphql -x node src/index.js",
     "dev": "nodemon -e js,graphql -x node --inspect src/index.js",
-    "test": "jest",
+    "test": "jest --watchAll",
     "deploy": "prisma deploy --env-file .env"
   },
   "dependencies": {
     "babel-preset-env": "^1.7.0",
     "bcryptjs": "2.4.3",
+    "cheerio": "^1.0.0-rc.2",
     "cookie-parser": "^1.4.3",
     "dotenv": "6.0.0",
     "graphql-yoga": "1.16.2",
