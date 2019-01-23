@@ -3,31 +3,92 @@
 type Mutation {
   #------------------- User Mutations ------------------#
 
+  """
+  Create a user
+  """
   createUser(
     name: String!
     email: String!
-    password: String! # domains: [Domain]!
+    password: String!
+    domains: DomainCreateManyInput
   ): User!
 
   # TODO: Update a user
 
-  # TODO: Destroy a user 💣
+  """
+  Delete a user 💣
+  """
+  deleteUser(id: ID!): User!
 
   #------------------- Domain Mutations ------------------#
 
-  # createDomain(url: String!, sitemapUrl: String, pages: [Page]!): Domain!
+  """
+  Create a domain
+  """
+  createDomain(
+    url: String!
+    sitemapUrl: String
+    pages: PageCreateManyInput
+  ): Domain!
 
   # TODO: Update a domain
 
-  # TODO: Destroy a domain 💣
+  """
+  Delete a domain 💣
+  """
+  deleteDomain(id: ID!): Domain!
 
   #------------------- Page Mutations ------------------#
 
-  # createPage(url: String!, pageName: String!): Page!
+  """
+  Create a page
+  """
+  createPage(url: String!, pageName: String!): Page!
 
   # TODO: Update a page
 
-  # TODO: Destroy a page 💣
+  """
+  Delete a page 💣
+  """
+  deletePage(id: ID!): Page!
+
+  #------------------- Link Mutations ------------------#
+
+  """
+  Create a link
+  """
+  createLink(
+    url: String!
+    affiliateTagged: Boolean!
+    affiliateTagName: String
+    product: ProductCreateOneWithoutLinksInput
+    pages: PageCreateManyWithoutLinksInput
+  ): Link!
+
+  # TODO: Update a link
+
+  """
+  Delete a link 💣
+  """
+  deleteLink(id: ID!): Link!
+
+  #------------------- Product Mutations ------------------#
+
+  """
+  Create a product
+  """
+  createProduct(
+    name: String!
+    asin: String!
+    links: LinkCreateManyWithoutProductInput
+  ): Product!
+
+  # TODO: Update a product
+
+  """
+  Delete a product 💣
+  """
+  deleteProduct(id: ID!): Product!
 
   #-----------------------------------------------------#
 }
@@ -35,4 +96,16 @@ type Mutation {
 type Query {
   users: [User]!
   user(where: UserWhereUniqueInput!): User
+
+  domains: [Domain]!
+  domain(where: DomainWhereUniqueInput!): Domain
+
+  pages: [Page]!
+  page(where: PageWhereUniqueInput!): Page
+
+  links: [Link]!
+  link(where: LinkWhereUniqueInput!): Link
+
+  products: [Product]!
+  product(where: ProductWhereUniqueInput!): Product
 }
