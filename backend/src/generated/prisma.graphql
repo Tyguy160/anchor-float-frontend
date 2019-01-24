@@ -1,5 +1,5 @@
 # source: http://206.189.199.243:4466
-# timestamp: Mon Jan 21 2019 20:46:37 GMT-0500 (EST)
+# timestamp: Wed Jan 23 2019 21:23:05 GMT-0500 (EST)
 
 type AggregateDomain {
   count: Int!
@@ -2023,4 +2023,5 @@ input UserWhereInput {
 
 input UserWhereUniqueInput {
   id: ID
+  email: String
 }

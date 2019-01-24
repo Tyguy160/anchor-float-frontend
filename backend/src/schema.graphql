@@ -4,14 +4,9 @@ type Mutation {
   #------------------- User Mutations ------------------#
 
   """
-  Create a user
+  Signs up a new user
   """
-  createUser(
-    name: String!
-    email: String!
-    password: String!
-    domains: DomainCreateManyInput
-  ): User!
+  signup(name: String!, email: String!, password: String!): User!
 
   # TODO: Update a user
 
