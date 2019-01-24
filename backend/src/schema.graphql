@@ -18,10 +18,10 @@ type Mutation {
   #------------------- Domain Mutations ------------------#
 
   """
-  Create a domain
+  Add a domain to the users domain list
   """
-  createDomain(
-    url: String!
+  addDomain(
+    hostname: String!
     sitemapUrl: String
     pages: PageCreateManyInput
   ): Domain!

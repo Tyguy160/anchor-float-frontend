@@ -8,7 +8,7 @@ type User {
 
 type Domain {
   id: ID! @id @unique
-  url: String!
+  hostname: String!
   pages: [Page]!
   sitemapUrl: String
 }

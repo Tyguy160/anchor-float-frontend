@@ -46,7 +46,7 @@ const Mutations = {
     return user;
   },
 
-  async createDomain(parent, args, context, info) {
+  async addDomain(parent, args, context, info) {
     const domain = await context.db.mutation.createDomain(
       {
         data: {
