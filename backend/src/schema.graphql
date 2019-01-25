@@ -16,11 +16,6 @@ type Mutation {
   """
   signOut: SuccessMessage
 
-  """
-  Delete a user 💣
-  """
-  deleteUser(id: ID!): User!
-
   #------------------- Domain Mutations ------------------#
 
   """

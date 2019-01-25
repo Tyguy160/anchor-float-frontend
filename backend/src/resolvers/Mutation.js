@@ -39,18 +39,6 @@ const Mutations = {
     return { message: 'Signed out' };
   },
 
-  async deleteUser(parent, args, context, info) {
-    const user = await context.db.mutation.deleteUser(
-      {
-        where: {
-          ...args,
-        },
-      },
-      info
-    );
-    return user;
-  },
-
   async addDomain(parent, args, context, info) {
     const domain = await context.db.mutation.createDomain(
       {
