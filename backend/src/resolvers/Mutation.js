@@ -34,6 +34,11 @@ const Mutations = {
     return user;
   },
 
+  signOut(parent, args, context, info) {
+    context.response.clearCookie('token');
+    return { message: 'Signed out' };
+  },
+
   async deleteUser(parent, args, context, info) {
     const user = await context.db.mutation.deleteUser(
       {

@@ -1,4 +1,7 @@
 # import * from './generated/prisma.graphql'
+type SuccessMessage {
+  message: String!
+}
 
 type Mutation {
   #------------------- User Mutations ------------------#
@@ -8,7 +11,10 @@ type Mutation {
   """
   signup(name: String!, email: String!, password: String!): User!
 
-  # TODO: Update a user
+  """
+  Signs out a user
+  """
+  signOut: SuccessMessage
 
   """
   Delete a user 💣
