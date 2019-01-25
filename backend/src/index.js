@@ -16,9 +16,16 @@ server.express.use(cookieParser());
 server.express.use((req, res, next) => {
   const { token } = req.cookies;
   if (token) {
-    const { userId } = jwt.verify(token, process.env.APP_SECRET);
-    // put the userId onto the req for future requests to access
-    req.userId = userId;
+    try {
+      const { userId } = jwt.verify(token, process.env.APP_SECRET);
+      // put the userId onto the req for future requests to access
+      req.userId = userId;
+    } catch (err) {
+      // removes client token if it's invalid
+      res.clearCookie('token');
+      req.userId = null;
+      return next(err);
+    }
   }
   next();
 });
