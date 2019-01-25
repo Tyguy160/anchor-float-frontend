@@ -1,9 +1,6 @@
 const { forwardTo } = require('prisma-binding');
 
 const Query = {
-  users: forwardTo('db'),
-  user: forwardTo('db'),
-
   domains: forwardTo('db'),
   domain: forwardTo('db'),
 
