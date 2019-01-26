@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
+
 const Mutations = {
   async signup(parent, args, context, info) {
     // lowercase their email
@@ -28,9 +30,31 @@ const Mutations = {
     // Set the jwt as a cookie on the response
     context.response.cookie('token', token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year cookie
+      maxAge: ONE_YEAR, // 1 year cookie
     });
     // Return the user to the browser
+    return user;
+  },
+
+  async signIn(parent, args, context, info) {
+    args.email = args.email.toLowerCase();
+    const user = await context.db.query.user({
+      where: {
+        email: args.email,
+      },
+    });
+    if (!user) {
+      throw new Error(`No user found for ${args.email}`);
+    }
+    const passValid = await bcrypt.compare(args.password, user.password);
+    if (!passValid) {
+      throw new Error('Incorrect password');
+    }
+    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+    context.response.cookie('token', token, {
+      httpOnly: true,
+      maxAge: ONE_YEAR,
+    });
     return user;
   },
 
