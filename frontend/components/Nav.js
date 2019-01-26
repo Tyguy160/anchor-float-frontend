@@ -66,7 +66,7 @@ const Nav = () => {
           <StyledLink>About</StyledLink>
         </Link>
         <Link href="/signup" passHref>
-          <StyledLink>Start a 14 day trial</StyledLink>
+          <StyledLink>Start 14-day trial</StyledLink>
         </Link>
         <Link href="/account" passHref>
           <StyledLink>Sign in</StyledLink>

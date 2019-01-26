@@ -2,6 +2,18 @@ import React, { Component } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSitemap,
+  faSpider,
+  faList,
+  faMailBulk,
+  faLink,
+  faGlobe,
+  faChartLine,
+  faFileCsv,
+} from '@fortawesome/free-solid-svg-icons';
+
 const HeroContainer = styled.div`
   color: white;
   background-image: url('../static/blake-connally-373084-unsplash.png');
@@ -117,55 +129,54 @@ const Home = props => {
       <PageSection>
         <StyledHeading>How It Works</StyledHeading>
         <div>
-          <ul>
-            <li>
-              <i>ICON HERE</i>
-              <p>You input your domain name into our tool</p>
-            </li>
-            <li>
-              <i>ICON HERE</i>
-              <p>We crawl your website and inspect every page and link</p>
-            </li>
-            <li>
-              <i>ICON HERE</i>
-              <p>
-                We send you an initial report with lotttts of data about your
-                links
-              </p>
-            </li>
-            <li>
-              <i>ICON HERE</i>
-              <p>
-                Every week from there on, we will crawl your site and send you a
-                report of what's changed
-              </p>
-            </li>
-          </ul>
+          <div>
+            <FontAwesomeIcon icon={faSitemap} size="3x" color={`goldenrod`} />
+            <p>You input your domain name into our tool</p>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faSpider} size="3x" color={`goldenrod`} />
+            <p>We crawl your website and inspect every page and link</p>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faList} size="3x" color={`goldenrod`} />
+            <p>
+              We send you an initial report with lotttts of data about your
+              links
+            </p>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faMailBulk} size="3x" color={`goldenrod`} />
+            <p>
+              Every week from there on, we will crawl your site and send you a
+              report of what's changed
+            </p>
+          </div>
         </div>
       </PageSection>
       <PageSection>
         <StyledHeading>What Else You Get</StyledHeading>
         <div>
-          <ul>
-            <li>
-              <i>ICON HERE</i>
-              <p>Backlink monitoring</p>
-            </li>
-            <li>
-              <i>ICON HERE</i>
-              <p>SEO recommendations</p>
-            </li>
-            <li>
-              <i>ICON HERE</i>
-              <p>Detailed word counts across your site</p>
-            </li>
-            <li>
-              <i>ICON HERE</i>
-              <p>
-                Statistics so detailed that <em>you just can't even</em>
-              </p>
-            </li>
-          </ul>
+          <div>
+            <FontAwesomeIcon icon={faLink} size="3x" color={`goldenrod`} />
+            <p>Backlink monitoring</p>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faGlobe} size="3x" color={`goldenrod`} />
+            <p>SEO recommendations</p>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faChartLine} size="3x" color={`goldenrod`} />
+            <p>
+              Detailed word counts across your site. See how you trend over
+              time.
+            </p>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faFileCsv} size="3x" color={`goldenrod`} />
+            <p>
+              Statistics so detailed that <em>you just can't even</em>
+            </p>
+          </div>
         </div>
       </PageSection>
       <PageSection id="pricing">
