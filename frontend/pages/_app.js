@@ -2,6 +2,17 @@ import App, { Container } from 'next/app';
 import Page from '../components/Page';
 import { ApolloProvider } from 'react-apollo';
 import withData from '../lib/withData';
+import { createGlobalStyle } from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+  html, body {
+    @import url(https://fonts.googleapis.com/css?family=Quicksand);
+    font-family: 'Quicksand', sans-serif;
+    padding: 0;
+    margin: 0;
+    color: #333;
+  }
+`;
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -17,6 +28,7 @@ class MyApp extends App {
     const { Component, apollo, pageProps } = this.props;
     return (
       <Container>
+        <GlobalStyle />
         <ApolloProvider client={apollo}>
           <Page>
             <Component {...pageProps} />

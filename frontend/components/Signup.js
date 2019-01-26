@@ -18,10 +18,10 @@ const SIGNUP_MUTATION = gql`
 
 class Signup extends Component {
   state = {
-    name: 'Test',
-    email: 'tylermaschino@yahoo.com',
-    password: 'dsffgdfsgdfg',
-    confirmPassword: 'dsffgdfsgdfg',
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   };
 
   createAccount = async (e, signup) => {
