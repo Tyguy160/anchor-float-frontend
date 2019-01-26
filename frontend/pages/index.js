@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const HeroContainer = styled.div`
   color: white;
-  background-image: url('../static/blake-connally-373084-unsplash.jpg');
+  background-image: url('../static/blake-connally-373084-unsplash.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
