@@ -10,7 +10,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Quicksand', sans-serif;
     padding: 0;
     margin: 0;
-    color: #333;
+    color: #383838;
   }
 `;
 

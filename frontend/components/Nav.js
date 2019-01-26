@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 const NavBar = styled.div`
-  background: #909090;
+  background: #383838;
   height: 60px;
   box-shadow: 0px 2px 2px 2px #787878;
   display: grid;
