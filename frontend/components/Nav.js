@@ -9,6 +9,7 @@ const NavBar = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   align-items: center;
+  z-index: 1;
 
   @media screen and (max-width: 850px) {
     grid-template-columns: auto;

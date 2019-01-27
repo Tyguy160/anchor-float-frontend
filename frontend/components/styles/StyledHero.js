@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { CTAButton, CTAButtonContainer } from './StyledCTA';
 
 const HeroContainer = styled.div`
   color: white;
@@ -6,18 +7,27 @@ const HeroContainer = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  height: 100vh;
+  min-height: 100vh;
   display: grid;
-  justify-items: center;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.4fr 0.6fr;
+  align-items: center;
 `;
 
 const HeroHeadline = styled.div`
-  display: grid;
-  font-size: 3em;
+  font-size: 2em;
   text-align: center;
   align-self: end;
-  margin-bottom: 100px;
   text-shadow: 1px 1px 3px #888;
 `;
 
-export { HeroContainer, HeroHeadline };
+const HeroCTAButton = styled(CTAButton)`
+  align-self: start;
+  margin: 10px;
+`;
+const HeroCTAButtonContainer = styled(CTAButtonContainer)`
+  margin-top: 50px;
+  align-self: start;
+`;
+
+export { HeroContainer, HeroHeadline, HeroCTAButton, HeroCTAButtonContainer };

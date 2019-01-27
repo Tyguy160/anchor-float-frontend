@@ -1,19 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CTAButton, CTAButtonContainer } from './styles/StyledCTA';
-import { HeroContainer, HeroHeadline } from './styles/StyledHero';
+import { CTAButtonContainer } from './styles/StyledCTA';
+import {
+  HeroContainer,
+  HeroHeadline,
+  HeroCTAButton,
+  HeroCTAButtonContainer,
+} from './styles/StyledHero';
 
 const Hero = () => {
   return (
     <HeroContainer>
       <HeroHeadline>
-        <div>You've worked hard to make valuable content</div>
-        <div>Protect Your Asset</div>
+        You've worked hard to make valuable content
+        <br />
+        Now protect your asset
       </HeroHeadline>
-      <CTAButtonContainer>
-        <CTAButton>Learn more</CTAButton>
-        <CTAButton>Sign up</CTAButton>
-      </CTAButtonContainer>
+      <HeroCTAButtonContainer>
+        <HeroCTAButton>Learn more</HeroCTAButton>
+        <HeroCTAButton>Sign up</HeroCTAButton>
+      </HeroCTAButtonContainer>
     </HeroContainer>
   );
 };

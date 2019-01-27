@@ -15,26 +15,24 @@ const OtherFeatures = () => {
     <PageSection>
       <StyledHeading>What Else You Get</StyledHeading>
       <div>
-        <div>
-          <FontAwesomeIcon icon={faLink} size="3x" color={`goldenrod`} />
-          <p>Backlink monitoring</p>
-        </div>
-        <div>
-          <FontAwesomeIcon icon={faGlobe} size="3x" color={`goldenrod`} />
-          <p>SEO recommendations</p>
-        </div>
-        <div>
-          <FontAwesomeIcon icon={faChartLine} size="3x" color={`goldenrod`} />
-          <p>
-            Detailed word counts across your site. See how you trend over time.
-          </p>
-        </div>
-        <div>
-          <FontAwesomeIcon icon={faFileCsv} size="3x" color={`goldenrod`} />
-          <p>
-            Statistics so detailed that <em>you just can't even</em>
-          </p>
-        </div>
+        <FontAwesomeIcon icon={faLink} size="3x" color={`goldenrod`} />
+        <p>Backlink monitoring</p>
+      </div>
+      <div>
+        <FontAwesomeIcon icon={faGlobe} size="3x" color={`goldenrod`} />
+        <p>SEO recommendations</p>
+      </div>
+      <div>
+        <FontAwesomeIcon icon={faChartLine} size="3x" color={`goldenrod`} />
+        <p>
+          Detailed word counts across your site. See how you trend over time.
+        </p>
+      </div>
+      <div>
+        <FontAwesomeIcon icon={faFileCsv} size="3x" color={`goldenrod`} />
+        <p>
+          Statistics so detailed that <em>you just can't even</em>
+        </p>
       </div>
     </PageSection>
   );
