@@ -37,7 +37,6 @@ const StyledLink = styled.a`
 `;
 
 const Logo = styled.a`
-  font-weight: 800;
   font-size: 1.5em;
   color: #efefef;
   padding-left: 20px;
@@ -56,8 +55,8 @@ const Nav = () => {
         <Logo>Affiliate Shield</Logo>
       </Link>
       <Links>
-        <Link href="/#how-it-works" passHref>
-          <StyledLink>How it works</StyledLink>
+        <Link href="/#learn-more" passHref>
+          <StyledLink>Learn More</StyledLink>
         </Link>
         <Link href="/#pricing" passHref>
           <StyledLink>Pricing</StyledLink>
