@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutations = {
-  async signup(parent, args, context, info) {
+  async signUp(parent, args, context, info) {
     // lowercase their email
     args.email = args.email.toLowerCase();
     // hash their password

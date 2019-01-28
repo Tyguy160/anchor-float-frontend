@@ -9,7 +9,7 @@ type Mutation {
   """
   Signs up a new user
   """
-  signup(name: String!, email: String!, password: String!): User!
+  signUp(name: String!, email: String!, password: String!): User!
 
   """
   Signs out a user
