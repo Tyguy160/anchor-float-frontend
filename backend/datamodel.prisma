@@ -3,7 +3,7 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  domains: [Domain]!
+  domains: [Domain!]!
 }
 
 type Domain {
