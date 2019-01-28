@@ -3,7 +3,6 @@ const { forwardTo } = require('prisma-binding');
 const Query = {
   me(parent, args, context, info) {
     const { userId } = context.request;
-    console.log(userId);
     if (!userId) {
       return null;
     }
