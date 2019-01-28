@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
-const Mutations = {
+const Mutation = {
   async signUp(parent, args, context, info) {
     // lowercase their email
     args.email = args.email.toLowerCase();
@@ -64,6 +64,21 @@ const Mutations = {
   },
 
   async addDomain(parent, args, context, info) {
+    let { user } = context.request;
+    const { hostname } = args;
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+    user = await context.db.query.user(
+      { where: { id: user.id } },
+      '{ id, email, name, domains { id, hostname } }'
+    );
+    const userHasDomain = user.domains
+      .map(entry => entry.hostname.toLowerCase())
+      .includes(hostname.toLowerCase());
+    if (userHasDomain) {
+      throw new Error('Domain already exists');
+    }
     const domain = await context.db.mutation.createDomain(
       {
         data: {
@@ -72,6 +87,19 @@ const Mutations = {
       },
       info
     );
+    await context.db.mutation.updateUser({
+      where: { id: user.id },
+      data: {
+        domains: {
+          connect: [
+            {
+              id: domain.id,
+            },
+          ],
+        },
+      },
+    });
+
     return domain;
   },
 
@@ -160,4 +188,4 @@ const Mutations = {
   },
 };
 
-module.exports = Mutations;
+module.exports = Mutation;
