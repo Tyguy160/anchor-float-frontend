@@ -26,13 +26,7 @@ type Mutation {
   """
   Add a domain to the users domain list
   """
-  addDomain(
-    hostname: String!
-    sitemapUrl: String
-    pages: PageCreateManyInput
-  ): Domain!
-
-  # TODO: Update a domain
+  addDomain(hostname: String!, sitemapUrl: String): Domain!
 
   """
   Delete a domain 💣
@@ -95,6 +89,8 @@ type Mutation {
 }
 
 type Query {
+  me: User
+
   domains: [Domain]!
   domain(where: DomainWhereUniqueInput!): Domain
 
