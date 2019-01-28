@@ -5,16 +5,18 @@ const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutation = {
   async signUp(parent, args, context, info) {
-    // lowercase their email
     args.email = args.email.toLowerCase();
-    // hash their password
+    let user = await context.db.query.user({
+      where: {
+        email: args.email,
+      },
+    });
+    if (user) {
+      throw new Error('An account with that email already exists');
+    }
     const password = await bcrypt.hash(args.password, 10);
-
-    // Delete the unencrypted pass to prevent passing unintentionally
     delete args.password;
-
-    // create the user in the database
-    const user = await context.db.mutation.createUser(
+    user = await context.db.mutation.createUser(
       {
         data: {
           ...args,
@@ -23,16 +25,11 @@ const Mutation = {
       },
       info
     );
-
-    // Create the JWT token for them
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
-
-    // Set the jwt as a cookie on the response
     context.response.cookie('token', token, {
       httpOnly: true,
-      maxAge: ONE_YEAR, // 1 year cookie
+      maxAge: ONE_YEAR,
     });
-    // Return the user to the browser
     return user;
   },
 
