@@ -1,15 +1,15 @@
-const cheerio = require("cheerio");
+const cheerio = require('cheerio');
 
-function parseMarkup(markup) {
+function parseMarkupForLinks(markup) {
   const $ = cheerio.load(markup);
   const links = $('a[href!=""]:not([href^=#])')
     .map(function() {
       const node = $(this);
       return {
-        href: node.attr("href"),
+        href: node.attr('href'),
         text: node.text().trim(),
-        rel: node.attr("rel") || null,
-        title: node.attr("title") || null
+        rel: node.attr('rel') || null,
+        title: node.attr('title') || null,
       };
     })
     .toArray();
@@ -23,4 +23,14 @@ function parseHref(href) {
   return { hostname, pathname, protocol, hash, params };
 }
 
-module.exports = { parseMarkup, parseHref };
+function countWords({ markup, contentSelector }) {
+  const $ = cheerio.load(markup);
+  const count = $(contentSelector)
+    .text()
+    .replace(/\n/g, ' ')
+    .split(' ')
+    .filter(word => word != '').length;
+  return count;
+}
+
+module.exports = { parseMarkupForLinks, parseHref, countWords };
