@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
+import User from './User';
+import SignOut from './SignOut';
 
 const NavBar = styled.div`
   background: #383838;
@@ -28,10 +30,11 @@ const Links = styled.div`
   }
 `;
 
-const StyledLink = styled.a`
+export const StyledLink = styled.a`
   color: #efefef;
   text-decoration: none;
   padding: 20px;
+  cursor: pointer;
   @media screen and (max-width: 850px) {
     justify-self: center;
   }
@@ -51,28 +54,53 @@ const Logo = styled.a`
 
 const Nav = () => {
   return (
-    <NavBar>
-      <Link href="/" passHref>
-        <Logo>Affiliate Shield</Logo>
-      </Link>
-      <Links>
-        <Link href="/#learn-more" passHref>
-          <StyledLink>Learn More</StyledLink>
-        </Link>
-        <Link href="/#pricing" passHref>
-          <StyledLink>Pricing</StyledLink>
-        </Link>
-        <Link href="/about" passHref>
-          <StyledLink>About</StyledLink>
-        </Link>
-        <Link href="/signup" passHref>
-          <StyledLink>Start 14-day trial</StyledLink>
-        </Link>
-        <Link href="/account" passHref>
-          <StyledLink>Sign in</StyledLink>
-        </Link>
-      </Links>
-    </NavBar>
+    <User>
+      {payload => (
+        <NavBar>
+          {payload.data.me && (
+            <>
+              <Link href="/dashboard" passHref>
+                <Logo>Affiliate Shield</Logo>
+              </Link>
+              <Links>
+                <Link href="/dashboard" passHref>
+                  <StyledLink>Dashboard</StyledLink>
+                </Link>
+                <Link href="/account" passHref>
+                  <StyledLink>Account</StyledLink>
+                </Link>
+                {/* //TODO: Create sign out functionality */}
+                <SignOut />
+              </Links>
+            </>
+          )}
+          {!payload.data.me && (
+            <>
+              <Link href="/" passHref>
+                <Logo>Affiliate Shield</Logo>
+              </Link>
+              <Links>
+                <Link href="/#learn-more" passHref>
+                  <StyledLink>Learn More</StyledLink>
+                </Link>
+                <Link href="/#pricing" passHref>
+                  <StyledLink>Pricing</StyledLink>
+                </Link>
+                <Link href="/about" passHref>
+                  <StyledLink>About</StyledLink>
+                </Link>
+                <Link href="/signup" passHref>
+                  <StyledLink>Start 14-day trial</StyledLink>
+                </Link>
+                <Link href="/signin" passHref>
+                  <StyledLink>Sign In</StyledLink>
+                </Link>
+              </Links>
+            </>
+          )}
+        </NavBar>
+      )}
+    </User>
   );
 };
 
