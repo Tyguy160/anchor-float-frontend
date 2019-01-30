@@ -62,20 +62,25 @@ const Mutation = {
 
   async addDomain(parent, args, context, info) {
     let { user } = context.request;
-    const { hostname } = args;
+    let { hostname } = args;
+    hostname = hostname.toLowerCase();
+
     if (!user) {
       throw new Error('You must be signed in');
     }
+
     user = await context.db.query.user(
       { where: { id: user.id } },
       '{ id, email, name, domains { id, hostname } }'
     );
+
     const userHasDomain = user.domains
-      .map(entry => entry.hostname.toLowerCase())
-      .includes(hostname.toLowerCase());
+      .map(entry => entry.hostname)
+      .includes(hostname);
     if (userHasDomain) {
-      throw new Error(`You've alread added that domain`);
+      throw new Error(`You've alread added ${hostname}`);
     }
+
     let domain = await context.db.query.domain({
       where: { hostname },
     });
