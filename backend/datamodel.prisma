@@ -9,24 +9,25 @@ type User {
 type Domain {
   id: ID! @id @unique
   hostname: String! @unique
-  pages: [Page]!
+  pages: [Page!]!
   users: [User!]!
 }
 
 type Page {
   id: ID! @id @unique
   url: String! @unique
-  pageName: String!
-  links: [Link]!
+  pageTitle: String
+  wordCount: Int
+  links: [Link!]!
 }
 
 type Link {
   id: ID! @id @unique
+  page: Page!
   url: String!
-  affiliateTagged: Boolean!
+  affiliateTagged: Boolean
   affiliateTagName: String
   product: Product
-  pages: [Page]!
 }
 
 type Product {

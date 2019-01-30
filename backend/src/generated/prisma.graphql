@@ -217,11 +217,11 @@ input DomainWhereUniqueInput {
 
 type Link {
   id: ID!
+  page: Page!
   url: String!
-  affiliateTagged: Boolean!
+  affiliateTagged: Boolean
   affiliateTagName: String
   product: Product
-  pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
 }
 
 type LinkConnection {
@@ -231,15 +231,15 @@ type LinkConnection {
 }
 
 input LinkCreateInput {
+  page: PageCreateOneWithoutLinksInput!
   url: String!
-  affiliateTagged: Boolean!
+  affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductCreateOneWithoutLinksInput
-  pages: PageCreateManyWithoutLinksInput
 }
 
-input LinkCreateManyWithoutPagesInput {
-  create: [LinkCreateWithoutPagesInput!]
+input LinkCreateManyWithoutPageInput {
+  create: [LinkCreateWithoutPageInput!]
   connect: [LinkWhereUniqueInput!]
 }
 
@@ -248,18 +248,18 @@ input LinkCreateManyWithoutProductInput {
   connect: [LinkWhereUniqueInput!]
 }
 
-input LinkCreateWithoutPagesInput {
+input LinkCreateWithoutPageInput {
   url: String!
-  affiliateTagged: Boolean!
+  affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductCreateOneWithoutLinksInput
 }
 
 input LinkCreateWithoutProductInput {
+  page: PageCreateOneWithoutLinksInput!
   url: String!
-  affiliateTagged: Boolean!
+  affiliateTagged: Boolean
   affiliateTagName: String
-  pages: PageCreateManyWithoutLinksInput
 }
 
 type LinkEdge {
@@ -285,7 +285,7 @@ enum LinkOrderByInput {
 type LinkPreviousValues {
   id: ID!
   url: String!
-  affiliateTagged: Boolean!
+  affiliateTagged: Boolean
   affiliateTagName: String
 }
 
@@ -358,11 +358,11 @@ input LinkSubscriptionWhereInput {
 }
 
 input LinkUpdateInput {
+  page: PageUpdateOneRequiredWithoutLinksInput
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductUpdateOneWithoutLinksInput
-  pages: PageUpdateManyWithoutLinksInput
 }
 
 input LinkUpdateManyDataInput {
@@ -377,13 +377,13 @@ input LinkUpdateManyMutationInput {
   affiliateTagName: String
 }
 
-input LinkUpdateManyWithoutPagesInput {
-  create: [LinkCreateWithoutPagesInput!]
+input LinkUpdateManyWithoutPageInput {
+  create: [LinkCreateWithoutPageInput!]
   delete: [LinkWhereUniqueInput!]
   connect: [LinkWhereUniqueInput!]
   disconnect: [LinkWhereUniqueInput!]
-  update: [LinkUpdateWithWhereUniqueWithoutPagesInput!]
-  upsert: [LinkUpsertWithWhereUniqueWithoutPagesInput!]
+  update: [LinkUpdateWithWhereUniqueWithoutPageInput!]
+  upsert: [LinkUpsertWithWhereUniqueWithoutPageInput!]
   deleteMany: [LinkScalarWhereInput!]
   updateMany: [LinkUpdateManyWithWhereNestedInput!]
 }
@@ -404,7 +404,7 @@ input LinkUpdateManyWithWhereNestedInput {
   data: LinkUpdateManyDataInput!
 }
 
-input LinkUpdateWithoutPagesDataInput {
+input LinkUpdateWithoutPageDataInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
@@ -412,15 +412,15 @@ input LinkUpdateWithoutPagesDataInput {
 }
 
 input LinkUpdateWithoutProductDataInput {
+  page: PageUpdateOneRequiredWithoutLinksInput
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
-  pages: PageUpdateManyWithoutLinksInput
 }
 
-input LinkUpdateWithWhereUniqueWithoutPagesInput {
+input LinkUpdateWithWhereUniqueWithoutPageInput {
   where: LinkWhereUniqueInput!
-  data: LinkUpdateWithoutPagesDataInput!
+  data: LinkUpdateWithoutPageDataInput!
 }
 
 input LinkUpdateWithWhereUniqueWithoutProductInput {
@@ -428,10 +428,10 @@ input LinkUpdateWithWhereUniqueWithoutProductInput {
   data: LinkUpdateWithoutProductDataInput!
 }
 
-input LinkUpsertWithWhereUniqueWithoutPagesInput {
+input LinkUpsertWithWhereUniqueWithoutPageInput {
   where: LinkWhereUniqueInput!
-  update: LinkUpdateWithoutPagesDataInput!
-  create: LinkCreateWithoutPagesInput!
+  update: LinkUpdateWithoutPageDataInput!
+  create: LinkCreateWithoutPageInput!
 }
 
 input LinkUpsertWithWhereUniqueWithoutProductInput {
@@ -455,6 +455,7 @@ input LinkWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  page: PageWhereInput
   url: String
   url_not: String
   url_in: [String!]
@@ -486,9 +487,6 @@ input LinkWhereInput {
   affiliateTagName_ends_with: String
   affiliateTagName_not_ends_with: String
   product: ProductWhereInput
-  pages_every: PageWhereInput
-  pages_some: PageWhereInput
-  pages_none: PageWhereInput
   AND: [LinkWhereInput!]
   OR: [LinkWhereInput!]
   NOT: [LinkWhereInput!]
@@ -546,7 +544,8 @@ interface Node {
 type Page {
   id: ID!
   url: String!
-  pageName: String!
+  pageTitle: String
+  wordCount: Int
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
 }
 
@@ -558,8 +557,9 @@ type PageConnection {
 
 input PageCreateInput {
   url: String!
-  pageName: String!
-  links: LinkCreateManyWithoutPagesInput
+  pageTitle: String
+  wordCount: Int
+  links: LinkCreateManyWithoutPageInput
 }
 
 input PageCreateManyInput {
@@ -567,14 +567,15 @@ input PageCreateManyInput {
   connect: [PageWhereUniqueInput!]
 }
 
-input PageCreateManyWithoutLinksInput {
-  create: [PageCreateWithoutLinksInput!]
-  connect: [PageWhereUniqueInput!]
+input PageCreateOneWithoutLinksInput {
+  create: PageCreateWithoutLinksInput
+  connect: PageWhereUniqueInput
 }
 
 input PageCreateWithoutLinksInput {
   url: String!
-  pageName: String!
+  pageTitle: String
+  wordCount: Int
 }
 
 type PageEdge {
@@ -594,8 +595,10 @@ enum PageOrderByInput {
   id_DESC
   url_ASC
   url_DESC
-  pageName_ASC
-  pageName_DESC
+  pageTitle_ASC
+  pageTitle_DESC
+  wordCount_ASC
+  wordCount_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -605,7 +608,8 @@ enum PageOrderByInput {
 type PagePreviousValues {
   id: ID!
   url: String!
-  pageName: String!
+  pageTitle: String
+  wordCount: Int
 }
 
 input PageScalarWhereInput {
@@ -637,20 +641,28 @@ input PageScalarWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
-  pageName: String
-  pageName_not: String
-  pageName_in: [String!]
-  pageName_not_in: [String!]
-  pageName_lt: String
-  pageName_lte: String
-  pageName_gt: String
-  pageName_gte: String
-  pageName_contains: String
-  pageName_not_contains: String
-  pageName_starts_with: String
-  pageName_not_starts_with: String
-  pageName_ends_with: String
-  pageName_not_ends_with: String
+  pageTitle: String
+  pageTitle_not: String
+  pageTitle_in: [String!]
+  pageTitle_not_in: [String!]
+  pageTitle_lt: String
+  pageTitle_lte: String
+  pageTitle_gt: String
+  pageTitle_gte: String
+  pageTitle_contains: String
+  pageTitle_not_contains: String
+  pageTitle_starts_with: String
+  pageTitle_not_starts_with: String
+  pageTitle_ends_with: String
+  pageTitle_not_ends_with: String
+  wordCount: Int
+  wordCount_not: Int
+  wordCount_in: [Int!]
+  wordCount_not_in: [Int!]
+  wordCount_lt: Int
+  wordCount_lte: Int
+  wordCount_gt: Int
+  wordCount_gte: Int
   AND: [PageScalarWhereInput!]
   OR: [PageScalarWhereInput!]
   NOT: [PageScalarWhereInput!]
@@ -676,19 +688,22 @@ input PageSubscriptionWhereInput {
 
 input PageUpdateDataInput {
   url: String
-  pageName: String
-  links: LinkUpdateManyWithoutPagesInput
+  pageTitle: String
+  wordCount: Int
+  links: LinkUpdateManyWithoutPageInput
 }
 
 input PageUpdateInput {
   url: String
-  pageName: String
-  links: LinkUpdateManyWithoutPagesInput
+  pageTitle: String
+  wordCount: Int
+  links: LinkUpdateManyWithoutPageInput
 }
 
 input PageUpdateManyDataInput {
   url: String
-  pageName: String
+  pageTitle: String
+  wordCount: Int
 }
 
 input PageUpdateManyInput {
@@ -704,18 +719,8 @@ input PageUpdateManyInput {
 
 input PageUpdateManyMutationInput {
   url: String
-  pageName: String
-}
-
-input PageUpdateManyWithoutLinksInput {
-  create: [PageCreateWithoutLinksInput!]
-  delete: [PageWhereUniqueInput!]
-  connect: [PageWhereUniqueInput!]
-  disconnect: [PageWhereUniqueInput!]
-  update: [PageUpdateWithWhereUniqueWithoutLinksInput!]
-  upsert: [PageUpsertWithWhereUniqueWithoutLinksInput!]
-  deleteMany: [PageScalarWhereInput!]
-  updateMany: [PageUpdateManyWithWhereNestedInput!]
+  pageTitle: String
+  wordCount: Int
 }
 
 input PageUpdateManyWithWhereNestedInput {
@@ -723,9 +728,17 @@ input PageUpdateManyWithWhereNestedInput {
   data: PageUpdateManyDataInput!
 }
 
+input PageUpdateOneRequiredWithoutLinksInput {
+  create: PageCreateWithoutLinksInput
+  update: PageUpdateWithoutLinksDataInput
+  upsert: PageUpsertWithoutLinksInput
+  connect: PageWhereUniqueInput
+}
+
 input PageUpdateWithoutLinksDataInput {
   url: String
-  pageName: String
+  pageTitle: String
+  wordCount: Int
 }
 
 input PageUpdateWithWhereUniqueNestedInput {
@@ -733,21 +746,15 @@ input PageUpdateWithWhereUniqueNestedInput {
   data: PageUpdateDataInput!
 }
 
-input PageUpdateWithWhereUniqueWithoutLinksInput {
-  where: PageWhereUniqueInput!
-  data: PageUpdateWithoutLinksDataInput!
+input PageUpsertWithoutLinksInput {
+  update: PageUpdateWithoutLinksDataInput!
+  create: PageCreateWithoutLinksInput!
 }
 
 input PageUpsertWithWhereUniqueNestedInput {
   where: PageWhereUniqueInput!
   update: PageUpdateDataInput!
   create: PageCreateInput!
-}
-
-input PageUpsertWithWhereUniqueWithoutLinksInput {
-  where: PageWhereUniqueInput!
-  update: PageUpdateWithoutLinksDataInput!
-  create: PageCreateWithoutLinksInput!
 }
 
 input PageWhereInput {
@@ -779,20 +786,28 @@ input PageWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
-  pageName: String
-  pageName_not: String
-  pageName_in: [String!]
-  pageName_not_in: [String!]
-  pageName_lt: String
-  pageName_lte: String
-  pageName_gt: String
-  pageName_gte: String
-  pageName_contains: String
-  pageName_not_contains: String
-  pageName_starts_with: String
-  pageName_not_starts_with: String
-  pageName_ends_with: String
-  pageName_not_ends_with: String
+  pageTitle: String
+  pageTitle_not: String
+  pageTitle_in: [String!]
+  pageTitle_not_in: [String!]
+  pageTitle_lt: String
+  pageTitle_lte: String
+  pageTitle_gt: String
+  pageTitle_gte: String
+  pageTitle_contains: String
+  pageTitle_not_contains: String
+  pageTitle_starts_with: String
+  pageTitle_not_starts_with: String
+  pageTitle_ends_with: String
+  pageTitle_not_ends_with: String
+  wordCount: Int
+  wordCount_not: Int
+  wordCount_in: [Int!]
+  wordCount_not_in: [Int!]
+  wordCount_lt: Int
+  wordCount_lte: Int
+  wordCount_gt: Int
+  wordCount_gte: Int
   links_every: LinkWhereInput
   links_some: LinkWhereInput
   links_none: LinkWhereInput
