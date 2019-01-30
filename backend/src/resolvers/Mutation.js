@@ -74,16 +74,21 @@ const Mutation = {
       .map(entry => entry.hostname.toLowerCase())
       .includes(hostname.toLowerCase());
     if (userHasDomain) {
-      throw new Error('Domain already exists');
+      throw new Error(`You've alread added that domain`);
     }
-    const domain = await context.db.mutation.createDomain(
-      {
-        data: {
-          ...args,
+    let domain = await context.db.query.domain({
+      where: { hostname },
+    });
+    if (!domain) {
+      domain = await context.db.mutation.createDomain(
+        {
+          data: {
+            ...args,
+          },
         },
-      },
-      info
-    );
+        info
+      );
+    }
     await context.db.mutation.updateUser({
       where: { id: user.id },
       data: {
