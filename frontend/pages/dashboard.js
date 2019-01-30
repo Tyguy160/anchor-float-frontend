@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import Authenticate from '../components/Authenticate';
+import Dashboard from '../components/Dashboard';
 
-class Dashboard extends Component {
+class DashboardPage extends Component {
   render() {
     return (
       <Authenticate>
-        <div>This is a dashboard</div>
+        <Dashboard />
       </Authenticate>
     );
   }
 }
 
-export default Dashboard;
+export default DashboardPage;
