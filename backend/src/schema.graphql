@@ -33,7 +33,7 @@ type Mutation {
   """
   Add a page under a given domain
   """
-  addPage(url: String!, pageName: String!): Page!
+  addPage(url: String!, hostname: String!): Page!
 
   #-----------------------------------------------------#
 }
@@ -44,7 +44,7 @@ type Query {
   domains: [Domain]!
   domain(where: DomainWhereUniqueInput!): Domain
 
-  pages: [Page]!
+  pages(hostname: String!): [Page!]!
   page(where: PageWhereUniqueInput!): Page
 
   links: [Link]!

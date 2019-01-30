@@ -62,18 +62,18 @@ const Mutation = {
 
   async addDomain(parent, args, context, info) {
     let { user } = context.request;
-    let { hostname } = args;
-    hostname = hostname.toLowerCase();
-
     if (!user) {
       throw new Error('You must be signed in');
     }
 
+    // get user but with domains
     user = await context.db.query.user(
       { where: { id: user.id } },
       '{ id, email, name, domains { id, hostname } }'
     );
 
+    let { hostname } = args;
+    hostname = hostname.toLowerCase();
     const userHasDomain = user.domains
       .map(entry => entry.hostname)
       .includes(hostname);
@@ -111,14 +111,55 @@ const Mutation = {
   },
 
   async addPage(parent, args, context, info) {
+    let { user } = context.request;
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    // get user but with domains
+    user = await context.db.query.user(
+      { where: { id: user.id } },
+      '{ id, email, name, domains { id, hostname } }'
+    );
+
+    let { url, hostname } = args;
+    url = new URL(url.toLowerCase());
+    hostname = hostname.toLowerCase();
+
+    const userHasDomain = user.domains
+      .map(entry => entry.hostname)
+      .includes(hostname);
+
+    if (!userHasDomain) {
+      throw new Error(
+        `"${hostname}" is not in your domains list. Please add it first.`
+      );
+    }
+
+    if (url.hostname !== hostname) {
+      throw new Error(
+        `Domain: "${hostname}" and page: "${url.hostname}" do not match.`
+      );
+    }
+
+    const urlToSave = url.origin + url.pathname;
     const page = await context.db.mutation.createPage(
       {
         data: {
-          ...args,
+          url: urlToSave,
         },
       },
       info
     );
+
+    // const domainId = user.domains.find(domain => domain.hostname === hostname);
+    await context.db.mutation.updateDomain({
+      where: { hostname },
+      data: {
+        pages: { connect: [{ id: page.id }] },
+      },
+    });
+
     return page;
   },
 };
