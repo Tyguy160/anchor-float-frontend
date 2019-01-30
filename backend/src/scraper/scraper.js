@@ -1,7 +1,8 @@
 const cheerio = require('cheerio');
 
-function parseMarkupForLinks(markup) {
+function parseMarkup(markup) {
   const $ = cheerio.load(markup);
+  const pageTitle = $('title').text();
   const links = $('a[href!=""]:not([href^=#])')
     .map(function() {
       const node = $(this);
@@ -13,7 +14,7 @@ function parseMarkupForLinks(markup) {
       };
     })
     .toArray();
-  return links;
+  return { links, pageTitle };
 }
 
 function parseHref(href) {
@@ -24,6 +25,7 @@ function parseHref(href) {
 }
 
 function countWords({ markup, contentSelector }) {
+  contentSelector = contentSelector || 'body';
   const $ = cheerio.load(markup);
   const count = $(contentSelector)
     .text()
@@ -33,4 +35,4 @@ function countWords({ markup, contentSelector }) {
   return count;
 }
 
-module.exports = { parseMarkupForLinks, parseHref, countWords };
+module.exports = { parseMarkup, parseHref, countWords };

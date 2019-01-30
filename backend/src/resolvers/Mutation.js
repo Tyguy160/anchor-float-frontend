@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const { pageParseQueue } = require('../scraper/jobQueue');
+
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutation = {
@@ -152,13 +154,15 @@ const Mutation = {
       info
     );
 
-    // const domainId = user.domains.find(domain => domain.hostname === hostname);
     await context.db.mutation.updateDomain({
       where: { hostname },
       data: {
         pages: { connect: [{ id: page.id }] },
       },
     });
+
+    console.log({ url: urlToSave, pageId: page.id });
+    pageParseQueue.add({ url: urlToSave, pageId: page.id, hostname });
 
     return page;
   },
