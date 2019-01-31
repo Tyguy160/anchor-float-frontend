@@ -41,7 +41,7 @@ type Mutation {
 type Query {
   me: User
 
-  domains: [Domain]!
+  domains(first: Int): [Domain]!
   domain(where: DomainWhereUniqueInput!): Domain
 
   pages(hostname: String!): [Page!]!

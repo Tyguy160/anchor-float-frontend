@@ -16,8 +16,14 @@ const Query = {
 
   async domains(parent, args, context, info) {
     let { user } = context.request;
+    let { first } = args;
+
     if (!user) {
       throw new Error('You must be logged in.');
+    }
+
+    if (first <= 0) {
+      throw new Error('First argument should be positive');
     }
     user = await context.db.query.user(
       {
@@ -27,15 +33,20 @@ const Query = {
       },
       `{ domains { id, hostname, pages {id, url, pageTitle, wordCount, links {id}} } }`
     );
+    if (first) {
+      return user.domains.slice(0, first);
+    }
     return user.domains;
   },
   domain: forwardTo('db'),
 
   async pages(parent, args, context, info) {
     let { user } = context.request;
+
     if (!user) {
       throw new Error('You must be logged in.');
     }
+
     let { hostname } = args;
     hostname = hostname.toLowerCase();
 
@@ -45,6 +56,7 @@ const Query = {
           id: user.id,
         },
       },
+      // TODO: Can't we use the info arg for this?
       `{ domains { id, hostname, pages {id, url, pageTitle, wordCount, links {id}} } }`
     );
 
