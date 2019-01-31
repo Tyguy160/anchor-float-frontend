@@ -12,9 +12,42 @@ const ADD_DOMAIN_MUTATION = gql`
   }
 `;
 
+const DOMAIN_PAGES_QUERY = gql`
+  query DOMAIN_PAGES_QUERY($hostname: String!) {
+    pages(hostname: $hostname) {
+      id
+      url
+    }
+  }
+`;
+
+const DASHBOARD_INITIAL_LOAD = gql`
+  query DASHBOARD_INITIAL_LOAD {
+    me {
+      id
+      email
+      name
+      domains(first: 1) {
+        id
+        hostname
+        pages(first: 20) {
+          id
+          url
+          wordCount
+        }
+      }
+    }
+    domains {
+      id
+      hostname
+    }
+  }
+`;
+
 class Dashboard extends Component {
   state = {
-    hostname: '',
+    hostname: '', //New hostname for domain creation
+    domain: '', //Domain that you are selecting and querying
   };
 
   saveToState = e => {
@@ -23,12 +56,14 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <Query query={CURRENT_USER_QUERY}>
+      <Query
+        query={CURRENT_USER_QUERY}
+        onCompleted={() => console.log('Completed the query')}>
         {({ data, error, loading }) => (
           <>
             <Error error={error} />
             <h2>Dashboard</h2>
-            <label htmlFor="domains">
+            <label htmlFor="domains" onChange={this.saveToState}>
               <select name="domain" id="domain">
                 {loading ? (
                   <option>Loading...</option>
@@ -37,18 +72,12 @@ class Dashboard extends Component {
                     <option key={domain.id}>{domain.hostname}</option>
                   ))
                 ) : (
-                  <option>No domains</option>
-                )
-                //   data.me.domains ? (
-                //     /*data.me.domains.map(domain => {
-                //       <option>{domain.hostname}</option>;
-                //     })*/ <option>
-                //       test
-                //     </option>
-                //   )
-                }
+                  <option name="">No domains</option>
+                )}
+                <option />
               </select>
             </label>
+            {/* Create a new domain using this mutation and input box */}
             <Mutation
               mutation={ADD_DOMAIN_MUTATION}
               variables={this.state}
@@ -84,6 +113,24 @@ class Dashboard extends Component {
                 </form>
               )}
             </Mutation>
+            <h3>Domain Data</h3>
+            {data.me.domains.length ? (
+              <Query
+                query={DOMAIN_PAGES_QUERY}
+                variables={{
+                  hostname: this.state.domain.length
+                    ? this.state.domain
+                    : data.me.domains[0].hostname,
+                }}>
+                {payload =>
+                  payload.data.pages.map(page => (
+                    <div key={page.id}>{page.url}</div>
+                  ))
+                }
+              </Query>
+            ) : (
+              'No data'
+            )}
           </>
         )}
       </Query>
