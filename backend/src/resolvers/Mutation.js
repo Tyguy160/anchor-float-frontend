@@ -161,7 +161,6 @@ const Mutation = {
       },
     });
 
-    console.log({ url: urlToSave, pageId: page.id });
     pageParseQueue.add({ url: urlToSave, pageId: page.id, hostname });
 
     return page;
