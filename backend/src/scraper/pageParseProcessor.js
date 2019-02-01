@@ -1,17 +1,20 @@
 const axios = require('axios');
-const { parseMarkup, countWords } = require('./scraper');
+const { parseMarkup, countWords, parseHref } = require('./parsers');
 
-const pageParseProcessor = async function(job) {
+async function pageParseProcessor(job) {
+  const { url } = job.data;
   try {
-    const { data } = await axios.get(job.data.url);
-    const { pageTitle, links } = parseMarkup(data);
-    const wordCount = countWords({ markup: data });
-    console.log({ pageTitle, links, wordCount });
+    const response = await axios.get(url);
+    const { pageTitle, links } = parseMarkup(response.data);
+    const wordCount = countWords({ markup: response.data });
+    const parsedLinks = links.map(link => {
+      const parsedHref = parseHref(link.href);
+      return { ...link, parsedHref };
+    });
+    return Promise.resolve({ pageTitle, links: parsedLinks, wordCount });
   } catch (error) {
-    console.log(error);
+    return Promise.reject(error);
   }
-
-  return Promise.resolve({ data: 'worked' });
-};
+}
 
 module.exports = pageParseProcessor;

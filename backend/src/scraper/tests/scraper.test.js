@@ -1,4 +1,4 @@
-const { parseMarkup, parseHref, countWords } = require('../scraper');
+const { parseMarkup, parseHref, countWords } = require('../parsers');
 const { markup } = require('./mockSite');
 
 describe('parseMarkup function', () => {

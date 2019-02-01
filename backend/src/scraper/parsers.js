@@ -1,6 +1,9 @@
 const cheerio = require('cheerio');
 
 function parseMarkup(markup) {
+  if (!markup) {
+    throw new Error('Please provide markup to parse');
+  }
   const $ = cheerio.load(markup);
   const pageTitle = $('title').text();
   const links = $('a[href!=""]:not([href^=#])')
