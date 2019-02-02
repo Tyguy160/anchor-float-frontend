@@ -4,48 +4,36 @@ import gql from 'graphql-tag';
 import { CURRENT_USER_QUERY } from './User';
 import Error from './ErrorMessage';
 import AddDomain from './AddDomain';
-
-const DOMAIN_PAGES_QUERY = gql`
-  query DOMAIN_PAGES_QUERY($hostname: String!) {
-    pages(hostname: $hostname) {
-      id
-      url
-      pageTitle
-    }
-  }
-`;
-
-const DASHBOARD_INITIAL_LOAD = gql`
-  query DASHBOARD_INITIAL_LOAD {
-    me {
-      id
-      email
-      name
-      domains(first: 1) {
-        id
-        hostname
-        pages(first: 20) {
-          id
-          url
-          wordCount
-        }
-      }
-    }
-    domains {
-      id
-      hostname
-    }
-  }
+import styled from 'styled-components';
+import DomainDataDisplay from './DomainDataDisplay';
+const StyledAddDomainButton = styled.button`
+  margin: 10px;
+  width: 30px;
+  height: 30px;
 `;
 
 class Dashboard extends Component {
   state = {
-    hostname: '', //New hostname for domain creation
     domain: '', //Domain that you are selecting and querying
+    showAddDomain: false,
   };
 
   saveToState = e => {
     this.setState({ [e.target.name]: e.target.value });
+  };
+
+  toggleAddDomain = () => {
+    this.setState({
+      showAddDomain: !this.state.showAddDomain,
+    });
+    console.log('Toggled addDomain window');
+  };
+
+  hideAddDomain = () => {
+    this.setState({
+      showAddDomain: false,
+    });
+    console.log('Closed the addDomain window');
   };
 
   render() {
@@ -70,37 +58,17 @@ class Dashboard extends Component {
                 )}
               </select>
             </label>
+            <StyledAddDomainButton
+              disabled={this.state.showAddDomain}
+              onClick={this.toggleAddDomain}>
+              +
+            </StyledAddDomainButton>
             <AddDomain
-              hostname={this.state.hostname}
-              onChange={this.saveToState}
+              showAddDomain={this.state.showAddDomain}
+              toggleAddDomain={this.toggleAddDomain}
+              hideAddDomain={this.hideAddDomain}
             />
-            <h3>Domain Data</h3>
-            {data.me.domains.length ? (
-              <Query
-                query={DOMAIN_PAGES_QUERY}
-                variables={{
-                  hostname: this.state.domain.length
-                    ? this.state.domain
-                    : data.me.domains[0].hostname,
-                }}>
-                {payload =>
-                  payload.data.pages.map(page => (
-                    <div key={page.id}>
-                      <span>
-                        <a href={page.url}>
-                          Page {payload.data.pages.indexOf(page) + 1}
-                        </a>
-                        <div>Good: </div>
-                        <div>3rd Party: </div>
-                        <div>Unavailable: </div>
-                      </span>
-                    </div>
-                  ))
-                }
-              </Query>
-            ) : (
-              'No data'
-            )}
+            <DomainDataDisplay data={data} domain={this.state.domain} />
           </>
         )}
       </Query>
