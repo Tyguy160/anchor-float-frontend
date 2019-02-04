@@ -20,11 +20,28 @@ function parseMarkup(markup) {
   return { links, pageTitle };
 }
 
-function parseHref(href) {
-  const url = new URL(href);
+// Should handle anything that's a valid value to an href attribtue
+// href refers to the href attribute on the link, origin should include the protocol and host
+function parseHref(href, origin) {
+  const relativeHref = /^\/[^\/].*/g;
+  const jsHref = /^javascript:.*/g;
+  const hashStartHref = /^#.*/g;
+
+  let url, isValid;
+
+  if (jsHref.test(href) || hashStartHref.test(href)) {
+    isValid = false;
+    return { isValid };
+  } else if (relativeHref.test(href)) {
+    isValid = true;
+    url = new URL(href, origin);
+  } else {
+    isValid = true;
+    url = new URL(href);
+  }
   const { hostname, pathname, protocol, hash } = url;
   const params = new Map(url.searchParams);
-  return { hostname, pathname, protocol, hash, params };
+  return { isValid, hostname, pathname, protocol, hash, params };
 }
 
 function countWords({ markup, contentSelector }) {
