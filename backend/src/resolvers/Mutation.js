@@ -118,7 +118,7 @@ const Mutation = {
       throw new Error('You must be signed in');
     }
 
-    // get user but with domains
+    // refetch user but with domains
     user = await context.db.query.user(
       { where: { id: user.id } },
       '{ id, email, name, domains { id, hostname } }'
@@ -161,7 +161,12 @@ const Mutation = {
       },
     });
 
-    pageParseQueue.add({ url: urlToSave, pageId: page.id, hostname });
+    pageParseQueue.add({
+      url: urlToSave,
+      pageId: page.id,
+      hostname,
+      origin: url.origin,
+    });
 
     return page;
   },
