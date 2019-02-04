@@ -37,6 +37,7 @@ async function pageParseProcessor(job) {
           connect: [linkIds],
         },
         wordCount,
+        pageTitle,
       },
     });
 
