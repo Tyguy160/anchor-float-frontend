@@ -20,6 +20,24 @@ function parseMarkup(markup) {
   return { links, pageTitle };
 }
 
+function parseProductPageMarkup(markup) {
+  if (!markup) {
+    throw new Error('Please provide valid markup to parse');
+  }
+  const $ = cheerio.load(markup);
+  const asin = $('#ASIN').attr('value');
+  const availability = $('#availability')
+    .text()
+    .trim();
+  const price = Number(
+    $('#newBuyBoxPrice')
+      .text()
+      .trim()
+      .slice(1)
+  );
+  return { asin, availability, price };
+}
+
 // Should handle anything that's a valid value to an href attribtue
 // href refers to the href attribute on the link, origin should include the protocol and host
 function parseHref(href, origin) {
@@ -60,4 +78,4 @@ function countWords({ markup, contentSelector }) {
   return count;
 }
 
-module.exports = { parseMarkup, parseHref, countWords };
+module.exports = { parseMarkup, parseProductPageMarkup, parseHref, countWords };
