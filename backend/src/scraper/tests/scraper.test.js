@@ -1,13 +1,16 @@
-const { parseMarkupForLinks, parseHref, countWords } = require('../scraper');
+const { parseMarkup, parseHref, countWords } = require('../parsers');
 const { markup } = require('./mockSite');
 
-describe('parseMarkupForLinks function', () => {
-  const result = parseMarkupForLinks(markup);
+describe('parseMarkup function', () => {
+  const result = parseMarkup(markup);
   test('returns an object', () => {
     expect(typeof result).toBe('object');
   });
   test('parses 54 links', () => {
-    expect(result.length).toBe(45);
+    expect(result.links.length).toBe(45);
+  });
+  test('parses a title', () => {
+    expect(typeof result.pageTitle).toBe('string');
   });
 });
 

@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const { pageParseQueue } = require('../scraper/jobQueue');
+
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutation = {
@@ -116,7 +118,7 @@ const Mutation = {
       throw new Error('You must be signed in');
     }
 
-    // get user but with domains
+    // refetch user but with domains
     user = await context.db.query.user(
       { where: { id: user.id } },
       '{ id, email, name, domains { id, hostname } }'
@@ -152,12 +154,18 @@ const Mutation = {
       info
     );
 
-    // const domainId = user.domains.find(domain => domain.hostname === hostname);
     await context.db.mutation.updateDomain({
       where: { hostname },
       data: {
         pages: { connect: [{ id: page.id }] },
       },
+    });
+
+    pageParseQueue.add({
+      url: urlToSave,
+      pageId: page.id,
+      hostname,
+      origin: url.origin,
     });
 
     return page;
