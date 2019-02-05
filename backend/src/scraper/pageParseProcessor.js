@@ -14,15 +14,39 @@ async function pageParseProcessor(job) {
       return { ...link, parsedHref };
     });
 
-    // Create a new link in the database for each link found
-    const linkIds = parsedLinks.map(async link => {
-      const createdLink = await db.mutation.createLink({
-        data: {
-          page: { connect: { id: pageId } },
-          url: link.href,
-        },
-      });
-      return { id: createdLink.id };
+    // Process all the links found on the page
+    // 1. If a link is valid, create a new link in the database
+    //    TODO: Prevent duplicates if ran twice on same page
+    // 2. If the link is an amazon product link, connect or create a product
+    parsedLinks.forEach(async link => {
+      const { isValid, params, hostname } = link.parsedHref;
+      if (isValid) {
+        let affiliateTagged = null;
+        let affiliateTagName = null;
+
+        // Handle Amazon links
+        // TODO: Get ASIN from link and see if a product exists
+        //   Create and link Product if it doesn't
+        //   (which should add a productPagePrase job)
+        //   OR
+        //   Connect the existing Product to the Link
+        if (hostname.includes('amazon.com') || hostname.includes('amzn.to')) {
+          affiliateTagged = params.has('tag') || hostname.includes('amzn.to');
+          // TODO: Doesn't get AffiliateTagName for amzn.to links
+          if (affiliateTagged && params.has('tag')) {
+            affiliateTagName = params.get('tag');
+          }
+        }
+
+        await db.mutation.createLink({
+          data: {
+            page: { connect: { id: pageId } },
+            url: link.href,
+            affiliateTagged,
+            affiliateTagName,
+          },
+        });
+      }
     });
 
     await db.mutation.updatePage({
