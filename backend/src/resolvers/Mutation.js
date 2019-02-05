@@ -164,7 +164,6 @@ const Mutation = {
     pageParseQueue.add({
       url: urlToSave,
       pageId: page.id,
-      hostname,
       origin: url.origin,
     });
 
