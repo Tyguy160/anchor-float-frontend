@@ -13,37 +13,31 @@ async function pageParseProcessor(job) {
       const parsedHref = parseHref(link.href, origin);
       return { ...link, parsedHref };
     });
-    console.log('Done parsing everything...');
 
     // Create a new link in the database for each link found
-    console.log('Making links in DB...');
     const linkIds = parsedLinks.map(async link => {
-      const link = await db.mutation.createLink({
+      const createdLink = await db.mutation.createLink({
         data: {
-          page: pageId,
+          page: { connect: { id: pageId } },
           url: link.href,
         },
       });
-      return { id: link.id };
+      return { id: createdLink.id };
     });
 
-    console.log('Updating page with wordCount and Links...');
     await db.mutation.updatePage({
       where: {
         id: pageId,
       },
       data: {
-        links: {
-          connect: [linkIds],
-        },
         wordCount,
         pageTitle,
       },
     });
 
-    console.log('Job complete');
     return Promise.resolve({ pageTitle, links: parsedLinks, wordCount });
   } catch (error) {
+    console.log(error);
     return Promise.reject(error);
   }
 }

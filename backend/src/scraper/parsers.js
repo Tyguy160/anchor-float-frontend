@@ -23,15 +23,20 @@ function parseMarkup(markup) {
 // Should handle anything that's a valid value to an href attribtue
 // href refers to the href attribute on the link, origin should include the protocol and host
 function parseHref(href, origin) {
-  const relativeHref = /^\/[^\/].*/g;
-  const jsHref = /^javascript:.*/g;
-  const hashStartHref = /^#.*/g;
+  const jsHref = /^javascript/;
+  const hashStartHref = /^#/;
+  const noProtocolHref = /^\/\/.*/;
+  const relativeHref = /^\//;
 
   let url, isValid;
 
   if (jsHref.test(href) || hashStartHref.test(href)) {
     isValid = false;
     return { isValid };
+  } else if (noProtocolHref.test(href)) {
+    hrefWithProtocol = `http:${href}`;
+    isValid = true;
+    url = new URL(hrefWithProtocol);
   } else if (relativeHref.test(href)) {
     isValid = true;
     url = new URL(href, origin);
