@@ -46,7 +46,29 @@ async function productParseProcessor(job) {
 
   const { data } = await axios.get(productPageUrl, { headers });
   const productInfo = parseProductPageMarkup(data);
-  console.log({ ...productInfo });
+
+  if (productInfo.availability.includes('In Stock')) {
+    await db.mutation.updateProduct({
+      where: {
+        id: productId,
+      },
+      data: {
+        availability: 'AMAZON',
+        name: productInfo.name,
+      },
+    });
+  } else {
+    await db.mutation.updateProduct({
+      where: {
+        id: productId,
+      },
+      data: {
+        name: productInfo.name,
+      },
+    });
+  }
+
+  return Promise.resolve(updatedProduct);
 }
 
 module.exports = productParseProcessor;

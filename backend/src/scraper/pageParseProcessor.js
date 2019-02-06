@@ -1,9 +1,11 @@
 const axios = require('axios');
 const { parseMarkup, countWords, parseHref } = require('./parsers');
 const db = require('../db');
+const { productParseQueue } = require('./jobQueue');
 
 async function pageParseProcessor(job) {
   const { url, origin, pageId } = job.data;
+
   let parsedLinks;
   try {
     const response = await axios.get(url);
@@ -18,8 +20,14 @@ async function pageParseProcessor(job) {
     // 1. If a link is valid, create a new link in the database
     //    TODO: Prevent duplicates if ran twice on same page
     // 2. If the link is an amazon product link, connect or create a product
-    parsedLinks.forEach(async link => {
-      const { isValid, params, hostname } = link.parsedHref;
+    await processAllLinks(parsedLinks);
+    async function processAllLinks(links) {
+      for (link of links) {
+        await processLink(link);
+      }
+    }
+    async function processLink(link) {
+      const { isValid, params, hostname, pathname } = link.parsedHref;
       if (isValid) {
         let affiliateTagged = null;
         let affiliateTagName = null;
@@ -38,16 +46,63 @@ async function pageParseProcessor(job) {
           }
         }
 
-        await db.mutation.createLink({
-          data: {
-            page: { connect: { id: pageId } },
-            url: link.href,
-            affiliateTagged,
-            affiliateTagName,
+        const newLink = await db.mutation.createLink(
+          {
+            data: {
+              page: { connect: { id: pageId } },
+              url: link.href,
+              affiliateTagged,
+              affiliateTagName,
+            },
           },
-        });
+          `{ id }`
+        );
+
+        let asin = null;
+        let productId = null;
+        if (hostname.includes('amazon.com')) {
+          const asinRegex = /\/dp\/([^\?#\/]+)/i;
+          const foundAsin = pathname.match(asinRegex);
+          if (foundAsin) {
+            asin = foundAsin[1];
+
+            const existingProduct = await db.query.product(
+              {
+                where: {
+                  asin,
+                },
+              },
+              `{ id asin }`
+            );
+
+            if (existingProduct) {
+              productId = existingProduct.id;
+            } else {
+              const product = await db.mutation.createProduct(
+                {
+                  data: {
+                    asin,
+                  },
+                },
+                `{ id }`
+              );
+
+              productId = product.id;
+              productParseQueue.add({
+                productId,
+              });
+            }
+
+            await db.mutation.updateLink({
+              where: { id: newLink.id },
+              data: {
+                product: { connect: { id: productId } },
+              },
+            });
+          }
+        }
       }
-    });
+    }
 
     await db.mutation.updatePage({
       where: {
@@ -61,7 +116,6 @@ async function pageParseProcessor(job) {
 
     return Promise.resolve({ pageTitle, links: parsedLinks, wordCount });
   } catch (error) {
-    console.log(error);
     return Promise.reject(error);
   }
 }

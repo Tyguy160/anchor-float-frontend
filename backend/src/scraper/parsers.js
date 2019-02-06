@@ -26,16 +26,13 @@ function parseProductPageMarkup(markup) {
   }
   const $ = cheerio.load(markup);
   const asin = $('#ASIN').attr('value');
+  const name = $('#productTitle')
+    .text()
+    .trim();
   const availability = $('#availability')
     .text()
     .trim();
-  const price = Number(
-    $('#newBuyBoxPrice')
-      .text()
-      .trim()
-      .slice(1)
-  );
-  return { asin, availability, price };
+  return { asin, availability, name };
 }
 
 // Should handle anything that's a valid value to an href attribtue
