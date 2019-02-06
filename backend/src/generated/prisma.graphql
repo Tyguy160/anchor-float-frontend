@@ -18,6 +18,12 @@ type AggregateUser {
   count: Int!
 }
 
+enum Availability {
+  AMAZON
+  THIRDPARTY
+  UNAVAILABLE
+}
+
 type BatchPayload {
   count: Long!
 }
@@ -823,9 +829,10 @@ input PageWhereUniqueInput {
 
 type Product {
   id: ID!
-  name: String!
+  name: String
   asin: String!
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
+  availability: Availability
 }
 
 type ProductConnection {
@@ -835,9 +842,10 @@ type ProductConnection {
 }
 
 input ProductCreateInput {
-  name: String!
+  name: String
   asin: String!
   links: LinkCreateManyWithoutProductInput
+  availability: Availability
 }
 
 input ProductCreateOneWithoutLinksInput {
@@ -846,8 +854,9 @@ input ProductCreateOneWithoutLinksInput {
 }
 
 input ProductCreateWithoutLinksInput {
-  name: String!
+  name: String
   asin: String!
+  availability: Availability
 }
 
 type ProductEdge {
@@ -862,6 +871,8 @@ enum ProductOrderByInput {
   name_DESC
   asin_ASC
   asin_DESC
+  availability_ASC
+  availability_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -870,8 +881,9 @@ enum ProductOrderByInput {
 
 type ProductPreviousValues {
   id: ID!
-  name: String!
+  name: String
   asin: String!
+  availability: Availability
 }
 
 type ProductSubscriptionPayload {
@@ -896,11 +908,13 @@ input ProductUpdateInput {
   name: String
   asin: String
   links: LinkUpdateManyWithoutProductInput
+  availability: Availability
 }
 
 input ProductUpdateManyMutationInput {
   name: String
   asin: String
+  availability: Availability
 }
 
 input ProductUpdateOneWithoutLinksInput {
@@ -915,6 +929,7 @@ input ProductUpdateOneWithoutLinksInput {
 input ProductUpdateWithoutLinksDataInput {
   name: String
   asin: String
+  availability: Availability
 }
 
 input ProductUpsertWithoutLinksInput {
@@ -968,6 +983,10 @@ input ProductWhereInput {
   links_every: LinkWhereInput
   links_some: LinkWhereInput
   links_none: LinkWhereInput
+  availability: Availability
+  availability_not: Availability
+  availability_in: [Availability!]
+  availability_not_in: [Availability!]
   AND: [ProductWhereInput!]
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]

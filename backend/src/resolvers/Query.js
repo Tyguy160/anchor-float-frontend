@@ -57,7 +57,29 @@ const Query = {
         },
       },
       // TODO: Can't we use the info arg for this?
-      `{ domains { id, hostname, pages {id, url, pageTitle, wordCount, links {id}} } }`
+      `{
+        domains {
+          id
+          hostname
+          pages {
+            id
+            url
+            pageTitle
+            wordCount
+            links {
+              id
+              url
+              product {
+                id
+                asin
+                name
+                availability
+              }
+            }
+          }
+        }
+      }
+      `
     );
 
     const userHasDomain = user.domains
