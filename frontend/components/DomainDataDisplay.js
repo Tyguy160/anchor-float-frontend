@@ -4,6 +4,8 @@ import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import styled from 'styled-components';
+import Error from './ErrorMessage';
+
 const DOMAIN_PAGES_QUERY = gql`
   query DOMAIN_PAGES_QUERY($hostname: String!) {
     pages(hostname: $hostname) {
@@ -54,13 +56,20 @@ const DomainDataDisplay = props => {
                 ? props.domain
                 : props.data.me.domains[0].hostname,
             }}>
-            {payload => {
-              if (payload.data.pages.length) {
-                let data = [];
-                payload.data.pages.map(page => {
+            {({ loading, data, error }) => {
+              if (loading) {
+                return <p>Loading...</p>;
+              }
+              if (error) {
+                return <Error />;
+              }
+              if (data.pages.length) {
+                let dataArray = [];
+                data.pages.map(page => {
+                  let url = new URL(page.url);
                   let pageData = {
                     pageTitle: page.pageTitle ? page.pageTitle : 'My Page',
-                    url: <a href={page.url}>{page.url}</a>,
+                    url: <a href={url}>{url.pathname}</a>,
                     wordCount: page.wordCount
                       ? page.wordCount
                       : Math.round(Math.random() * 1212 + 1),
@@ -69,12 +78,12 @@ const DomainDataDisplay = props => {
                     unavailable: Math.round(Math.random() * 11 + 1),
                     totalLinks: 'NaN',
                   };
-                  data.push(pageData);
+                  dataArray.push(pageData);
                 });
 
                 return (
                   <ReactTable
-                    data={data}
+                    data={dataArray}
                     columns={[
                       {
                         Header: 'Page',
@@ -103,25 +112,15 @@ const DomainDataDisplay = props => {
                     className="-striped -highlight"
                   />
                 );
-
-                // <div key={page.id}>
-                //   {console.log(props.data.me.domains[3].id)}
-                //   <span>
-                //     <a href={page.url}>
-                //       Page {payload.data.pages.indexOf(page) + 1}
-                //     </a>
-                //     <div>Good: </div>
-                //     <div>3rd Party: </div>
-                //     <div>Unavailable: </div>
-                //   </span>
-                // </div>
               } else {
-                <div>
-                  No pages exist for this domain.
+                return (
                   <div>
-                    Add one <button>here</button>
+                    No pages exist for this domain.
+                    <div>
+                      Add one <button>here</button>
+                    </div>
                   </div>
-                </div>;
+                );
               }
             }}
           </Query>
