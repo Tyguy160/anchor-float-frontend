@@ -12,6 +12,17 @@ const DOMAIN_PAGES_QUERY = gql`
       id
       url
       pageTitle
+      wordCount
+      links {
+        id
+        url
+        product {
+          id
+          asin
+          name
+          availability
+        }
+      }
     }
   }
 `;
@@ -43,6 +54,12 @@ const StyledTableContainer = styled.div`
   margin: 0 20px 20px 20px;
 `;
 
+function countLinks(links, linkType) {
+  return links
+    .filter(link => link.product)
+    .filter(link => link.product.availability === linkType).length;
+}
+
 const DomainDataDisplay = props => {
   return (
     <div>
@@ -70,13 +87,11 @@ const DomainDataDisplay = props => {
                   let pageData = {
                     pageTitle: page.pageTitle ? page.pageTitle : 'My Page',
                     url: <a href={url}>{url.pathname}</a>,
-                    wordCount: page.wordCount
-                      ? page.wordCount
-                      : Math.round(Math.random() * 1212 + 1),
-                    valid: Math.round(Math.random() * 11 + 1),
-                    thirdParty: Math.round(Math.random() * 11 + 1),
-                    unavailable: Math.round(Math.random() * 11 + 1),
-                    totalLinks: 'NaN',
+                    wordCount: page.wordCount,
+                    valid: countLinks(page.links, 'AMAZON'),
+                    thirdParty: countLinks(page.links, 'THIRDPARTY'),
+                    unavailable: countLinks(page.links, 'UNAVAILABLE'),
+                    totalLinks: page.links.length,
                   };
                   dataArray.push(pageData);
                 });
