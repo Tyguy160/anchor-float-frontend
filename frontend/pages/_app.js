@@ -3,7 +3,7 @@ import Page from '../components/Page';
 import { ApolloProvider } from 'react-apollo';
 import withData from '../lib/withData';
 import { createGlobalStyle } from 'styled-components';
-
+import 'react-table/react-table.css';
 const GlobalStyle = createGlobalStyle`
   html, body {
     @import url(https://fonts.googleapis.com/css?family=Quicksand);

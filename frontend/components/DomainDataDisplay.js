@@ -2,7 +2,6 @@ import React from 'react';
 import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import styled from 'styled-components';
 import Error from './ErrorMessage';
 
