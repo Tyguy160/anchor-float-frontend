@@ -16,10 +16,11 @@ async function pageParseProcessor(job) {
       return { ...link, parsedHref };
     });
 
-    // Process all the links found on the page
-    // 1. If a link is valid, create a new link in the database
-    //    TODO: Prevent duplicates if ran twice on same page
-    // 2. If the link is an amazon product link, connect or create a product
+    const { count } = await db.mutation.deleteManyLinks(
+      { where: { page: { id: pageId } } },
+      `{ count }`
+    );
+
     await processAllLinks(parsedLinks);
     async function processAllLinks(links) {
       for (link of links) {
@@ -33,17 +34,14 @@ async function pageParseProcessor(job) {
         let affiliateTagName = null;
 
         // Handle Amazon links
-        // TODO: Get ASIN from link and see if a product exists
-        //   Create and link Product if it doesn't
-        //   (which should add a productPagePrase job)
-        //   OR
-        //   Connect the existing Product to the Link
-        if (hostname.includes('amazon.com') || hostname.includes('amzn.to')) {
-          affiliateTagged = params.has('tag') || hostname.includes('amzn.to');
-          // TODO: Doesn't get AffiliateTagName for amzn.to links
-          if (affiliateTagged && params.has('tag')) {
-            affiliateTagName = params.get('tag');
-          }
+        if (hostname.includes('amazon.com') && params.has('tag')) {
+          affiliateTagged = true;
+          affiliateTagName = params.get('tag');
+        }
+
+        // Handle amzn.to links
+        if (hostname.includes('amzn.to')) {
+          affiliateTagged = true;
         }
 
         const newLink = await db.mutation.createLink(
@@ -58,13 +56,11 @@ async function pageParseProcessor(job) {
           `{ id }`
         );
 
-        let asin = null;
-        let productId = null;
         if (hostname.includes('amazon.com')) {
           const asinRegex = /\/dp\/([^\?#\/]+)/i;
           const foundAsin = pathname.match(asinRegex);
           if (foundAsin) {
-            asin = foundAsin[1];
+            const asin = foundAsin[1];
 
             const existingProduct = await db.query.product(
               {
@@ -75,6 +71,7 @@ async function pageParseProcessor(job) {
               `{ id asin }`
             );
 
+            let productId = null;
             if (existingProduct) {
               productId = existingProduct.id;
             } else {
