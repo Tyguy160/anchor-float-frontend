@@ -14,61 +14,75 @@ class NoASINError extends Error {}
 // 3. Parsing the markup with the parser
 // 4. Updating the product in the database
 async function productParseProcessor(job) {
-  const { productId } = job.data;
+  try {
+    const { productId } = job.data;
 
-  if (!productId) {
-    throw new NoProductIdError('Parser must be called with a productId');
-  }
+    if (!productId) {
+      throw new NoProductIdError('Parser must be called with a productId');
+    }
+    console.log(`Parsing ${productId} at: ${new Date().toUTCString()}\n`);
 
-  const product = await db.query.product(
-    {
-      where: { id: productId },
-    },
-    `{ id, asin }`
-  );
-
-  if (!product) {
-    throw new ProductNotFoundError(
-      `Product with id: ${productId} not found in database`
+    const product = await db.query.product(
+      {
+        where: { id: productId },
+      },
+      `{ id, asin }`
     );
-  }
 
-  if (!product.asin) {
-    throw new NoASINError('Product does not have an ASIN value');
-  }
+    if (!product) {
+      throw new ProductNotFoundError(
+        `Product with id: ${productId} not found in database`
+      );
+    }
 
-  const productPageUrl = constructProductUrl({ asin: product.asin });
+    if (!product.asin) {
+      throw new NoASINError('Product does not have an ASIN value');
+    }
 
-  const headers = {
-    'user-agent':
-      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
-  };
+    const productPageUrl = constructProductUrl({ asin: product.asin });
 
-  const { data } = await axios.get(productPageUrl, { headers });
-  const productInfo = parseProductPageMarkup(data);
+    const headers = {
+      'user-agent':
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
+    };
 
-  if (productInfo.availability.includes('In Stock')) {
-    await db.mutation.updateProduct({
+    const { data, status } = await axios
+      .get(productPageUrl, { headers })
+      .catch(err => {
+        if (err.response) {
+          return err.response;
+        }
+      });
+
+    if (status < 200 || status >= 300) {
+      throw new Error(`Page did not return a 200 range status code: ${status}`);
+    }
+    const productInfo = parseProductPageMarkup(data);
+
+    const updatedProductData = {
+      name: productInfo.name,
+    };
+
+    if (productInfo.availability.includes('unavailable')) {
+      updatedProductData.availability = 'UNAVAILABLE';
+    } else if (productInfo.availability.includes('these sellers')) {
+      updatedProductData.availability = 'THIRDPARTY';
+    } else if (productInfo.availability.toLowerCase().includes('in stock')) {
+      updatedProductData.availability = 'AMAZON';
+    }
+
+    const updatedProduct = await db.mutation.updateProduct({
       where: {
         id: productId,
       },
-      data: {
-        availability: 'AMAZON',
-        name: productInfo.name,
-      },
+      data: updatedProductData,
     });
-  } else {
-    await db.mutation.updateProduct({
-      where: {
-        id: productId,
-      },
-      data: {
-        name: productInfo.name,
-      },
-    });
-  }
 
-  return Promise.resolve(updatedProduct);
+    return Promise.resolve(updatedProduct);
+  } catch (error) {
+    console.log(error);
+    return Promise.reject(error);
+  }
 }
 
 module.exports = productParseProcessor;
