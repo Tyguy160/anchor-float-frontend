@@ -69,6 +69,8 @@ const Query = {
             links {
               id
               url
+              affiliateTagged
+              affiliateTagName
               product {
                 id
                 asin
