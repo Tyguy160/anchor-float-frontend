@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { parseMarkup, countWords, parseHref } = require('./parsers');
 const db = require('../db');
-const { productParseQueue } = require('./jobQueue');
+const { productParseQueue, shortlinkParseQueue } = require('./jobQueue');
 
 async function pageParseProcessor(job) {
   const { url, origin, pageId } = job.data;
@@ -33,15 +33,31 @@ async function pageParseProcessor(job) {
         let affiliateTagged = null;
         let affiliateTagName = null;
 
+        // Handle amzn.to links
+        if (hostname.includes('amzn.to')) {
+          affiliateTagged = true;
+          const newShortlink = await db.mutation.createLink(
+            {
+              data: {
+                page: { connect: { id: pageId } },
+                url: link.href,
+                affiliateTagged,
+              },
+            },
+            `{ id }`
+          );
+          console.log('Adding shortlink to queue...');
+          shortlinkParseQueue.add({
+            linkId: newShortlink.id,
+            url: link.href,
+          });
+          return;
+        }
+
         // Handle Amazon links
         if (hostname.includes('amazon.com') && params.has('tag')) {
           affiliateTagged = true;
           affiliateTagName = params.get('tag');
-        }
-
-        // Handle amzn.to links
-        if (hostname.includes('amzn.to')) {
-          affiliateTagged = true;
         }
 
         const newLink = await db.mutation.createLink(
@@ -113,6 +129,7 @@ async function pageParseProcessor(job) {
 
     return Promise.resolve({ pageTitle, links: parsedLinks, wordCount });
   } catch (error) {
+    console.log(error);
     return Promise.reject(error);
   }
 }
