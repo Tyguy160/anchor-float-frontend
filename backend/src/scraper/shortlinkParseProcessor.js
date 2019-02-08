@@ -8,8 +8,6 @@ const { productParseQueue } = require('./jobQueue');
 async function shortlinkParseProcessor(job) {
   try {
     const { linkId, url } = job.data;
-    console.log(`Parsing shortlink: ${url}\n`);
-    console.log(`no error getting vars`);
 
     if (!url.includes('amzn.to')) {
       throw new Error(`URL is not an Amazon shortlink:\n${url}`);

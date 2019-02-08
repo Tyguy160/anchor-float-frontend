@@ -20,13 +20,18 @@ async function productParseProcessor(job) {
     if (!productId) {
       throw new NoProductIdError('Parser must be called with a productId');
     }
-    console.log(`Parsing ${productId} at: ${new Date().toUTCString()}\n`);
 
     const product = await db.query.product(
       {
         where: { id: productId },
       },
       `{ id, asin }`
+    );
+
+    console.log(
+      `Getting product details... | ${new Date().toUTCString()}\n${
+        product.asin
+      }\n`
     );
 
     if (!product) {
@@ -51,7 +56,11 @@ async function productParseProcessor(job) {
       });
 
     if (status < 200 || status >= 300) {
-      throw new Error(`Page did not return a 200 range status code: ${status}`);
+      throw new Error(
+        `Page did not return a 200 range status code: ${status}\nASIN: ${
+          product.asin
+        }\n`
+      );
     }
     const productInfo = parseProductPageMarkup(data);
 

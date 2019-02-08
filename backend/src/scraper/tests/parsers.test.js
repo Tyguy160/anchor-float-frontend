@@ -2,12 +2,12 @@ const { parseMarkup, parseHref, countWords } = require('../parsers');
 const { markup } = require('./mockSite');
 
 describe('parseMarkup function', () => {
-  const result = parseMarkup(markup);
+  const result = parseMarkup(markup, 'article.page');
   test('returns an object', () => {
     expect(typeof result).toBe('object');
   });
   test('parses 54 links', () => {
-    expect(result.links.length).toBe(45);
+    expect(result.links.length).toBe(30);
   });
   test('parses a title', () => {
     expect(typeof result.pageTitle).toBe('string');

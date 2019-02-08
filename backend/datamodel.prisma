@@ -17,6 +17,15 @@ type Domain {
   hostname: String! @unique
   pages: [Page!]!
   users: [User!]!
+  preferences: [UserDomainPreferences!]!
+}
+
+type UserDomainPreferences {
+  id: ID! @id @unique
+  domain: Domain!
+  user: User!
+  sitemapUrl: String
+  contentSelector: String
 }
 
 type Page {

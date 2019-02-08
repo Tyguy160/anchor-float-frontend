@@ -18,6 +18,10 @@ type AggregateUser {
   count: Int!
 }
 
+type AggregateUserDomainPreferences {
+  count: Int!
+}
+
 enum Availability {
   AMAZON
   THIRDPARTY
@@ -33,6 +37,7 @@ type Domain {
   hostname: String!
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  preferences(where: UserDomainPreferencesWhereInput, orderBy: UserDomainPreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserDomainPreferences!]
 }
 
 type DomainConnection {
@@ -45,6 +50,7 @@ input DomainCreateInput {
   hostname: String!
   pages: PageCreateManyInput
   users: UserCreateManyWithoutDomainsInput
+  preferences: UserDomainPreferencesCreateManyWithoutDomainInput
 }
 
 input DomainCreateManyWithoutUsersInput {
@@ -52,9 +58,21 @@ input DomainCreateManyWithoutUsersInput {
   connect: [DomainWhereUniqueInput!]
 }
 
+input DomainCreateOneWithoutPreferencesInput {
+  create: DomainCreateWithoutPreferencesInput
+  connect: DomainWhereUniqueInput
+}
+
+input DomainCreateWithoutPreferencesInput {
+  hostname: String!
+  pages: PageCreateManyInput
+  users: UserCreateManyWithoutDomainsInput
+}
+
 input DomainCreateWithoutUsersInput {
   hostname: String!
   pages: PageCreateManyInput
+  preferences: UserDomainPreferencesCreateManyWithoutDomainInput
 }
 
 type DomainEdge {
@@ -134,6 +152,7 @@ input DomainUpdateInput {
   hostname: String
   pages: PageUpdateManyInput
   users: UserUpdateManyWithoutDomainsInput
+  preferences: UserDomainPreferencesUpdateManyWithoutDomainInput
 }
 
 input DomainUpdateManyDataInput {
@@ -160,14 +179,33 @@ input DomainUpdateManyWithWhereNestedInput {
   data: DomainUpdateManyDataInput!
 }
 
+input DomainUpdateOneRequiredWithoutPreferencesInput {
+  create: DomainCreateWithoutPreferencesInput
+  update: DomainUpdateWithoutPreferencesDataInput
+  upsert: DomainUpsertWithoutPreferencesInput
+  connect: DomainWhereUniqueInput
+}
+
+input DomainUpdateWithoutPreferencesDataInput {
+  hostname: String
+  pages: PageUpdateManyInput
+  users: UserUpdateManyWithoutDomainsInput
+}
+
 input DomainUpdateWithoutUsersDataInput {
   hostname: String
   pages: PageUpdateManyInput
+  preferences: UserDomainPreferencesUpdateManyWithoutDomainInput
 }
 
 input DomainUpdateWithWhereUniqueWithoutUsersInput {
   where: DomainWhereUniqueInput!
   data: DomainUpdateWithoutUsersDataInput!
+}
+
+input DomainUpsertWithoutPreferencesInput {
+  update: DomainUpdateWithoutPreferencesDataInput!
+  create: DomainCreateWithoutPreferencesInput!
 }
 
 input DomainUpsertWithWhereUniqueWithoutUsersInput {
@@ -211,6 +249,9 @@ input DomainWhereInput {
   users_every: UserWhereInput
   users_some: UserWhereInput
   users_none: UserWhereInput
+  preferences_every: UserDomainPreferencesWhereInput
+  preferences_some: UserDomainPreferencesWhereInput
+  preferences_none: UserDomainPreferencesWhereInput
   AND: [DomainWhereInput!]
   OR: [DomainWhereInput!]
   NOT: [DomainWhereInput!]
@@ -535,6 +576,12 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createUserDomainPreferences(data: UserDomainPreferencesCreateInput!): UserDomainPreferences!
+  updateUserDomainPreferences(data: UserDomainPreferencesUpdateInput!, where: UserDomainPreferencesWhereUniqueInput!): UserDomainPreferences
+  updateManyUserDomainPreferenceses(data: UserDomainPreferencesUpdateManyMutationInput!, where: UserDomainPreferencesWhereInput): BatchPayload!
+  upsertUserDomainPreferences(where: UserDomainPreferencesWhereUniqueInput!, create: UserDomainPreferencesCreateInput!, update: UserDomainPreferencesUpdateInput!): UserDomainPreferences!
+  deleteUserDomainPreferences(where: UserDomainPreferencesWhereUniqueInput!): UserDomainPreferences
+  deleteManyUserDomainPreferenceses(where: UserDomainPreferencesWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1013,6 +1060,9 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  userDomainPreferences(where: UserDomainPreferencesWhereUniqueInput!): UserDomainPreferences
+  userDomainPreferenceses(where: UserDomainPreferencesWhereInput, orderBy: UserDomainPreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserDomainPreferences]!
+  userDomainPreferencesesConnection(where: UserDomainPreferencesWhereInput, orderBy: UserDomainPreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserDomainPreferencesConnection!
   node(id: ID!): Node
 }
 
@@ -1022,6 +1072,7 @@ type Subscription {
   page(where: PageSubscriptionWhereInput): PageSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  userDomainPreferences(where: UserDomainPreferencesSubscriptionWhereInput): UserDomainPreferencesSubscriptionPayload
 }
 
 type User {
@@ -1050,10 +1101,241 @@ input UserCreateManyWithoutDomainsInput {
   connect: [UserWhereUniqueInput!]
 }
 
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutDomainsInput {
   name: String!
   email: String!
   password: String!
+}
+
+type UserDomainPreferences {
+  id: ID!
+  domain: Domain!
+  user: User!
+  sitemapUrl: String
+  contentSelector: String
+}
+
+type UserDomainPreferencesConnection {
+  pageInfo: PageInfo!
+  edges: [UserDomainPreferencesEdge]!
+  aggregate: AggregateUserDomainPreferences!
+}
+
+input UserDomainPreferencesCreateInput {
+  domain: DomainCreateOneWithoutPreferencesInput!
+  user: UserCreateOneInput!
+  sitemapUrl: String
+  contentSelector: String
+}
+
+input UserDomainPreferencesCreateManyWithoutDomainInput {
+  create: [UserDomainPreferencesCreateWithoutDomainInput!]
+  connect: [UserDomainPreferencesWhereUniqueInput!]
+}
+
+input UserDomainPreferencesCreateWithoutDomainInput {
+  user: UserCreateOneInput!
+  sitemapUrl: String
+  contentSelector: String
+}
+
+type UserDomainPreferencesEdge {
+  node: UserDomainPreferences!
+  cursor: String!
+}
+
+enum UserDomainPreferencesOrderByInput {
+  id_ASC
+  id_DESC
+  sitemapUrl_ASC
+  sitemapUrl_DESC
+  contentSelector_ASC
+  contentSelector_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type UserDomainPreferencesPreviousValues {
+  id: ID!
+  sitemapUrl: String
+  contentSelector: String
+}
+
+input UserDomainPreferencesScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  sitemapUrl: String
+  sitemapUrl_not: String
+  sitemapUrl_in: [String!]
+  sitemapUrl_not_in: [String!]
+  sitemapUrl_lt: String
+  sitemapUrl_lte: String
+  sitemapUrl_gt: String
+  sitemapUrl_gte: String
+  sitemapUrl_contains: String
+  sitemapUrl_not_contains: String
+  sitemapUrl_starts_with: String
+  sitemapUrl_not_starts_with: String
+  sitemapUrl_ends_with: String
+  sitemapUrl_not_ends_with: String
+  contentSelector: String
+  contentSelector_not: String
+  contentSelector_in: [String!]
+  contentSelector_not_in: [String!]
+  contentSelector_lt: String
+  contentSelector_lte: String
+  contentSelector_gt: String
+  contentSelector_gte: String
+  contentSelector_contains: String
+  contentSelector_not_contains: String
+  contentSelector_starts_with: String
+  contentSelector_not_starts_with: String
+  contentSelector_ends_with: String
+  contentSelector_not_ends_with: String
+  AND: [UserDomainPreferencesScalarWhereInput!]
+  OR: [UserDomainPreferencesScalarWhereInput!]
+  NOT: [UserDomainPreferencesScalarWhereInput!]
+}
+
+type UserDomainPreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: UserDomainPreferences
+  updatedFields: [String!]
+  previousValues: UserDomainPreferencesPreviousValues
+}
+
+input UserDomainPreferencesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserDomainPreferencesWhereInput
+  AND: [UserDomainPreferencesSubscriptionWhereInput!]
+  OR: [UserDomainPreferencesSubscriptionWhereInput!]
+  NOT: [UserDomainPreferencesSubscriptionWhereInput!]
+}
+
+input UserDomainPreferencesUpdateInput {
+  domain: DomainUpdateOneRequiredWithoutPreferencesInput
+  user: UserUpdateOneRequiredInput
+  sitemapUrl: String
+  contentSelector: String
+}
+
+input UserDomainPreferencesUpdateManyDataInput {
+  sitemapUrl: String
+  contentSelector: String
+}
+
+input UserDomainPreferencesUpdateManyMutationInput {
+  sitemapUrl: String
+  contentSelector: String
+}
+
+input UserDomainPreferencesUpdateManyWithoutDomainInput {
+  create: [UserDomainPreferencesCreateWithoutDomainInput!]
+  delete: [UserDomainPreferencesWhereUniqueInput!]
+  connect: [UserDomainPreferencesWhereUniqueInput!]
+  disconnect: [UserDomainPreferencesWhereUniqueInput!]
+  update: [UserDomainPreferencesUpdateWithWhereUniqueWithoutDomainInput!]
+  upsert: [UserDomainPreferencesUpsertWithWhereUniqueWithoutDomainInput!]
+  deleteMany: [UserDomainPreferencesScalarWhereInput!]
+  updateMany: [UserDomainPreferencesUpdateManyWithWhereNestedInput!]
+}
+
+input UserDomainPreferencesUpdateManyWithWhereNestedInput {
+  where: UserDomainPreferencesScalarWhereInput!
+  data: UserDomainPreferencesUpdateManyDataInput!
+}
+
+input UserDomainPreferencesUpdateWithoutDomainDataInput {
+  user: UserUpdateOneRequiredInput
+  sitemapUrl: String
+  contentSelector: String
+}
+
+input UserDomainPreferencesUpdateWithWhereUniqueWithoutDomainInput {
+  where: UserDomainPreferencesWhereUniqueInput!
+  data: UserDomainPreferencesUpdateWithoutDomainDataInput!
+}
+
+input UserDomainPreferencesUpsertWithWhereUniqueWithoutDomainInput {
+  where: UserDomainPreferencesWhereUniqueInput!
+  update: UserDomainPreferencesUpdateWithoutDomainDataInput!
+  create: UserDomainPreferencesCreateWithoutDomainInput!
+}
+
+input UserDomainPreferencesWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  domain: DomainWhereInput
+  user: UserWhereInput
+  sitemapUrl: String
+  sitemapUrl_not: String
+  sitemapUrl_in: [String!]
+  sitemapUrl_not_in: [String!]
+  sitemapUrl_lt: String
+  sitemapUrl_lte: String
+  sitemapUrl_gt: String
+  sitemapUrl_gte: String
+  sitemapUrl_contains: String
+  sitemapUrl_not_contains: String
+  sitemapUrl_starts_with: String
+  sitemapUrl_not_starts_with: String
+  sitemapUrl_ends_with: String
+  sitemapUrl_not_ends_with: String
+  contentSelector: String
+  contentSelector_not: String
+  contentSelector_in: [String!]
+  contentSelector_not_in: [String!]
+  contentSelector_lt: String
+  contentSelector_lte: String
+  contentSelector_gt: String
+  contentSelector_gte: String
+  contentSelector_contains: String
+  contentSelector_not_contains: String
+  contentSelector_starts_with: String
+  contentSelector_not_starts_with: String
+  contentSelector_ends_with: String
+  contentSelector_not_ends_with: String
+  AND: [UserDomainPreferencesWhereInput!]
+  OR: [UserDomainPreferencesWhereInput!]
+  NOT: [UserDomainPreferencesWhereInput!]
+}
+
+input UserDomainPreferencesWhereUniqueInput {
+  id: ID
 }
 
 type UserEdge {
@@ -1163,6 +1445,13 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  domains: DomainUpdateManyWithoutUsersInput
+}
+
 input UserUpdateInput {
   name: String
   email: String
@@ -1198,6 +1487,13 @@ input UserUpdateManyWithWhereNestedInput {
   data: UserUpdateManyDataInput!
 }
 
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateWithoutDomainsDataInput {
   name: String
   email: String
@@ -1207,6 +1503,11 @@ input UserUpdateWithoutDomainsDataInput {
 input UserUpdateWithWhereUniqueWithoutDomainsInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutDomainsDataInput!
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutDomainsInput {

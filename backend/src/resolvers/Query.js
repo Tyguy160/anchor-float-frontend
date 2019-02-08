@@ -31,7 +31,7 @@ const Query = {
           id: user.id,
         },
       },
-      `{ domains { id, hostname, pages {id, url, pageTitle, wordCount, links {id}} } }`
+      `{ domains { id, hostname, preferences { id, sitemapUrl, contentSelector}, pages {id, url, pageTitle, wordCount, links {id}} } }`
     );
     if (first) {
       return user.domains.slice(0, first);
@@ -93,6 +93,21 @@ const Query = {
     }
 
     return user.domains.find(domain => domain.hostname === hostname).pages;
+  },
+  async preferences(parent, args, context, info) {
+    let { user } = context.request;
+    if (!user) {
+      throw new Error('You must be logged in.');
+    }
+
+    const res = await context.db.query.userDomainPreferenceses(
+      {
+        where: { user: { id: user.id } },
+      },
+      `{ domain { hostname }, sitemapUrl, contentSelector }`
+    );
+
+    return res.map(pref => ({ ...pref, domain: pref.domain.hostname }));
   },
   page: forwardTo('db'),
 

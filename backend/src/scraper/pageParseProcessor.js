@@ -4,19 +4,22 @@ const db = require('../db');
 const { productParseQueue, shortlinkParseQueue } = require('./jobQueue');
 
 async function pageParseProcessor(job) {
-  const { url, origin, pageId } = job.data;
+  const { url, pageId, contentSelector } = job.data;
+  const { origin, pathname } = new URL(url);
+
+  console.log(`Parsing page... | ${new Date().toUTCString()}\n${pathname}\n`);
 
   let parsedLinks;
   try {
     const response = await axios.get(url);
-    const { pageTitle, links } = parseMarkup(response.data);
+    const { pageTitle, links } = parseMarkup(response.data, contentSelector);
     const wordCount = countWords({ markup: response.data });
     parsedLinks = links.map(link => {
       const parsedHref = parseHref(link.href, origin);
       return { ...link, parsedHref };
     });
 
-    const { count } = await db.mutation.deleteManyLinks(
+    await db.mutation.deleteManyLinks(
       { where: { page: { id: pageId } } },
       `{ count }`
     );
@@ -46,7 +49,6 @@ async function pageParseProcessor(job) {
             },
             `{ id }`
           );
-          console.log('Adding shortlink to queue...');
           shortlinkParseQueue.add({
             linkId: newShortlink.id,
             url: link.href,
@@ -54,7 +56,7 @@ async function pageParseProcessor(job) {
           return;
         }
 
-        // Handle Amazon links
+        // Handle amazon.com links
         if (hostname.includes('amazon.com') && params.has('tag')) {
           affiliateTagged = true;
           affiliateTagName = params.get('tag');
@@ -73,10 +75,17 @@ async function pageParseProcessor(job) {
         );
 
         if (hostname.includes('amazon.com')) {
-          const asinRegex = /\/dp\/([^\?#\/]+)/i;
-          const foundAsin = pathname.match(asinRegex);
-          if (foundAsin) {
-            const asin = foundAsin[1];
+          const asinRegexs = [
+            /\/dp\/([^\?#\/]+)/i,
+            /\/gp\/product\/([^\?#\/]+)/i,
+          ];
+          let captureGroup;
+          const hasAsin = asinRegexs.some(regex => {
+            captureGroup = pathname.match(regex);
+            return captureGroup;
+          });
+          if (hasAsin) {
+            const asin = captureGroup[1];
 
             const existingProduct = await db.query.product(
               {
