@@ -1,12 +1,20 @@
 const cheerio = require('cheerio');
 
-function parseMarkup(markup) {
+function parseMarkup(markup, contentSelector) {
   if (!markup) {
     throw new Error('Please provide markup to parse');
   }
+  if (contentSelector && typeof contentSelector !== 'string') {
+    throw new Error('CSS selector was provide but is not a string');
+  }
+
   const $ = cheerio.load(markup);
   const pageTitle = $('title').text();
-  const links = $('a[href!=""]:not([href^=#])')
+  let content;
+  if ($(contentSelector).length) {
+    content = $(contentSelector).contents();
+  }
+  const links = $('a[href!=""]:not([href^=#])', content)
     .map(function() {
       const node = $(this);
       return {
@@ -17,6 +25,7 @@ function parseMarkup(markup) {
       };
     })
     .toArray();
+  console.log(links);
   return { links, pageTitle };
 }
 
