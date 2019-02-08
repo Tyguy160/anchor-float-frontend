@@ -233,6 +233,43 @@ const Mutation = {
 
     return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };
   },
+  async addOrUpdateContentSelector(parent, args, context, info) {
+    let { user } = context.request;
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    const domain = await context.db.query.domain(
+      { where: { hostname: args.hostname } },
+      `{id preferences { id user { id }}}`
+    );
+
+    if (!domain) {
+      throw new Error(
+        `Please add ${
+          args.hostname
+        } to your domains before adding a CSS selector`
+      );
+    }
+
+    const filteredPreferences = domain.preferences.filter(
+      details => details.user.id === user.id
+    );
+
+    if (filteredPreferences.length !== 1) {
+      throw new Error('Exisiting preferences not found');
+    }
+
+    const updatedPrefs = await context.db.mutation.updateUserDomainPreferences(
+      {
+        where: { id: filteredPreferences[0].id },
+        data: { contentSelector: args.cssSelector },
+      },
+      `{ domain { hostname }, sitemapUrl, contentSelector }`
+    );
+
+    return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };
+  },
 };
 
 module.exports = Mutation;

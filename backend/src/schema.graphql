@@ -41,6 +41,10 @@ type Mutation {
   Add a sitemap URL
   """
   addOrUpdateSitemap(url: String!): UserDomainPreferences
+  addOrUpdateContentSelector(
+    hostname: String!
+    cssSelector: String!
+  ): UserDomainPreferences
   #-----------------------------------------------------#
 }
 
