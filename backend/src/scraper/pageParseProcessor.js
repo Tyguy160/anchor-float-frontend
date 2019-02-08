@@ -46,7 +46,6 @@ async function pageParseProcessor(job) {
             },
             `{ id }`
           );
-          console.log('Adding shortlink to queue...');
           shortlinkParseQueue.add({
             linkId: newShortlink.id,
             url: link.href,
@@ -54,7 +53,7 @@ async function pageParseProcessor(job) {
           return;
         }
 
-        // Handle Amazon links
+        // Handle amazon.com links
         if (hostname.includes('amazon.com') && params.has('tag')) {
           affiliateTagged = true;
           affiliateTagName = params.get('tag');

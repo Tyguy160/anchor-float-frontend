@@ -95,6 +95,27 @@ const Mutation = {
         },
         info
       );
+      const domainPrefs = await context.db.mutation.createUserDomainPreferences(
+        {
+          data: {
+            domain: { connect: { id: domain.id } },
+            user: { connect: { id: user.id } },
+          },
+        },
+        `{
+          id
+          domain {
+            id
+          }
+          user {
+            id
+          }
+        }`
+      );
+      await context.db.mutation.updateDomain({
+        where: { id: domain.id },
+        data: { preferences: { connect: [{ id: domainPrefs.id }] } },
+      });
     }
     await context.db.mutation.updateUser({
       where: { id: user.id },
@@ -168,6 +189,49 @@ const Mutation = {
     });
 
     return page;
+  },
+  async addOrUpdateSitemap(parent, args, context, info) {
+    let { user } = context.request;
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    if (!args.url.endsWith('.xml')) {
+      throw new Error('URL must link to an XML sitemap (end in .xml)');
+    }
+
+    const parsedUrl = new URL(args.url);
+
+    const domain = await context.db.query.domain(
+      { where: { hostname: parsedUrl.hostname } },
+      `{id preferences { id user { id }}}`
+    );
+
+    if (!domain) {
+      throw new Error(
+        `Please add ${
+          parsedUrl.hostname
+        } to your domains before adding a sitemap.`
+      );
+    }
+
+    const filteredPreferences = domain.preferences.filter(
+      details => details.user.id === user.id
+    );
+
+    if (filteredPreferences.length !== 1) {
+      throw new Error('Exisiting preferences not found');
+    }
+
+    const updatedPrefs = await context.db.mutation.updateUserDomainPreferences(
+      {
+        where: { id: filteredPreferences[0].id },
+        data: { sitemapUrl: parsedUrl.href },
+      },
+      `{ domain { hostname }, sitemapUrl, contentSelector }`
+    );
+
+    return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };
   },
 };
 
