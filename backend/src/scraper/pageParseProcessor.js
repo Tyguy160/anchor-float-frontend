@@ -4,7 +4,10 @@ const db = require('../db');
 const { productParseQueue, shortlinkParseQueue } = require('./jobQueue');
 
 async function pageParseProcessor(job) {
-  const { url, origin, pageId, contentSelector } = job.data;
+  const { url, pageId, contentSelector } = job.data;
+  const { origin, pathname } = new URL(url);
+
+  Console.log(`Parsing page... | ${new Date().toUTCString}\n${pathname}`);
 
   let parsedLinks;
   try {

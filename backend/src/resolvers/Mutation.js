@@ -188,14 +188,11 @@ const Mutation = {
     const filteredPreferences = updatedDomain.preferences.filter(
       details => details.user.id === user.id
     );
-    console.log(filteredPreferences);
-
     const contentSelector = filteredPreferences[0].contentSelector || undefined;
 
     pageParseQueue.add({
       url: urlToSave,
       pageId: page.id,
-      origin: url.origin,
       contentSelector,
     });
 
@@ -243,7 +240,10 @@ const Mutation = {
     );
 
     sitemapParseQueue.add({
+      user,
+      domainId: domain.id,
       sitemapUrl: parsedUrl.href,
+      contentSelector: updatedPrefs.contentSelector,
     });
 
     return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };

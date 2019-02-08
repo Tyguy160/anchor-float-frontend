@@ -20,13 +20,16 @@ async function productParseProcessor(job) {
     if (!productId) {
       throw new NoProductIdError('Parser must be called with a productId');
     }
-    console.log(`Parsing ${productId} at: ${new Date().toUTCString()}\n`);
 
     const product = await db.query.product(
       {
         where: { id: productId },
       },
       `{ id, asin }`
+    );
+
+    console.log(
+      `Getting product details... | ${new Date().toUTCString}\n${product.asin}`
     );
 
     if (!product) {
