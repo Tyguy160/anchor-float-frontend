@@ -25,7 +25,6 @@ function parseMarkup(markup, contentSelector) {
       };
     })
     .toArray();
-  console.log(links);
   return { links, pageTitle };
 }
 
