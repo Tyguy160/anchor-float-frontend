@@ -4,19 +4,19 @@ const db = require('../db');
 const { productParseQueue, shortlinkParseQueue } = require('./jobQueue');
 
 async function pageParseProcessor(job) {
-  const { url, origin, pageId } = job.data;
+  const { url, origin, pageId, contentSelector } = job.data;
 
   let parsedLinks;
   try {
     const response = await axios.get(url);
-    const { pageTitle, links } = parseMarkup(response.data);
+    const { pageTitle, links } = parseMarkup(response.data, contentSelector);
     const wordCount = countWords({ markup: response.data });
     parsedLinks = links.map(link => {
       const parsedHref = parseHref(link.href, origin);
       return { ...link, parsedHref };
     });
 
-    const { count } = await db.mutation.deleteManyLinks(
+    await db.mutation.deleteManyLinks(
       { where: { page: { id: pageId } } },
       `{ count }`
     );

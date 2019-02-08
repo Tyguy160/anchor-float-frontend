@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { pageParseQueue } = require('../scraper/jobQueue');
+const { pageParseQueue, sitemapParseQueue } = require('../scraper/jobQueue');
 
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
@@ -175,17 +175,28 @@ const Mutation = {
       info
     );
 
-    await context.db.mutation.updateDomain({
-      where: { hostname },
-      data: {
-        pages: { connect: [{ id: page.id }] },
+    const updatedDomain = await context.db.mutation.updateDomain(
+      {
+        where: { hostname },
+        data: {
+          pages: { connect: [{ id: page.id }] },
+        },
       },
-    });
+      `{id hostname preferences { id contentSelector user { id }}}`
+    );
+
+    const filteredPreferences = updatedDomain.preferences.filter(
+      details => details.user.id === user.id
+    );
+    console.log(filteredPreferences);
+
+    const contentSelector = filteredPreferences[0].contentSelector || undefined;
 
     pageParseQueue.add({
       url: urlToSave,
       pageId: page.id,
       origin: url.origin,
+      contentSelector,
     });
 
     return page;
@@ -230,6 +241,10 @@ const Mutation = {
       },
       `{ domain { hostname }, sitemapUrl, contentSelector }`
     );
+
+    sitemapParseQueue.add({
+      sitemapUrl: parsedUrl.href,
+    });
 
     return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };
   },
