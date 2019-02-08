@@ -15,7 +15,9 @@ shortlinkParseQueue.process(
   path.join(__dirname, './shortlinkParseProcessor.js')
 );
 
-const pageParseQueue = new Queue('page-parsing');
+const pageParseQueue = new Queue('page-parsing', {
+  limiter: { max: 1, duration: 1000 },
+});
 pageParseQueue.process(path.join(__dirname, './pageParseProcessor.js'));
 
 const productParseQueue = new Queue('product-parsing', parseConfig);
