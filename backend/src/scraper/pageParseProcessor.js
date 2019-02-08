@@ -72,10 +72,17 @@ async function pageParseProcessor(job) {
         );
 
         if (hostname.includes('amazon.com')) {
-          const asinRegex = /\/dp\/([^\?#\/]+)/i;
-          const foundAsin = pathname.match(asinRegex);
-          if (foundAsin) {
-            const asin = foundAsin[1];
+          const asinRegexs = [
+            /\/dp\/([^\?#\/]+)/i,
+            /\/gp\/product\/([^\?#\/]+)/i,
+          ];
+          let captureGroup;
+          const hasAsin = asinRegexs.some(regex => {
+            captureGroup = pathname.match(regex);
+            return captureGroup;
+          });
+          if (hasAsin) {
+            const asin = captureGroup[1];
 
             const existingProduct = await db.query.product(
               {
