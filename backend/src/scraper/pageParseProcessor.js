@@ -7,7 +7,7 @@ async function pageParseProcessor(job) {
   const { url, pageId, contentSelector } = job.data;
   const { origin, pathname } = new URL(url);
 
-  Console.log(`Parsing page... | ${new Date().toUTCString}\n${pathname}`);
+  console.log(`Parsing page... | ${new Date().toUTCString()}\n${pathname}\n`);
 
   let parsedLinks;
   try {

@@ -13,12 +13,25 @@ async function sitemapParseProcessor(job) {
     const sitemap = new Sitemapper();
     const { sites } = await sitemap.fetch(sitemapUrl);
 
-    sites.forEach(pageUrl => {
+    sites.forEach(async pageUrl => {
+      const { hostname, pathname } = new URL(pageUrl);
+      console.log(
+        `Making new page for... | ${new Date().toUTCString()}\n${pathname}\n`
+      );
       const page = await db.mutation.createPage(
         {
           data: {
             url: pageUrl,
-            domain: {connect: {id: domainId}}
+          },
+        },
+        `{ id }`
+      );
+
+      await db.mutation.updateDomain(
+        {
+          where: { hostname },
+          data: {
+            pages: { connect: [{ id: page.id }] },
           },
         },
         `{ id }`
