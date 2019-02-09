@@ -60,16 +60,18 @@ const Nav = () => {
           {payload.data.me && (
             <>
               <Link href="/dashboard" passHref>
-                <Logo>Affiliate Shield</Logo>
+                <Logo>Anchors Afloat</Logo>
               </Link>
               <Links>
                 <Link href="/dashboard" passHref>
                   <StyledLink>Dashboard</StyledLink>
                 </Link>
+                <Link href="/domains" passHref>
+                  <StyledLink>Domains</StyledLink>
+                </Link>
                 <Link href="/account" passHref>
                   <StyledLink>Account</StyledLink>
                 </Link>
-                {/* //TODO: Create sign out functionality */}
                 <SignOut />
               </Links>
             </>
@@ -77,7 +79,7 @@ const Nav = () => {
           {!payload.data.me && (
             <>
               <Link href="/" passHref>
-                <Logo>Affiliate Shield</Logo>
+                <Logo>Anchors Afloat</Logo>
               </Link>
               <Links>
                 <Link href="/#learn-more" passHref>
