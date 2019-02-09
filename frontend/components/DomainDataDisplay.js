@@ -4,6 +4,8 @@ import gql from 'graphql-tag';
 import ReactTable from 'react-table';
 import styled from 'styled-components';
 import Error from './ErrorMessage';
+import Link from 'next/link';
+import Router from 'next/router';
 
 const DOMAIN_PAGES_QUERY = gql`
   query DOMAIN_PAGES_QUERY($hostname: String!) {
@@ -86,6 +88,7 @@ const DomainDataDisplay = props => {
                   let pageData = {
                     pageTitle: page.pageTitle ? page.pageTitle : 'My Page',
                     url: <a href={url}>{url.pathname}</a>,
+                    id: page.id,
                     wordCount: page.wordCount,
                     valid: countLinks(page.links, 'AMAZON'),
                     thirdParty: countLinks(page.links, 'THIRDPARTY'),
@@ -98,11 +101,48 @@ const DomainDataDisplay = props => {
                 return (
                   <ReactTable
                     data={dataArray}
+                    sorted={[
+                      {
+                        id: 'unavailable',
+                        desc: true,
+                      },
+                    ]}
+                    getTdProps={(state, rowInfo, column) => {
+                      return {
+                        style: {
+                          color:
+                            column.id === 'unavailable' &&
+                            rowInfo.row.unavailable > 0
+                              ? 'white'
+                              : 'black',
+                          backgroundColor:
+                            column.id === 'unavailable' &&
+                            rowInfo.row.unavailable > 0
+                              ? `#d71616`
+                              : '',
+                        },
+                      };
+                    }}
                     columns={[
                       {
                         Header: 'Page',
                         columns: [
-                          { Header: 'Page', accessor: 'pageTitle' },
+                          {
+                            Header: 'Page',
+                            accessor: 'pageTitle',
+                            Cell: row => (
+                              <span
+                                style={{ cursor: `pointer` }}
+                                onClick={() =>
+                                  Router.push({
+                                    pathname: '/webpage',
+                                    query: { id: row.original.id },
+                                  })
+                                }>
+                                {row.value}
+                              </span>
+                            ),
+                          },
 
                           { Header: 'URL', accessor: 'url' },
                           { Header: 'Word Count', accessor: 'wordCount' },
@@ -113,7 +153,10 @@ const DomainDataDisplay = props => {
                         columns: [
                           { Header: 'Valid', accessor: 'valid' },
 
-                          { Header: '3rd Party', accessor: 'thirdParty' },
+                          {
+                            Header: '3rd Party',
+                            accessor: 'thirdParty',
+                          },
                           {
                             Header: 'Unavailable',
                             accessor: 'unavailable',
