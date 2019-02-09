@@ -28,9 +28,9 @@ async function shortlinkParseProcessor(job) {
 
     const { location } = headers;
 
-    if (!location.includes('amazon.com')) {
+    if (!location.includes('amazon.co')) {
       throw new Error(
-        `Location does not correspond to an Amazon page:\n${location}`
+        `Location does not correspond to an Amazon page:\n${location}\n`
       );
     }
 
