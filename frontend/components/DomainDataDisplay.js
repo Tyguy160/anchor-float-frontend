@@ -99,75 +99,87 @@ const DomainDataDisplay = props => {
                 });
 
                 return (
-                  <ReactTable
-                    data={dataArray}
-                    sorted={[
-                      {
-                        id: 'unavailable',
-                        desc: true,
-                      },
-                    ]}
-                    getTdProps={(state, rowInfo, column) => {
-                      return {
-                        style: {
-                          color:
-                            column.id === 'unavailable' &&
-                            rowInfo.row.unavailable > 0
-                              ? 'white'
-                              : 'black',
-                          backgroundColor:
-                            column.id === 'unavailable' &&
-                            rowInfo.row.unavailable > 0
-                              ? `#d71616`
-                              : '',
+                  <>
+                    <ReactTable
+                      data={dataArray}
+                      defaultSorted={[
+                        {
+                          id: 'unavailable',
+                          desc: true,
                         },
-                      };
-                    }}
-                    columns={[
-                      {
-                        Header: 'Page',
-                        columns: [
-                          {
-                            Header: 'Page',
-                            accessor: 'pageTitle',
-                            Cell: row => (
-                              <span
-                                style={{ cursor: `pointer` }}
-                                onClick={() =>
-                                  Router.push({
+                      ]}
+                      getTdProps={(state, rowInfo, column) => {
+                        return {
+                          style: {
+                            color:
+                              column.id === 'unavailable' &&
+                              rowInfo.row.unavailable > 0
+                                ? 'white'
+                                : 'black',
+                            backgroundColor:
+                              column.id === 'unavailable' &&
+                              rowInfo.row.unavailable > 0
+                                ? `#d71616`
+                                : '',
+                          },
+                        };
+                      }}
+                      columns={[
+                        {
+                          Header: 'Page',
+                          columns: [
+                            {
+                              Header: 'Page',
+                              accessor: 'pageTitle',
+                              Cell: row => (
+                                <Link
+                                  prefetch
+                                  href={{
                                     pathname: '/webpage',
                                     query: { id: row.original.id },
-                                  })
-                                }>
-                                {row.value}
-                              </span>
-                            ),
-                          },
+                                  }}>
+                                  <a>{row.value}</a>
+                                </Link>
+                              ),
+                            },
 
-                          { Header: 'URL', accessor: 'url' },
-                          { Header: 'Word Count', accessor: 'wordCount' },
-                        ],
-                      },
-                      {
-                        Header: 'Links',
-                        columns: [
-                          { Header: 'Valid', accessor: 'valid' },
+                            { Header: 'URL', accessor: 'url' },
+                            { Header: 'Word Count', accessor: 'wordCount' },
+                          ],
+                        },
+                        {
+                          Header: 'Links',
+                          columns: [
+                            { Header: 'Valid', accessor: 'valid' },
 
-                          {
-                            Header: '3rd Party',
-                            accessor: 'thirdParty',
-                          },
-                          {
-                            Header: 'Unavailable',
-                            accessor: 'unavailable',
-                          },
-                          { Header: 'Total Links', accessor: 'totalLinks' },
-                        ],
-                      },
-                    ]}
-                    defaultPageSize={10}
-                    className="-striped -highlight"
-                  />
+                            {
+                              Header: '3rd Party',
+                              accessor: 'thirdParty',
+                            },
+                            {
+                              Header: 'Unavailable',
+                              accessor: 'unavailable',
+                            },
+                            { Header: 'Total Links', accessor: 'totalLinks' },
+                          ],
+                        },
+                      ]}
+                      defaultPageSize={10}
+                      className="-striped -highlight"
+                    />
+                    <div>
+                      <h3>Unavailable Products</h3>
+                      <ul>
+                        <li>To be populated</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h3>3rd Party Products</h3>
+                      <ul>
+                        <li>To be populated</li>
+                      </ul>
+                    </div>
+                  </>
                 );
               } else {
                 return (
