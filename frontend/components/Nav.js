@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import User from './User';
 import SignOut from './SignOut';
+// import siteLogo from '../static/logo.png';
 
 const NavBar = styled.div`
   background: #383838;
@@ -40,13 +41,18 @@ export const StyledLink = styled.a`
   }
 `;
 
-const Logo = styled.a`
+const Logo = styled.div`
   font-size: 1.5em;
   color: #efefef;
+  display: grid;
+  grid-template-columns: 80px 1fr;
   padding-left: 20px;
   text-decoration: none;
   @media screen and (max-width: 850px) {
     padding: 0px;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+    justify-items: center;
     text-align: center;
     font-size: 2em;
   }
@@ -60,7 +66,15 @@ const Nav = () => {
           {payload.data.me && (
             <>
               <Link href="/dashboard" passHref>
-                <Logo>Anchors Afloat</Logo>
+                <Logo>
+                  <img
+                    src="/static/logo.png"
+                    style={{
+                      maxHeight: `30px`,
+                    }}
+                  />
+                  <div style={{ width: `100%` }}>Anchors Afloat</div>
+                </Logo>
               </Link>
               <Links>
                 <Link href="/dashboard" passHref>
