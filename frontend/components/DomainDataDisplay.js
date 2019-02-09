@@ -170,13 +170,27 @@ const DomainDataDisplay = props => {
                     <div>
                       <h3>Unavailable Products</h3>
                       <ul>
-                        <li>To be populated</li>
+                        <li>
+                          {data.pages
+                            .map(page => countLinks(page.links, 'UNAVAILABLE'))
+                            .reduce(
+                              (accumulator, currentValue) =>
+                                accumulator + currentValue
+                            )}
+                        </li>
                       </ul>
                     </div>
                     <div>
                       <h3>3rd Party Products</h3>
                       <ul>
-                        <li>To be populated</li>
+                        <li>
+                          {data.pages
+                            .map(page => countLinks(page.links, 'THIRDPARTY'))
+                            .reduce(
+                              (accumulator, currentValue) =>
+                                accumulator + currentValue
+                            )}
+                        </li>
                       </ul>
                     </div>
                   </>
