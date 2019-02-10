@@ -3,6 +3,7 @@ import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Error from './ErrorMessage';
+import Link from 'next/link';
 
 const USER_DOMAINS_QUERY = gql`
   query USER_DOMAINS_QUERY($first: Int) {
@@ -32,12 +33,17 @@ const DomainContainer = props => {
         return (
           <div>
             <h2>Domains</h2>
-            {data.domains.map(domain => (
-              <div key={domain.id}>
-                {domain.hostname}
-                <p>{domain.preferences.sitemapUrl}</p>
-              </div>
-            ))}
+            <ul>
+              {data.domains.map(domain => (
+                <li>
+                  <Link
+                    href={{ pathname: '/report', query: { id: domain.id } }}
+                    key={domain.id}>
+                    {domain.hostname}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         );
       }}
