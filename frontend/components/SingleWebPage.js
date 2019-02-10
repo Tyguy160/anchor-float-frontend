@@ -24,7 +24,9 @@ const SINGLE_WEBPAGE_QUERY = gql`
 class SingleWebPage extends Component {
   render() {
     return (
-      <Query query={SINGLE_WEBPAGE_QUERY} variables={{ id: this.props.id }}>
+      <Query
+        query={SINGLE_WEBPAGE_QUERY}
+        variables={{ id: this.props.id ? this.props.id : '' }}>
         {({ loading, data, error }) => {
           if (loading) {
             return <p>Loading...</p>;
@@ -37,20 +39,25 @@ class SingleWebPage extends Component {
               </div>
             );
           }
-          console.log(data);
-          const listOfAffiliateLinks = data.page.links.filter(
-            link => link.affiliateTagged
-          );
-          // .map(link => link.product);
-          console.log(listOfAffiliateLinks);
-          return (
-            <div>
-              <h3>{data.page.pageTitle}</h3>
-              {data.page.links.map(link =>
-                link.product ? <p>{link.product.asin}</p> : <p>No asin</p>
-              )}
-            </div>
-          );
+
+          if (data.page) {
+            console.log(data);
+            const listOfAffiliateLinks = data.page.links.filter(
+              link => link.affiliateTagged
+            );
+            // .map(link => link.product);
+            console.log(listOfAffiliateLinks);
+            return (
+              <div>
+                <h3>{data.page.pageTitle}</h3>
+                {data.page.links.map(link =>
+                  link.product ? <p>{link.product.asin}</p> : <p>No asin</p>
+                )}
+              </div>
+            );
+          } else {
+            return <p>Looks like something went wrong...</p>;
+          }
         }}
       </Query>
     );
