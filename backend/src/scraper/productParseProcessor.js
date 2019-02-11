@@ -1,7 +1,8 @@
 const axios = require('axios');
 const { parseProductPageMarkup } = require('./parsers');
-const { constructProductUrl, getRequestHeaders } = require('./utils');
+const { constructProductUrl } = require('./utils');
 const db = require('../db');
+const { proxy } = require('./proxySettings');
 
 class ProductNotFoundError extends Error {}
 class NoProductIdError extends Error {}
@@ -46,15 +47,22 @@ async function productParseProcessor(job) {
 
     const productPageUrl = constructProductUrl({ asin: product.asin });
 
-    const headers = getRequestHeaders();
     const { data, status } = await axios
-      .get(productPageUrl, { headers })
+      .get(productPageUrl, { proxy })
       .catch(err => {
         if (err.response) {
           return err.response;
         }
       });
 
+    if (status === 429 || status === 503) {
+      console.log(
+        `Page did not return a 200 range status code: ${status}\nASIN: ${
+          product.asin
+        }\n`
+      );
+      return Promise.reject('Non 200 res');
+    }
     if (status < 200 || status >= 300) {
       throw new Error(
         `Page did not return a 200 range status code: ${status}\nASIN: ${
@@ -62,6 +70,7 @@ async function productParseProcessor(job) {
         }\n`
       );
     }
+
     const productInfo = parseProductPageMarkup(data);
 
     const updatedProductData = {

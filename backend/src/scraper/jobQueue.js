@@ -19,7 +19,7 @@ const shortParseConfig = {
   },
 };
 
-const shortlinkParseQueue = new Queue('shortlink-parsing', longParseConfig);
+const shortlinkParseQueue = new Queue('shortlink-parsing', shortParseConfig);
 shortlinkParseQueue.process(
   path.join(__dirname, './shortlinkParseProcessor.js')
 );
@@ -27,7 +27,7 @@ shortlinkParseQueue.process(
 const pageParseQueue = new Queue('page-parsing', shortParseConfig);
 pageParseQueue.process(path.join(__dirname, './pageParseProcessor.js'));
 
-const productParseQueue = new Queue('product-parsing', longParseConfig);
+const productParseQueue = new Queue('product-parsing', shortParseConfig);
 productParseQueue.process(path.join(__dirname, './productParseProcessor.js'));
 
 const sitemapParseQueue = new Queue('sitemap-parsing', shortParseConfig);

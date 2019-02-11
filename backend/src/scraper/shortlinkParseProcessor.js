@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { getRequestHeaders } = require('./utils');
+const { proxy } = require('./proxySettings');
 const db = require('../db');
 const { productParseQueue } = require('./jobQueue');
 
@@ -13,9 +13,8 @@ async function shortlinkParseProcessor(job) {
       throw new Error(`URL is not an Amazon shortlink:\n${url}`);
     }
 
-    const reqHeaders = getRequestHeaders();
     const { status, headers } = await axios
-      .get(url, { headers: reqHeaders, maxRedirects: 0 })
+      .get(url, { proxy, maxRedirects: 0 })
       .catch(err => {
         if (err.response) {
           return err.response;

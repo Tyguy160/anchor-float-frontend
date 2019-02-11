@@ -14,7 +14,7 @@ async function sitemapParseProcessor(job) {
     const { sites } = await sitemap.fetch(sitemapUrl);
 
     for (pageHref of sites) {
-      await createPageAndConnect(pageHref);
+      await createPageAndConnect(pageHref, contentSelector);
     }
 
     return Promise.resolve(sites);
@@ -24,7 +24,7 @@ async function sitemapParseProcessor(job) {
   }
 }
 
-async function createPageAndConnect(pageUrl) {
+async function createPageAndConnect(pageUrl, contentSelector) {
   const { hostname, pathname } = new URL(pageUrl);
   console.log(
     `Making new page for... | ${new Date().toUTCString()}\n${pathname}\n`
@@ -52,11 +52,11 @@ async function createPageAndConnect(pageUrl) {
     `Updated domain | ${new Date().toUTCString()}\n${theDomain.id}\n`
   );
 
-  // pageParseQueue.add({
-  //   url: pageUrl,
-  //   pageId: page.id,
-  //   contentSelector,
-  // });
+  pageParseQueue.add({
+    url: pageUrl,
+    pageId: page.id,
+    contentSelector,
+  });
 }
 
 module.exports = sitemapParseProcessor;

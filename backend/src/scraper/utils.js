@@ -1,5 +1,5 @@
 function constructProductUrl({ asin }) {
-  return `https://www.amazon.com/dp/${asin}`;
+  return `http://www.amazon.com/dp/${asin}`;
 }
 
 function getRequestHeaders(index) {
