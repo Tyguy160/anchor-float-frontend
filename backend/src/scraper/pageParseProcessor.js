@@ -110,9 +110,12 @@ async function pageParseProcessor(job) {
               );
 
               productId = product.id;
-              productParseQueue.add({
-                productId,
-              });
+              productParseQueue.add(
+                {
+                  productId,
+                },
+                { attempts: 10 }
+              );
             }
 
             await db.mutation.updateLink({

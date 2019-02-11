@@ -61,7 +61,7 @@ async function productParseProcessor(job) {
           product.asin
         }\n`
       );
-      return Promise.reject('Non 200 res');
+      return Promise.reject(`Response status: ${status}`);
     }
     if (status < 200 || status >= 300) {
       throw new Error(

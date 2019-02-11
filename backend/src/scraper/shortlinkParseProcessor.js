@@ -25,7 +25,24 @@ async function shortlinkParseProcessor(job) {
       throw new Error(`Page did not return a redirect code: ${status}`);
     }
 
-    const { location } = headers;
+    let { location } = headers;
+
+    let tries = 0;
+
+    while (!location.includes('amazon.co') && tries < 10) {
+      const { headers } = await axios
+        .get(location, { proxy, maxRedirects: 0 })
+        .catch(err => {
+          if (err.response) {
+            return err.response;
+          } else {
+            throw new Error(err);
+          }
+        });
+
+      location = headers.location;
+      tries++;
+    }
 
     if (!location.includes('amazon.co')) {
       throw new Error(
@@ -62,9 +79,12 @@ async function shortlinkParseProcessor(job) {
         );
 
         productId = product.id;
-        productParseQueue.add({
-          productId,
-        });
+        productParseQueue.add(
+          {
+            productId,
+          },
+          { attempts: 10 }
+        );
       }
 
       const { searchParams } = new URL(location);

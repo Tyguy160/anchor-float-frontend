@@ -53,19 +53,27 @@ function parseHref(href, origin) {
 
   let url, isValid;
 
-  if (jsHref.test(href) || hashStartHref.test(href)) {
-    isValid = false;
-    return { isValid };
-  } else if (noProtocolHref.test(href)) {
-    hrefWithProtocol = `http:${href}`;
-    isValid = true;
-    url = new URL(hrefWithProtocol);
-  } else if (relativeHref.test(href)) {
-    isValid = true;
-    url = new URL(href, origin);
-  } else {
-    isValid = true;
-    url = new URL(href);
+  try {
+    if (jsHref.test(href) || hashStartHref.test(href)) {
+      isValid = false;
+      return { isValid };
+    } else if (noProtocolHref.test(href)) {
+      hrefWithProtocol = `http:${href}`;
+      isValid = true;
+      url = new URL(hrefWithProtocol);
+    } else if (relativeHref.test(href)) {
+      isValid = true;
+      url = new URL(href, origin);
+    } else {
+      isValid = true;
+      url = new URL(href);
+    }
+  } catch (err) {
+    if (err instanceof TypeError) {
+      return { isValid: false };
+    } else {
+      throw err;
+    }
   }
   const { hostname, pathname, protocol, hash } = url;
   const params = new Map(url.searchParams);
