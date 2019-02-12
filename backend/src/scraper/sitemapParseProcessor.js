@@ -4,7 +4,7 @@ const db = require('../db');
 
 async function sitemapParseProcessor(job) {
   try {
-    const { domainId, sitemapUrl, contentSelector } = job.data;
+    const { sitemapUrl, contentSelector } = job.data;
 
     if (!sitemapUrl.endsWith('.xml')) {
       throw new Error('Sitemap URL must end in `.xml`');
@@ -14,7 +14,20 @@ async function sitemapParseProcessor(job) {
     const { sites } = await sitemap.fetch(sitemapUrl);
 
     for (pageHref of sites) {
-      await createPageAndConnect(pageHref, contentSelector);
+      const page = await db.query.page(
+        { where: { url: pageHref } },
+        `{ id, url }`
+      );
+      if (!page) {
+        await createPageAndConnect(pageHref, contentSelector);
+      } else {
+        console.log(`Page already exists in DB\n${pageHref}\n`);
+        pageParseQueue.add({
+          url: page.url,
+          pageId: page.id,
+          contentSelector,
+        });
+      }
     }
 
     return Promise.resolve(sites);
@@ -27,7 +40,7 @@ async function sitemapParseProcessor(job) {
 async function createPageAndConnect(pageUrl, contentSelector) {
   const { hostname, pathname } = new URL(pageUrl);
   console.log(
-    `Making new page for... | ${new Date().toUTCString()}\n${pathname}\n`
+    `Creating new page and connecting to domain | ${new Date().toUTCString()}\n${pathname}\n`
   );
   const page = await db.mutation.createPage(
     {
@@ -37,9 +50,8 @@ async function createPageAndConnect(pageUrl, contentSelector) {
     },
     `{ id }`
   );
-  console.log(`Created page | ${new Date().toUTCString()}\n${page.id}\n`);
 
-  const theDomain = await db.mutation.updateDomain(
+  await db.mutation.updateDomain(
     {
       where: { hostname },
       data: {
@@ -47,9 +59,6 @@ async function createPageAndConnect(pageUrl, contentSelector) {
       },
     },
     `{ id }`
-  );
-  console.log(
-    `Updated domain | ${new Date().toUTCString()}\n${theDomain.id}\n`
   );
 
   pageParseQueue.add({

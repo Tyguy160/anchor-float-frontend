@@ -4,10 +4,6 @@ const { constructProductUrl } = require('./utils');
 const db = require('../db');
 const { proxy } = require('./proxySettings');
 
-class ProductNotFoundError extends Error {}
-class NoProductIdError extends Error {}
-class NoASINError extends Error {}
-
 // assumes a product with an ASIN exists in the database
 // updates the product information in the DB by:
 // 1. Getting the ASIN to construct the Amazon URL
@@ -19,14 +15,14 @@ async function productParseProcessor(job) {
     const { productId } = job.data;
 
     if (!productId) {
-      throw new NoProductIdError('Parser must be called with a productId');
+      throw new Error('Parser must be called with a productId');
     }
 
     const product = await db.query.product(
       {
         where: { id: productId },
       },
-      `{ id, asin }`
+      `{ id, asin, availability }`
     );
 
     console.log(
@@ -36,13 +32,11 @@ async function productParseProcessor(job) {
     );
 
     if (!product) {
-      throw new ProductNotFoundError(
-        `Product with id: ${productId} not found in database`
-      );
+      throw new Error(`Product with id: ${productId} not found in database\n`);
     }
 
     if (!product.asin) {
-      throw new NoASINError('Product does not have an ASIN value');
+      throw new Error('Product does not have an ASIN value');
     }
 
     const productPageUrl = constructProductUrl({ asin: product.asin });
@@ -52,6 +46,8 @@ async function productParseProcessor(job) {
       .catch(err => {
         if (err.response) {
           return err.response;
+        } else {
+          throw new Error(err);
         }
       });
 
@@ -61,13 +57,18 @@ async function productParseProcessor(job) {
           product.asin
         }\n`
       );
-      return Promise.reject(`Response status: ${status}`);
+      return Promise.reject(
+        `Response status: ${status}\nASIN: ${product.asin}\n`
+      );
     }
     if (status < 200 || status >= 300) {
-      throw new Error(
+      console.log(
         `Page did not return a 200 range status code: ${status}\nASIN: ${
           product.asin
         }\n`
+      );
+      return Promise.resolve(
+        `Response status: ${status}\nASIN: ${product.asin}\n`
       );
     }
 

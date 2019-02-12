@@ -13,11 +13,16 @@ async function shortlinkParseProcessor(job) {
       throw new Error(`URL is not an Amazon shortlink:\n${url}`);
     }
 
+    const httpUrul = new URL(url);
+    httpUrul.protocol = 'http';
+
     const { status, headers } = await axios
-      .get(url, { proxy, maxRedirects: 0 })
+      .get(httpUrul.href, { proxy, maxRedirects: 0 })
       .catch(err => {
         if (err.response) {
           return err.response;
+        } else {
+          throw new Error(err);
         }
       });
 
@@ -28,8 +33,10 @@ async function shortlinkParseProcessor(job) {
     let { location } = headers;
 
     let tries = 0;
-
     while (!location.includes('amazon.co') && tries < 10) {
+      console.log(
+        `Unrecognized location: ${location}\nRefetching (${tries})...\n`
+      );
       const { headers } = await axios
         .get(location, { proxy, maxRedirects: 0 })
         .catch(err => {

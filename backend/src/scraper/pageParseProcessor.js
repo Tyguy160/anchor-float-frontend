@@ -11,7 +11,9 @@ async function pageParseProcessor(job) {
 
   let parsedLinks;
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(url).catch(err => {
+      throw new Error(err);
+    });
     const { pageTitle, links } = parseMarkup(response.data, contentSelector);
     const wordCount = countWords({ markup: response.data });
     parsedLinks = links.map(link => {
@@ -19,10 +21,14 @@ async function pageParseProcessor(job) {
       return { ...link, parsedHref };
     });
 
-    await db.mutation.deleteManyLinks(
+    const { count } = await db.mutation.deleteManyLinks(
       { where: { page: { id: pageId } } },
       `{ count }`
     );
+
+    if (count) {
+      console.log(`Existing links found on page: ${count}\n${pathname}\n`);
+    }
 
     await processAllLinks(parsedLinks);
     async function processAllLinks(links) {
@@ -37,24 +43,24 @@ async function pageParseProcessor(job) {
         let affiliateTagName = null;
 
         // Handle amzn.to links
-        if (hostname.includes('amzn.to')) {
-          affiliateTagged = true;
-          const newShortlink = await db.mutation.createLink(
-            {
-              data: {
-                page: { connect: { id: pageId } },
-                url: link.href,
-                affiliateTagged,
-              },
-            },
-            `{ id }`
-          );
-          shortlinkParseQueue.add({
-            linkId: newShortlink.id,
-            url: link.href,
-          });
-          return;
-        }
+        // if (hostname.includes('amzn.to')) {
+        //   affiliateTagged = true;
+        //   const newShortlink = await db.mutation.createLink(
+        //     {
+        //       data: {
+        //         page: { connect: { id: pageId } },
+        //         url: link.href,
+        //         affiliateTagged,
+        //       },
+        //     },
+        //     `{ id }`
+        //   );
+        //   shortlinkParseQueue.add({
+        //     linkId: newShortlink.id,
+        //     url: link.href,
+        //   });
+        //   return;
+        // }
 
         // Handle amazon.com links
         if (hostname.includes('amazon.com') && params.has('tag')) {
@@ -93,13 +99,29 @@ async function pageParseProcessor(job) {
                   asin,
                 },
               },
-              `{ id asin }`
+              `{ id asin availability }`
             );
 
             let productId = null;
             if (existingProduct) {
               productId = existingProduct.id;
+              if (existingProduct.availability) {
+                console.log(
+                  `Existing availability data found\n${existingProduct.asin}\n`
+                );
+              } else {
+                console.log(
+                  `No existing availability data\n${existingProduct.asin}\n`
+                );
+                productParseQueue.add(
+                  {
+                    productId,
+                  },
+                  { attempts: 10 }
+                );
+              }
             } else {
+              console.log(`No existing product found\n${asin}\n`);
               const product = await db.mutation.createProduct(
                 {
                   data: {
@@ -108,7 +130,6 @@ async function pageParseProcessor(job) {
                 },
                 `{ id }`
               );
-
               productId = product.id;
               productParseQueue.add(
                 {
