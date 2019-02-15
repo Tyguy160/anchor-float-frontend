@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { pageParseQueue, sitemapParseQueue } = require('../scraper/jobQueue');
+const { pageParseQueue, sitemapsParseQueue } = require('../scraper/jobQueue');
 
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
@@ -198,8 +198,8 @@ const Mutation = {
 
     return page;
   },
-  async addOrUpdateSitemap(parent, args, context, info) {
-    let { user } = context.request;
+  async addSitemap(parent, args, context, info) {
+    const { user } = context.request;
     if (!user) {
       throw new Error('You must be signed in');
     }
@@ -208,11 +208,23 @@ const Mutation = {
       throw new Error('URL must link to an XML sitemap (end in .xml)');
     }
 
-    const parsedUrl = new URL(args.url);
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(args.url);
+    } catch (err) {
+      throw new Error('URL could not be parsed');
+    }
 
-    const domain = await context.db.query.domain(
-      { where: { hostname: parsedUrl.hostname } },
-      `{id preferences { id user { id }}}`
+    const [domain] = await context.db.query.domains(
+      {
+        where: {
+          AND: [
+            { hostname: parsedUrl.hostname },
+            { users_some: { id: user.id } },
+          ],
+        },
+      },
+      `{ id hostname preferences { id sitemapUrls } }`
     );
 
     if (!domain) {
@@ -223,30 +235,30 @@ const Mutation = {
       );
     }
 
-    const filteredPreferences = domain.preferences.filter(
-      details => details.user.id === user.id
-    );
-
-    if (filteredPreferences.length !== 1) {
-      throw new Error('Exisiting preferences not found');
+    const updatedUrls = new Set(domain.preferences.sitemapUrls);
+    if (updatedUrls.has(parsedUrl.href)) {
+      throw new Error('Sitemap URL already in preferences');
     }
+    updatedUrls.add(parsedUrl.href);
 
     const updatedPrefs = await context.db.mutation.updateUserDomainPreferences(
       {
-        where: { id: filteredPreferences[0].id },
-        data: { sitemapUrl: parsedUrl.href },
+        where: { id: domain.preferences.id },
+        data: { sitemapUrls: { set: [...updatedUrls] } },
       },
-      `{ domain { hostname }, sitemapUrl, contentSelector }`
+      `{ domain { hostname } }`
     );
 
-    sitemapParseQueue.add({
-      user,
-      domainId: domain.id,
-      sitemapUrl: parsedUrl.href,
-      contentSelector: updatedPrefs.contentSelector,
+    if (!updatedPrefs) {
+      throw new Error(`Error updating sitemap list`);
+    }
+
+    sitemapsParseQueue.add({
+      userId: user.id,
+      domainHostname: updatedPrefs.hostname,
     });
 
-    return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };
+    return `Added ${parsedUrl.href} to sitemap list`;
   },
   async addOrUpdateContentSelector(parent, args, context, info) {
     let { user } = context.request;
