@@ -243,7 +243,7 @@ const Mutation = {
 
     const updatedPrefs = await context.db.mutation.updateUserDomainPreferences(
       {
-        where: { id: domain.preferences.id },
+        where: { id: domain.preferences[0].id },
         data: { sitemapUrls: { set: [...updatedUrls] } },
       },
       `{ domain { hostname } }`
@@ -253,12 +253,13 @@ const Mutation = {
       throw new Error(`Error updating sitemap list`);
     }
 
+    console.log(`Adding to sitemap queue`);
     sitemapsParseQueue.add({
       userId: user.id,
-      domainHostname: updatedPrefs.hostname,
+      domainHostname: updatedPrefs.domain.hostname,
     });
 
-    return `Added ${parsedUrl.href} to sitemap list`;
+    return { message: `Added ${parsedUrl.href} to sitemap list` };
   },
   async addOrUpdateContentSelector(parent, args, context, info) {
     let { user } = context.request;

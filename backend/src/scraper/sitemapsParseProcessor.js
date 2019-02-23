@@ -4,8 +4,10 @@ const db = require('../db');
 
 async function sitemapsParseProcessor(job) {
   if (!job.data || !job.data.domainHostname || !job.data.userId) {
+    console.log('Missing data - resolving sitemap parse');
     return Promise.resolve('Missing job data, domainHostname or userId.');
   }
+  console.log(`Parsing sitemap`);
   const { userId, domainHostname } = job.data;
 
   const [preferences] = await db.query.userDomainPreferenceses(
@@ -25,6 +27,7 @@ async function sitemapsParseProcessor(job) {
     !preferences.sitemapUrls ||
     preferences.sitemapUrls.length === 0
   ) {
+    console.log('No sitemaps found. No action taken.');
     return Promise.resolve('No sitemaps found. No action taken.');
   }
 
@@ -34,9 +37,14 @@ async function sitemapsParseProcessor(job) {
   // and pass each page url into a (currently) non-existant upsertPage function.
 
   const sitemap = new Sitemapper();
-  const { sites } = await sitemap.fetch(sitemapUrl);
+  const pageUrls = new Set();
+  for (sitemapUrl of sitemapUrls) {
+    const { sites } = await sitemap.fetch(sitemapUrl);
+    sites.forEach(site => pageUrls.add(site));
+  }
 
-  for (pageHref of sites) {
+  for (pageHref of pageUrls) {
+    console.log(`Checking for page ${pageHref}`);
     const page = await db.query.page(
       { where: { url: pageHref } },
       `{ id, url }`

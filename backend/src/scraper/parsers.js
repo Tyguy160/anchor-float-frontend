@@ -5,7 +5,7 @@ function parseMarkup(markup, contentSelector) {
     throw new Error('Please provide markup to parse');
   }
   if (contentSelector && typeof contentSelector !== 'string') {
-    throw new Error('CSS selector was provide but is not a string');
+    throw new Error('CSS selector was provided but is not a string');
   }
 
   const $ = cheerio.load(markup);
