@@ -13,11 +13,11 @@ async function shortlinkParseProcessor(job) {
       throw new Error(`URL is not an Amazon shortlink:\n${url}`);
     }
 
-    const httpUrul = new URL(url);
-    httpUrul.protocol = 'http';
+    const httpUrl = new URL(url);
+    httpUrl.protocol = 'http';
 
     const { status, headers } = await axios
-      .get(httpUrul.href, { proxy, maxRedirects: 0 })
+      .get(httpUrl.href, { proxy, maxRedirects: 0 })
       .catch(err => {
         if (err.response) {
           return err.response;
