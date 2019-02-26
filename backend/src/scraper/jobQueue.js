@@ -2,10 +2,10 @@ const Queue = require('bull');
 const path = require('path');
 
 const redisConfig = {
-  port: 16265,
-  host: 'redis-16265.c11.us-east-1-2.ec2.cloud.redislabs.com',
-  password: 'RaIvBtEHt31xsXKTAfTKDBqwTSerQl1U'
-}
+  port: process.env.REDIS_PORT,
+  host: process.env.REDIS_ENDPOINT,
+  password: process.env.REDIS_PASSWORD,
+};
 
 const sitemapParseConfig = {
   redis: redisConfig,
