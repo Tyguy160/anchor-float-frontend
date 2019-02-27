@@ -43,24 +43,25 @@ async function pageParseProcessor(job) {
         let affiliateTagName = null;
 
         // Handle amzn.to links
-        // if (hostname.includes('amzn.to')) {
-        //   affiliateTagged = true;
-        //   const newShortlink = await db.mutation.createLink(
-        //     {
-        //       data: {
-        //         page: { connect: { id: pageId } },
-        //         url: link.href,
-        //         affiliateTagged,
-        //       },
-        //     },
-        //     `{ id }`
-        //   );
-        //   shortlinkParseQueue.add({
-        //     linkId: newShortlink.id,
-        //     url: link.href,
-        //   });
-        //   return;
-        // }
+        if (hostname.includes('amzn.to')) {
+          console.log(`Shortlink found, no action taken`);
+          //   affiliateTagged = true;
+          //   const newShortlink = await db.mutation.createLink(
+          //     {
+          //       data: {
+          //         page: { connect: { id: pageId } },
+          //         url: link.href,
+          //         affiliateTagged,
+          //       },
+          //     },
+          //     `{ id }`
+          //   );
+          //   shortlinkParseQueue.add({
+          //     linkId: newShortlink.id,
+          //     url: link.href,
+          //   });
+          //   return;
+        }
 
         // Handle amazon.com links
         if (hostname.includes('amazon.com') && params.has('tag')) {

@@ -24,7 +24,11 @@ type UserDomainPreferences {
   id: ID! @id @unique
   domain: Domain!
   user: User!
+  sitemapUrls: [String]
+  contentSelectors: [String]
+  # Deprecated
   sitemapUrl: String
+  # Deprecated
   contentSelector: String
 }
 
@@ -43,6 +47,9 @@ type Link {
   affiliateTagged: Boolean
   affiliateTagName: String
   product: Product
+  anchorText: String
+  # Deprecated
+  valid: Boolean
 }
 
 type Product {

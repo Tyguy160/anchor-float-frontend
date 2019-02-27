@@ -25,6 +25,13 @@ async function productParseProcessor(job) {
       `{ id, asin, availability }`
     );
 
+    if (product.availability) {
+      console.log(
+        `Already have availability\n${product.asin}: ${product.availability}\n`
+      );
+      return Promise.resolve('had product');
+    }
+
     console.log(
       `Getting product details... | ${new Date().toUTCString()}\n${
         product.asin
@@ -92,7 +99,9 @@ async function productParseProcessor(job) {
       },
       data: updatedProductData,
     });
-
+    console.log(
+      `Updated product\n${productId}: ${updatedProductData.availability}\n`
+    );
     return Promise.resolve(updatedProduct);
   } catch (error) {
     console.log(error);

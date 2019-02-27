@@ -269,6 +269,8 @@ type Link {
   affiliateTagged: Boolean
   affiliateTagName: String
   product: Product
+  anchorText: String
+  valid: Boolean
 }
 
 type LinkConnection {
@@ -283,6 +285,8 @@ input LinkCreateInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductCreateOneWithoutLinksInput
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkCreateManyWithoutPageInput {
@@ -300,6 +304,8 @@ input LinkCreateWithoutPageInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductCreateOneWithoutLinksInput
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkCreateWithoutProductInput {
@@ -307,6 +313,8 @@ input LinkCreateWithoutProductInput {
   url: String!
   affiliateTagged: Boolean
   affiliateTagName: String
+  anchorText: String
+  valid: Boolean
 }
 
 type LinkEdge {
@@ -323,6 +331,10 @@ enum LinkOrderByInput {
   affiliateTagged_DESC
   affiliateTagName_ASC
   affiliateTagName_DESC
+  anchorText_ASC
+  anchorText_DESC
+  valid_ASC
+  valid_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -334,6 +346,8 @@ type LinkPreviousValues {
   url: String!
   affiliateTagged: Boolean
   affiliateTagName: String
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkScalarWhereInput {
@@ -381,6 +395,22 @@ input LinkScalarWhereInput {
   affiliateTagName_not_starts_with: String
   affiliateTagName_ends_with: String
   affiliateTagName_not_ends_with: String
+  anchorText: String
+  anchorText_not: String
+  anchorText_in: [String!]
+  anchorText_not_in: [String!]
+  anchorText_lt: String
+  anchorText_lte: String
+  anchorText_gt: String
+  anchorText_gte: String
+  anchorText_contains: String
+  anchorText_not_contains: String
+  anchorText_starts_with: String
+  anchorText_not_starts_with: String
+  anchorText_ends_with: String
+  anchorText_not_ends_with: String
+  valid: Boolean
+  valid_not: Boolean
   AND: [LinkScalarWhereInput!]
   OR: [LinkScalarWhereInput!]
   NOT: [LinkScalarWhereInput!]
@@ -410,18 +440,24 @@ input LinkUpdateInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductUpdateOneWithoutLinksInput
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkUpdateManyDataInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkUpdateManyMutationInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkUpdateManyWithoutPageInput {
@@ -456,6 +492,8 @@ input LinkUpdateWithoutPageDataInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   product: ProductUpdateOneWithoutLinksInput
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkUpdateWithoutProductDataInput {
@@ -463,6 +501,8 @@ input LinkUpdateWithoutProductDataInput {
   url: String
   affiliateTagged: Boolean
   affiliateTagName: String
+  anchorText: String
+  valid: Boolean
 }
 
 input LinkUpdateWithWhereUniqueWithoutPageInput {
@@ -534,6 +574,22 @@ input LinkWhereInput {
   affiliateTagName_ends_with: String
   affiliateTagName_not_ends_with: String
   product: ProductWhereInput
+  anchorText: String
+  anchorText_not: String
+  anchorText_in: [String!]
+  anchorText_not_in: [String!]
+  anchorText_lt: String
+  anchorText_lte: String
+  anchorText_gt: String
+  anchorText_gte: String
+  anchorText_contains: String
+  anchorText_not_contains: String
+  anchorText_starts_with: String
+  anchorText_not_starts_with: String
+  anchorText_ends_with: String
+  anchorText_not_ends_with: String
+  valid: Boolean
+  valid_not: Boolean
   AND: [LinkWhereInput!]
   OR: [LinkWhereInput!]
   NOT: [LinkWhereInput!]
@@ -1116,6 +1172,8 @@ type UserDomainPreferences {
   id: ID!
   domain: Domain!
   user: User!
+  sitemapUrls: [String!]!
+  contentSelectors: [String!]!
   sitemapUrl: String
   contentSelector: String
 }
@@ -1126,9 +1184,15 @@ type UserDomainPreferencesConnection {
   aggregate: AggregateUserDomainPreferences!
 }
 
+input UserDomainPreferencesCreatecontentSelectorsInput {
+  set: [String!]
+}
+
 input UserDomainPreferencesCreateInput {
   domain: DomainCreateOneWithoutPreferencesInput!
   user: UserCreateOneInput!
+  sitemapUrls: UserDomainPreferencesCreatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesCreatecontentSelectorsInput
   sitemapUrl: String
   contentSelector: String
 }
@@ -1138,8 +1202,14 @@ input UserDomainPreferencesCreateManyWithoutDomainInput {
   connect: [UserDomainPreferencesWhereUniqueInput!]
 }
 
+input UserDomainPreferencesCreatesitemapUrlsInput {
+  set: [String!]
+}
+
 input UserDomainPreferencesCreateWithoutDomainInput {
   user: UserCreateOneInput!
+  sitemapUrls: UserDomainPreferencesCreatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesCreatecontentSelectorsInput
   sitemapUrl: String
   contentSelector: String
 }
@@ -1164,6 +1234,8 @@ enum UserDomainPreferencesOrderByInput {
 
 type UserDomainPreferencesPreviousValues {
   id: ID!
+  sitemapUrls: [String!]!
+  contentSelectors: [String!]!
   sitemapUrl: String
   contentSelector: String
 }
@@ -1234,19 +1306,29 @@ input UserDomainPreferencesSubscriptionWhereInput {
   NOT: [UserDomainPreferencesSubscriptionWhereInput!]
 }
 
+input UserDomainPreferencesUpdatecontentSelectorsInput {
+  set: [String!]
+}
+
 input UserDomainPreferencesUpdateInput {
   domain: DomainUpdateOneRequiredWithoutPreferencesInput
   user: UserUpdateOneRequiredInput
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
   sitemapUrl: String
   contentSelector: String
 }
 
 input UserDomainPreferencesUpdateManyDataInput {
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
   sitemapUrl: String
   contentSelector: String
 }
 
 input UserDomainPreferencesUpdateManyMutationInput {
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
   sitemapUrl: String
   contentSelector: String
 }
@@ -1267,8 +1349,14 @@ input UserDomainPreferencesUpdateManyWithWhereNestedInput {
   data: UserDomainPreferencesUpdateManyDataInput!
 }
 
+input UserDomainPreferencesUpdatesitemapUrlsInput {
+  set: [String!]
+}
+
 input UserDomainPreferencesUpdateWithoutDomainDataInput {
   user: UserUpdateOneRequiredInput
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
   sitemapUrl: String
   contentSelector: String
 }
