@@ -26,14 +26,19 @@ enum Availability {
   AMAZON
   THIRDPARTY
   UNAVAILABLE
+  NOTFOUND
 }
 
 type BatchPayload {
   count: Long!
 }
 
+scalar DateTime
+
 type Domain {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   hostname: String!
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page!]
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
@@ -83,16 +88,18 @@ type DomainEdge {
 enum DomainOrderByInput {
   id_ASC
   id_DESC
-  hostname_ASC
-  hostname_DESC
-  createdAt_ASC
-  createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  hostname_ASC
+  hostname_DESC
 }
 
 type DomainPreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   hostname: String!
 }
 
@@ -111,6 +118,22 @@ input DomainScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   hostname: String
   hostname_not: String
   hostname_in: [String!]
@@ -229,6 +252,22 @@ input DomainWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   hostname: String
   hostname_not: String
   hostname_in: [String!]
@@ -264,13 +303,14 @@ input DomainWhereUniqueInput {
 
 type Link {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   page: Page!
   url: String!
   affiliateTagged: Boolean
   affiliateTagName: String
   product: Product
   anchorText: String
-  valid: Boolean
 }
 
 type LinkConnection {
@@ -286,7 +326,6 @@ input LinkCreateInput {
   affiliateTagName: String
   product: ProductCreateOneWithoutLinksInput
   anchorText: String
-  valid: Boolean
 }
 
 input LinkCreateManyWithoutPageInput {
@@ -305,7 +344,6 @@ input LinkCreateWithoutPageInput {
   affiliateTagName: String
   product: ProductCreateOneWithoutLinksInput
   anchorText: String
-  valid: Boolean
 }
 
 input LinkCreateWithoutProductInput {
@@ -314,7 +352,6 @@ input LinkCreateWithoutProductInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   anchorText: String
-  valid: Boolean
 }
 
 type LinkEdge {
@@ -325,6 +362,10 @@ type LinkEdge {
 enum LinkOrderByInput {
   id_ASC
   id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
   url_ASC
   url_DESC
   affiliateTagged_ASC
@@ -333,21 +374,16 @@ enum LinkOrderByInput {
   affiliateTagName_DESC
   anchorText_ASC
   anchorText_DESC
-  valid_ASC
-  valid_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
 type LinkPreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   url: String!
   affiliateTagged: Boolean
   affiliateTagName: String
   anchorText: String
-  valid: Boolean
 }
 
 input LinkScalarWhereInput {
@@ -365,6 +401,22 @@ input LinkScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   url: String
   url_not: String
   url_in: [String!]
@@ -409,8 +461,6 @@ input LinkScalarWhereInput {
   anchorText_not_starts_with: String
   anchorText_ends_with: String
   anchorText_not_ends_with: String
-  valid: Boolean
-  valid_not: Boolean
   AND: [LinkScalarWhereInput!]
   OR: [LinkScalarWhereInput!]
   NOT: [LinkScalarWhereInput!]
@@ -441,7 +491,6 @@ input LinkUpdateInput {
   affiliateTagName: String
   product: ProductUpdateOneWithoutLinksInput
   anchorText: String
-  valid: Boolean
 }
 
 input LinkUpdateManyDataInput {
@@ -449,7 +498,6 @@ input LinkUpdateManyDataInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   anchorText: String
-  valid: Boolean
 }
 
 input LinkUpdateManyMutationInput {
@@ -457,7 +505,6 @@ input LinkUpdateManyMutationInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   anchorText: String
-  valid: Boolean
 }
 
 input LinkUpdateManyWithoutPageInput {
@@ -493,7 +540,6 @@ input LinkUpdateWithoutPageDataInput {
   affiliateTagName: String
   product: ProductUpdateOneWithoutLinksInput
   anchorText: String
-  valid: Boolean
 }
 
 input LinkUpdateWithoutProductDataInput {
@@ -502,7 +548,6 @@ input LinkUpdateWithoutProductDataInput {
   affiliateTagged: Boolean
   affiliateTagName: String
   anchorText: String
-  valid: Boolean
 }
 
 input LinkUpdateWithWhereUniqueWithoutPageInput {
@@ -542,6 +587,22 @@ input LinkWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   page: PageWhereInput
   url: String
   url_not: String
@@ -588,8 +649,6 @@ input LinkWhereInput {
   anchorText_not_starts_with: String
   anchorText_ends_with: String
   anchorText_not_ends_with: String
-  valid: Boolean
-  valid_not: Boolean
   AND: [LinkWhereInput!]
   OR: [LinkWhereInput!]
   NOT: [LinkWhereInput!]
@@ -652,6 +711,8 @@ interface Node {
 
 type Page {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   url: String!
   pageTitle: String
   wordCount: Int
@@ -702,20 +763,22 @@ type PageInfo {
 enum PageOrderByInput {
   id_ASC
   id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
   url_ASC
   url_DESC
   pageTitle_ASC
   pageTitle_DESC
   wordCount_ASC
   wordCount_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
 type PagePreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   url: String!
   pageTitle: String
   wordCount: Int
@@ -736,6 +799,22 @@ input PageScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   url: String
   url_not: String
   url_in: [String!]
@@ -881,6 +960,22 @@ input PageWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   url: String
   url_not: String
   url_in: [String!]
@@ -932,6 +1027,8 @@ input PageWhereUniqueInput {
 
 type Product {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   name: String
   asin: String!
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
@@ -970,20 +1067,22 @@ type ProductEdge {
 enum ProductOrderByInput {
   id_ASC
   id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
   name_ASC
   name_DESC
   asin_ASC
   asin_DESC
   availability_ASC
   availability_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
 type ProductPreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   name: String
   asin: String!
   availability: Availability
@@ -1055,6 +1154,22 @@ input ProductWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   name: String
   name_not: String
   name_in: [String!]
@@ -1133,6 +1248,8 @@ type Subscription {
 
 type User {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   name: String!
   email: String!
   password: String!
@@ -1170,12 +1287,12 @@ input UserCreateWithoutDomainsInput {
 
 type UserDomainPreferences {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   domain: Domain!
   user: User!
   sitemapUrls: [String!]!
   contentSelectors: [String!]!
-  sitemapUrl: String
-  contentSelector: String
 }
 
 type UserDomainPreferencesConnection {
@@ -1193,8 +1310,6 @@ input UserDomainPreferencesCreateInput {
   user: UserCreateOneInput!
   sitemapUrls: UserDomainPreferencesCreatesitemapUrlsInput
   contentSelectors: UserDomainPreferencesCreatecontentSelectorsInput
-  sitemapUrl: String
-  contentSelector: String
 }
 
 input UserDomainPreferencesCreateManyWithoutDomainInput {
@@ -1210,8 +1325,6 @@ input UserDomainPreferencesCreateWithoutDomainInput {
   user: UserCreateOneInput!
   sitemapUrls: UserDomainPreferencesCreatesitemapUrlsInput
   contentSelectors: UserDomainPreferencesCreatecontentSelectorsInput
-  sitemapUrl: String
-  contentSelector: String
 }
 
 type UserDomainPreferencesEdge {
@@ -1222,22 +1335,18 @@ type UserDomainPreferencesEdge {
 enum UserDomainPreferencesOrderByInput {
   id_ASC
   id_DESC
-  sitemapUrl_ASC
-  sitemapUrl_DESC
-  contentSelector_ASC
-  contentSelector_DESC
-  createdAt_ASC
-  createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
 }
 
 type UserDomainPreferencesPreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   sitemapUrls: [String!]!
   contentSelectors: [String!]!
-  sitemapUrl: String
-  contentSelector: String
 }
 
 input UserDomainPreferencesScalarWhereInput {
@@ -1255,34 +1364,22 @@ input UserDomainPreferencesScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  sitemapUrl: String
-  sitemapUrl_not: String
-  sitemapUrl_in: [String!]
-  sitemapUrl_not_in: [String!]
-  sitemapUrl_lt: String
-  sitemapUrl_lte: String
-  sitemapUrl_gt: String
-  sitemapUrl_gte: String
-  sitemapUrl_contains: String
-  sitemapUrl_not_contains: String
-  sitemapUrl_starts_with: String
-  sitemapUrl_not_starts_with: String
-  sitemapUrl_ends_with: String
-  sitemapUrl_not_ends_with: String
-  contentSelector: String
-  contentSelector_not: String
-  contentSelector_in: [String!]
-  contentSelector_not_in: [String!]
-  contentSelector_lt: String
-  contentSelector_lte: String
-  contentSelector_gt: String
-  contentSelector_gte: String
-  contentSelector_contains: String
-  contentSelector_not_contains: String
-  contentSelector_starts_with: String
-  contentSelector_not_starts_with: String
-  contentSelector_ends_with: String
-  contentSelector_not_ends_with: String
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   AND: [UserDomainPreferencesScalarWhereInput!]
   OR: [UserDomainPreferencesScalarWhereInput!]
   NOT: [UserDomainPreferencesScalarWhereInput!]
@@ -1315,22 +1412,16 @@ input UserDomainPreferencesUpdateInput {
   user: UserUpdateOneRequiredInput
   sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
   contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
-  sitemapUrl: String
-  contentSelector: String
 }
 
 input UserDomainPreferencesUpdateManyDataInput {
   sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
   contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
-  sitemapUrl: String
-  contentSelector: String
 }
 
 input UserDomainPreferencesUpdateManyMutationInput {
   sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
   contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
-  sitemapUrl: String
-  contentSelector: String
 }
 
 input UserDomainPreferencesUpdateManyWithoutDomainInput {
@@ -1357,8 +1448,6 @@ input UserDomainPreferencesUpdateWithoutDomainDataInput {
   user: UserUpdateOneRequiredInput
   sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
   contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
-  sitemapUrl: String
-  contentSelector: String
 }
 
 input UserDomainPreferencesUpdateWithWhereUniqueWithoutDomainInput {
@@ -1387,36 +1476,24 @@ input UserDomainPreferencesWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   domain: DomainWhereInput
   user: UserWhereInput
-  sitemapUrl: String
-  sitemapUrl_not: String
-  sitemapUrl_in: [String!]
-  sitemapUrl_not_in: [String!]
-  sitemapUrl_lt: String
-  sitemapUrl_lte: String
-  sitemapUrl_gt: String
-  sitemapUrl_gte: String
-  sitemapUrl_contains: String
-  sitemapUrl_not_contains: String
-  sitemapUrl_starts_with: String
-  sitemapUrl_not_starts_with: String
-  sitemapUrl_ends_with: String
-  sitemapUrl_not_ends_with: String
-  contentSelector: String
-  contentSelector_not: String
-  contentSelector_in: [String!]
-  contentSelector_not_in: [String!]
-  contentSelector_lt: String
-  contentSelector_lte: String
-  contentSelector_gt: String
-  contentSelector_gte: String
-  contentSelector_contains: String
-  contentSelector_not_contains: String
-  contentSelector_starts_with: String
-  contentSelector_not_starts_with: String
-  contentSelector_ends_with: String
-  contentSelector_not_ends_with: String
   AND: [UserDomainPreferencesWhereInput!]
   OR: [UserDomainPreferencesWhereInput!]
   NOT: [UserDomainPreferencesWhereInput!]
@@ -1434,20 +1511,22 @@ type UserEdge {
 enum UserOrderByInput {
   id_ASC
   id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
   name_ASC
   name_DESC
   email_ASC
   email_DESC
   password_ASC
   password_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
 type UserPreviousValues {
   id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   name: String!
   email: String!
   password: String!
@@ -1468,6 +1547,22 @@ input UserScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   name: String
   name_not: String
   name_in: [String!]
@@ -1619,6 +1714,22 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   name: String
   name_not: String
   name_in: [String!]
