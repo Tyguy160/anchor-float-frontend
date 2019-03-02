@@ -2,10 +2,13 @@ enum Availability {
   AMAZON
   THIRDPARTY
   UNAVAILABLE
+  NOTFOUND
 }
 
 type User {
   id: ID! @id @unique
+  updatedAt: DateTime!
+  createdAt: DateTime!
   name: String!
   email: String! @unique
   password: String!
@@ -14,6 +17,8 @@ type User {
 
 type Domain {
   id: ID! @id @unique
+  updatedAt: DateTime!
+  createdAt: DateTime!
   hostname: String! @unique
   pages: [Page!]!
   users: [User!]!
@@ -22,18 +27,18 @@ type Domain {
 
 type UserDomainPreferences {
   id: ID! @id @unique
+  updatedAt: DateTime!
+  createdAt: DateTime!
   domain: Domain!
   user: User!
   sitemapUrls: [String]
   contentSelectors: [String]
-  # Deprecated
-  sitemapUrl: String
-  # Deprecated
-  contentSelector: String
 }
 
 type Page {
   id: ID! @id @unique
+  updatedAt: DateTime!
+  createdAt: DateTime!
   url: String! @unique
   pageTitle: String
   wordCount: Int
@@ -42,18 +47,20 @@ type Page {
 
 type Link {
   id: ID! @id @unique
+  updatedAt: DateTime!
+  createdAt: DateTime!
   page: Page!
   url: String!
   affiliateTagged: Boolean
   affiliateTagName: String
   product: Product
   anchorText: String
-  # Deprecated
-  valid: Boolean
 }
 
 type Product {
   id: ID! @id @unique
+  updatedAt: DateTime!
+  createdAt: DateTime!
   name: String
   asin: String! @unique
   links: [Link]
