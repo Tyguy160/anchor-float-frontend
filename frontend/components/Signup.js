@@ -31,6 +31,18 @@ const PricingContainer = styled(Container)``;
 
 const PricingHeading = styled(SignupHeading)``;
 
+const StartOverButton = styled(ContinueButton)``;
+
+const PayWithCardButton = styled(StripeCheckout)`
+  height: 45px;
+  justify-self: center;
+  align-self: center;
+  span {
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+`;
+
 const InnerPricingContainer = styled(SignupFormContainer)`
   max-width: 350px;
 `;
@@ -77,21 +89,22 @@ const WebsiteDetails = styled.div`
   grid-gap: 10px;
 `;
 
-const handler = StripeCheckout.configure({
-  key: 'pk_test_mqMxPm3hGXqDIiwIVvAME4Af',
-  image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-  locale: 'auto',
-  token: function(token) {
-    // You can access the token ID with `token.id`.
-    // Get the token ID to your server-side code for use.
-  },
-});
-
 class Signup extends Component {
   state = {
     websiteURL: 'www.example.com',
     sitemapURLs: 'www.example.com/sitemap.xml',
     pageCount: 614,
+  };
+
+  onToken = token => {
+    fetch('/save-stripe-token', {
+      method: 'POST',
+      body: JSON.stringify(token),
+    }).then(response => {
+      response.json().then(data => {
+        alert(`We are in business, ${data.email}`);
+      });
+    });
   };
 
   createAccount = async (e, signup) => {
@@ -123,21 +136,6 @@ class Signup extends Component {
     });
   };
 
-  openStripe = e => {
-    // Open Checkout with further options:
-    handler.open({
-      name: 'Maschino LLC',
-      description: '2 widgets',
-      amount: 2000,
-    });
-    e.preventDefault();
-  };
-
-  // Close Checkout on page navigation:
-  // window.addEventListener('popstate', function() {
-  //   handler.close();
-  // });
-
   render() {
     return (
       <Mutation mutation={PAGE_COUNT_QUERY} variables={this.state}>
@@ -165,8 +163,20 @@ class Signup extends Component {
                   </WebsiteDetails>
                 </Pricing>
                 <ButtonContainer>
-                  <ContinueButton type="submit" value="Start over" />
-                  <button id="customButton">Purchase</button>
+                  <StartOverButton type="submit" value="Start over" />
+                  <PayWithCardButton
+                    token={this.onToken}
+                    stripeKey="pk_test_mqMxPm3hGXqDIiwIVvAME4Af"
+                    name="Anchor Float" // the pop-in header title
+                    image="/static/logo.png" // the pop-in header image (default none)
+                    description="Affiliate Link Report" // the pop-in header subtitle
+                    amount={4900 + this.state.pageCount * 5} // cents
+                    locale="auto"
+                    zipCode={true}
+                    billingAddress={true}
+                    // ComponentClass="div"
+                    currency="USD"
+                  />
                 </ButtonContainer>
               </InnerPricingContainer>
             </PricingContainer>
