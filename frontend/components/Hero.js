@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 import { CTAButtonContainer } from './styles/StyledCTA';
 import {
   HeroContainer,
@@ -18,7 +19,9 @@ const Hero = () => {
       </HeroHeadline>
       <HeroCTAButtonContainer>
         <HeroCTAButton>Learn more</HeroCTAButton>
-        <HeroCTAButton>Sign up</HeroCTAButton>
+        <Link href="/signup" passHref>
+          <HeroCTAButton>Sign up</HeroCTAButton>
+        </Link>
       </HeroCTAButtonContainer>
     </HeroContainer>
   );
