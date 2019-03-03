@@ -73,7 +73,7 @@ const Nav = () => {
                       maxHeight: `30px`,
                     }}
                   />
-                  <div style={{ width: `100%` }}>Anchors Afloat</div>
+                  <div style={{ width: `100%` }}>Anchor Float</div>
                 </Logo>
               </Link>
               <Links>
@@ -93,9 +93,20 @@ const Nav = () => {
           {!payload.data.me && (
             <>
               <Link href="/" passHref>
-                <Logo>Anchors Afloat</Logo>
+                <Logo>
+                  <img
+                    src="/static/logo.png"
+                    style={{
+                      maxHeight: `30px`,
+                    }}
+                  />
+                  <div style={{ width: `100%` }}>Anchor Float</div>
+                </Logo>
               </Link>
               <Links>
+                <Link href="/signup" passHref>
+                  <StyledLink>Sign Up</StyledLink>
+                </Link>
                 <Link href="/#learn-more" passHref>
                   <StyledLink>Learn More</StyledLink>
                 </Link>
@@ -105,12 +116,9 @@ const Nav = () => {
                 <Link href="/about" passHref>
                   <StyledLink>About</StyledLink>
                 </Link>
-                <Link href="/signup" passHref>
-                  <StyledLink>Start 14-day trial</StyledLink>
-                </Link>
-                <Link href="/signin" passHref>
+                {/* <Link href="/signin" passHref>
                   <StyledLink>Sign In</StyledLink>
-                </Link>
+                </Link> */}
               </Links>
             </>
           )}
