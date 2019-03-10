@@ -23,11 +23,11 @@ const shortParseConfig = {
     // Number of processes allowed
     max: 1,
     // Per TIME period
-    duration: 4500,
+    duration: 6000,
   },
   defaultJobOptions: {
     // Jobs timeout and moved to failed after 4 seconds
-    timeout: 4000,
+    timeout: 5000,
   },
 };
 
