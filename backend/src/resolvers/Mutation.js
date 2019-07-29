@@ -1,23 +1,20 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { pageParseQueue, sitemapsParseQueue } = require('../scraper/jobQueue');
-
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutation = {
   async signUp(parent, args, context, info) {
-    args.email = args.email.toLowerCase();
+    const email = args.email.toLowerCase();
     let user = await context.db.query.user({
       where: {
-        email: args.email,
+        email,
       },
     });
     if (user) {
       throw new Error('An account with that email already exists');
     }
     const password = await bcrypt.hash(args.password, 10);
-    delete args.password;
     user = await context.db.mutation.createUser(
       {
         data: {
@@ -25,7 +22,7 @@ const Mutation = {
           password,
         },
       },
-      info
+      info,
     );
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
     context.response.cookie('token', token, {
@@ -36,10 +33,10 @@ const Mutation = {
   },
 
   async signIn(parent, args, context, info) {
-    args.email = args.email.toLowerCase();
+    const email = args.email.toLowerCase();
     const user = await context.db.query.user({
       where: {
-        email: args.email,
+        email,
       },
     });
     if (!user) {
@@ -71,7 +68,7 @@ const Mutation = {
     // get user but with domains
     user = await context.db.query.user(
       { where: { id: user.id } },
-      '{ id, email, name, domains { id, hostname } }'
+      '{ id, email, name, domains { id, hostname } }',
     );
 
     let { hostname } = args;
@@ -93,7 +90,7 @@ const Mutation = {
             ...args,
           },
         },
-        info
+        info,
       );
       const domainPrefs = await context.db.mutation.createUserDomainPreferences(
         {
@@ -110,7 +107,7 @@ const Mutation = {
           user {
             id
           }
-        }`
+        }`,
       );
       await context.db.mutation.updateDomain({
         where: { id: domain.id },
@@ -142,7 +139,7 @@ const Mutation = {
     // refetch user but with domains
     user = await context.db.query.user(
       { where: { id: user.id } },
-      '{ id, email, name, domains { id, hostname } }'
+      '{ id, email, name, domains { id, hostname } }',
     );
 
     let { url, hostname } = args;
@@ -155,13 +152,13 @@ const Mutation = {
 
     if (!userHasDomain) {
       throw new Error(
-        `"${hostname}" is not in your domains list. Please add it first.`
+        `"${hostname}" is not in your domains list. Please add it first.`,
       );
     }
 
     if (url.hostname !== hostname) {
       throw new Error(
-        `Domain: "${hostname}" and page: "${url.hostname}" do not match.`
+        `Domain: "${hostname}" and page: "${url.hostname}" do not match.`,
       );
     }
 
@@ -172,7 +169,7 @@ const Mutation = {
           url: urlToSave,
         },
       },
-      info
+      info,
     );
 
     const updatedDomain = await context.db.mutation.updateDomain(
@@ -182,19 +179,15 @@ const Mutation = {
           pages: { connect: [{ id: page.id }] },
         },
       },
-      `{id hostname preferences { id contentSelector user { id }}}`
+      '{id hostname preferences { id contentSelector user { id }}}',
     );
 
     const filteredPreferences = updatedDomain.preferences.filter(
-      details => details.user.id === user.id
+      details => details.user.id === user.id,
     );
     const contentSelector = filteredPreferences[0].contentSelector || undefined;
 
-    pageParseQueue.add({
-      url: urlToSave,
-      pageId: page.id,
-      contentSelector,
-    });
+    // Add to parse page queue
 
     return page;
   },
@@ -224,14 +217,14 @@ const Mutation = {
           ],
         },
       },
-      `{ id hostname preferences { id sitemapUrls } }`
+      '{ id hostname preferences { id sitemapUrls } }',
     );
 
     if (!domain) {
       throw new Error(
         `Please add ${
           parsedUrl.hostname
-        } to your domains before adding a sitemap.`
+        } to your domains before adding a sitemap.`,
       );
     }
 
@@ -246,42 +239,38 @@ const Mutation = {
         where: { id: domain.preferences[0].id },
         data: { sitemapUrls: { set: [...updatedUrls] } },
       },
-      `{ domain { hostname } }`
+      '{ domain { hostname } }',
     );
 
     if (!updatedPrefs) {
-      throw new Error(`Error updating sitemap list`);
+      throw new Error('Error updating sitemap list');
     }
 
-    console.log(`Adding to sitemap queue`);
-    sitemapsParseQueue.add({
-      userId: user.id,
-      domainHostname: updatedPrefs.domain.hostname,
-    });
+    // Add to sitemap parse queue
 
     return { message: `Added ${parsedUrl.href} to sitemap list` };
   },
   async addOrUpdateContentSelector(parent, args, context, info) {
-    let { user } = context.request;
+    const { user } = context.request;
     if (!user) {
       throw new Error('You must be signed in');
     }
 
     const domain = await context.db.query.domain(
       { where: { hostname: args.hostname } },
-      `{id preferences { id user { id }}}`
+      '{id preferences { id user { id }}}',
     );
 
     if (!domain) {
       throw new Error(
         `Please add ${
           args.hostname
-        } to your domains before adding a CSS selector`
+        } to your domains before adding a CSS selector`,
       );
     }
 
     const filteredPreferences = domain.preferences.filter(
-      details => details.user.id === user.id
+      details => details.user.id === user.id,
     );
 
     if (filteredPreferences.length !== 1) {
@@ -293,7 +282,7 @@ const Mutation = {
         where: { id: filteredPreferences[0].id },
         data: { contentSelector: args.cssSelector },
       },
-      `{ domain { hostname }, sitemapUrl, contentSelector }`
+      '{ domain { hostname }, sitemapUrl, contentSelector }',
     );
 
     return { ...updatedPrefs, domain: updatedPrefs.domain.hostname };

@@ -1,18 +1,16 @@
-const { GraphQLServer } = require('graphql-yoga');
+const { ApolloServer } = require('apollo-server');
 const Mutation = require('./resolvers/Mutation');
 const Query = require('./resolvers/Query');
 const db = require('./db');
+const typeDefs = require('./schema');
 
-// Create GraphQL Yoga server
+// Create ApolloServer
 function createServer() {
-  return new GraphQLServer({
-    typeDefs: 'src/schema.graphql',
+  return new ApolloServer({
+    typeDefs,
     resolvers: {
       Mutation,
       Query,
-    },
-    resolverValidationOptions: {
-      requireResolversForResolveType: false,
     },
     context: req => ({
       ...req,

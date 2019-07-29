@@ -1,5 +1,3 @@
-const { forwardTo } = require('prisma-binding');
-
 const Query = {
   me(parent, args, context, info) {
     const { user } = context.request;
@@ -10,13 +8,13 @@ const Query = {
       {
         where: { id: user.id },
       },
-      info
+      info,
     );
   },
 
   async domains(parent, args, context, info) {
     let { user } = context.request;
-    let { first } = args;
+    const { first } = args;
 
     if (!user) {
       throw new Error('You must be logged in.');
@@ -31,14 +29,13 @@ const Query = {
           id: user.id,
         },
       },
-      `{ domains { id, hostname, preferences { id, sitemapUrl, contentSelector}, pages {id, url, pageTitle, wordCount, links {id}} } }`
+      '{ domains { id, hostname, preferences { id, sitemapUrl, contentSelector}, pages {id, url, pageTitle, wordCount, links {id}} } }',
     );
     if (first) {
       return user.domains.slice(0, first);
     }
     return user.domains;
   },
-  domain: forwardTo('db'),
 
   async pages(parent, args, context, info) {
     let { user } = context.request;
@@ -81,7 +78,7 @@ const Query = {
           }
         }
       }
-      `
+      `,
     );
 
     const userHasDomain = user.domains
@@ -95,7 +92,7 @@ const Query = {
     return user.domains.find(domain => domain.hostname === hostname).pages;
   },
   async preferences(parent, args, context, info) {
-    let { user } = context.request;
+    const { user } = context.request;
     if (!user) {
       throw new Error('You must be logged in.');
     }
@@ -104,18 +101,11 @@ const Query = {
       {
         where: { user: { id: user.id } },
       },
-      `{ domain { hostname }, sitemapUrl, contentSelector }`
+      '{ domain { hostname }, sitemapUrl, contentSelector }',
     );
 
     return res.map(pref => ({ ...pref, domain: pref.domain.hostname }));
   },
-  page: forwardTo('db'),
-
-  links: forwardTo('db'),
-  link: forwardTo('db'),
-
-  products: forwardTo('db'),
-  product: forwardTo('db'),
 };
 
 module.exports = Query;
