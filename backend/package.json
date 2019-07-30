@@ -29,7 +29,8 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.2",
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "prisma2": "^2.0.0-preview-3.2"
   },
   "prettier": {
     "singleQuote": true,
