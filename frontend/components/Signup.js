@@ -138,7 +138,7 @@ class Signup extends Component {
 
   render() {
     return (
-      <Mutation mutation={PAGE_COUNT_QUERY} variables={this.state}>
+      /*<Mutation mutation={PAGE_COUNT_QUERY} variables={this.state}>
         {(getPageCount, { loading, error, data }) =>
           loading ? (
             <LoadingContainer>
@@ -190,6 +190,13 @@ class Signup extends Component {
           )
         }
       </Mutation>
+      */
+      <SignupContainer
+        // error={error}
+        websiteURL={this.state.websiteURL}
+        sitemapURLs={this.state.sitemapURLs}
+        handleChange={this.handleChange}
+      />
     );
   }
 }

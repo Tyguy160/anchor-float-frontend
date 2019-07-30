@@ -5,18 +5,26 @@ import { CTAButtonContainer } from './styles/StyledCTA';
 import {
   HeroContainer,
   HeroHeadline,
+  HeroSubtext,
   HeroCTAButton,
   HeroCTAButtonContainer,
 } from './styles/StyledHero';
 
+const HeroTextContainer = styled.div`
+  display: grid;
+  grid-gap: 20px;
+  color: #565656;
+`;
+
 const Hero = () => {
   return (
     <HeroContainer>
-      <HeroHeadline>
-        You've worked hard to make valuable content
-        <br />
-        Now protect your asset
-      </HeroHeadline>
+      <HeroTextContainer>
+        <HeroHeadline>Amazon Associates Link Health Checks</HeroHeadline>
+        <HeroSubtext>
+          Find out which of your Amazon affiliate links are no longer up-to-date
+        </HeroSubtext>
+      </HeroTextContainer>
       <HeroCTAButtonContainer>
         <HeroCTAButton>Learn more</HeroCTAButton>
         <Link href="/signup" passHref>

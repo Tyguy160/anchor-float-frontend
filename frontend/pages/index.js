@@ -10,11 +10,11 @@ const Home = props => {
   return (
     <div>
       <Hero />
-      <WhatItIs />
-      <HowItWorks />
-      <OtherFeatures />
-      <Pricing />
-      <FinalCTA />
+      {/* <WhatItIs /> */}
+      {/* <HowItWorks /> */}
+      {/* <OtherFeatures /> */}
+      {/* <Pricing /> */}
+      {/* <FinalCTA /> */}
     </div>
   );
 };

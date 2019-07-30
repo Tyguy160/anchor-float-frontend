@@ -63,7 +63,8 @@ const Nav = () => {
     <User>
       {payload => (
         <NavBar>
-          {payload.data.me && (
+          {
+            //payload.data.me && (  // TODO: uncomment this once backend is working
             <>
               <Link href="/dashboard" passHref>
                 <Logo>
@@ -89,8 +90,11 @@ const Nav = () => {
                 <SignOut />
               </Links>
             </>
-          )}
-          {!payload.data.me && (
+            // )
+          }
+          {/* // TODO: uncomment this once backend is working */}
+          {/* {
+            //!payload.data.me && (
             <>
               <Link href="/" passHref>
                 <Logo>
@@ -116,12 +120,13 @@ const Nav = () => {
                 <Link href="/about" passHref>
                   <StyledLink>About</StyledLink>
                 </Link>
-                {/* <Link href="/signin" passHref>
+                <Link href="/signin" passHref>
                   <StyledLink>Sign In</StyledLink>
-                </Link> */}
+                </Link>
               </Links>
             </>
-          )}
+            )
+          } */}
         </NavBar>
       )}
     </User>
