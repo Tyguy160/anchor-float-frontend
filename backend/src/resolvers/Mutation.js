@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken');
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutation = {
-  async signUp(parent, { input }, context, info) {
+  async signUp(parent, { input }, { db }, info) {
     const { email, password } = input;
-    const lowerEmail = email.toLowerCase();
+
+    const user = await db.users.create({ data: { credential: [{ email, password }] } });
+    console.log(user);
     // let user = await context.db.query.user({
     //   where: {
     //     email,
@@ -30,9 +32,6 @@ const Mutation = {
     //   httpOnly: true,
     //   maxAge: ONE_YEAR,
     // });
-    const user = {
-      email: lowerEmail,
-    };
     return { user };
   },
 

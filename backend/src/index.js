@@ -4,8 +4,8 @@ require('dotenv').config({
 
 const createServer = require('./createServer');
 
-const server = createServer();
-
-server.listen().then(({ url }) => {
-  console.log(url);
+createServer().then((server) => {
+  server.listen().then(({ url }) => {
+    console.log(url);
+  });
 });

@@ -2,6 +2,9 @@
   "extends": [
     "airbnb"
   ],
+  "plugins": [
+    "ignore-generated-and-nolint"
+  ],
   "rules": {
     "no-console": 2,
   }

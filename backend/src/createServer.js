@@ -7,7 +7,9 @@ const typeDefs = require('./schema');
 const resolvers = { Mutation, Query };
 
 // Create ApolloServer
-function createServer() {
+async function createServer() {
+  await db.connect();
+
   return new ApolloServer({
     typeDefs,
     resolvers,
