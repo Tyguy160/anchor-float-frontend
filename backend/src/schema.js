@@ -1,49 +1,54 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
-    type User {
-      email: String
-    }
+  type User {
+    id: String
+    email: String
+    password: String
+  }
 
-    type Domain {
-      hostname: String
-    }
+  type Domain {
+    hostname: String
+  }
 
-    type Query {
-      me: User
-    }
+  type Query {
+    me: User
+    users: [User]!
+  }
 
-    type Mutation {
-      signUp(input: SignUpInput!): SignUpPayload
-      signIn(input: SignInInput!): SignInPayload
-      addDomain(input: AddDomainInput!): AddDomainPayload
-    }
+  type Mutation {
+    signUp(input: SignUpInput!): SignUpPayload
+    signIn(input: SignInInput!): SignInPayload
+    addDomain(input: AddDomainInput!): AddDomainPayload
+  }
 
-    input SignUpInput {
-      email: String!
-      password: String!
-    }
+  input SignUpInput {
+    email: String!
+    password: String!
+  }
 
-    type SignUpPayload {
-      user: User
-    }
+  type SignUpPayload {
+    id: String
+    email: String
+    password: String
+  }
 
-    input SignInInput {
-      email: String!
-      password: String!
-    }
+  input SignInInput {
+    email: String!
+    password: String!
+  }
 
-    type SignInPayload {
-      user: User
-    }
+  type SignInPayload {
+    user: User
+  }
 
-    input AddDomainInput {
-      hostname: String!
-    }
+  input AddDomainInput {
+    hostname: String!
+  }
 
-    type AddDomainPayload {
-      domain: Domain
-    }
+  type AddDomainPayload {
+    domain: Domain
+  }
 `;
 
 module.exports = typeDefs;

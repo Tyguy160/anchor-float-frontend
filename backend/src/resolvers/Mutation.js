@@ -6,9 +6,16 @@ const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 const Mutation = {
   async signUp(parent, { input }, { db }, info) {
     const { email, password } = input;
+    return db.users.create(
+      {
+        data: {
+          email,
+          password,
+        },
+      },
+      info,
+    );
 
-    const user = await db.users.create({ data: { credential: [{ email, password }] } });
-    console.log(user);
     // let user = await context.db.query.user({
     //   where: {
     //     email,
@@ -32,7 +39,6 @@ const Mutation = {
     //   httpOnly: true,
     //   maxAge: ONE_YEAR,
     // });
-    return { user };
   },
 
   async signIn(parent, { input }, context, info) {
@@ -71,9 +77,7 @@ const Mutation = {
 
     let { hostname } = args;
     hostname = hostname.toLowerCase();
-    const userHasDomain = user.domains
-      .map(entry => entry.hostname)
-      .includes(hostname);
+    const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
     if (userHasDomain) {
       throw new Error(`You've alread added ${hostname}`);
     }

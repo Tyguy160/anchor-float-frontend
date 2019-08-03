@@ -9,19 +9,11 @@ generator photon {
 }
 
 model User {
-  id         String       @default(cuid()) @id @unique
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  credential Credential[]
-}
-
-model Credential {
   id        String   @default(cuid()) @id @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email     String   @unique
   password  String
-  user      User
 }
 
 model Domain {
