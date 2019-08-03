@@ -1,12 +1,12 @@
 const Query = {
-  me(parent, args, context, info) {
-    const { user } = context.req;
+  me(parent, args, { user, db }, info) {
+    console.log(user);
     if (!user) {
-      return null;
+      throw new Error('Not Authenticated');
     }
-    return context.db.users.findOne(
+    return db.users.findOne(
       {
-        where: { id: user.id },
+        where: { id: user.userId },
       },
       info,
     );

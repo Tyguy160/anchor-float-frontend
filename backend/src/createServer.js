@@ -6,18 +6,49 @@ const typeDefs = require('./schema');
 
 const resolvers = { Mutation, Query };
 
-// Create ApolloServer
+const jwt = require('jsonwebtoken');
+
+const getUser = (token) => {
+  try {
+    if (token) {
+      return jwt.verify(token, process.env.APP_SECRET);
+    }
+    return null;
+  } catch (err) {
+    return null;
+  }
+};
+
 async function createServer() {
   await db.connect();
-
   return new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({
-      req,
-      db,
-    }),
+    context: ({ req }) => {
+      const tokenWithBearer = req.headers.authorization || '';
+      const token = tokenWithBearer.split(' ')[1];
+      const user = getUser(token);
+
+      return {
+        user,
+        db,
+      };
+    },
   });
 }
+
+// // Create ApolloServer
+// async function createServer() {
+//   await db.connect();
+
+//   return new ApolloServer({
+//     typeDefs,
+//     resolvers,
+//     context: ({ req }) => ({
+//       req,
+//       db,
+//     }),
+//   });
+// }
 
 module.exports = createServer;

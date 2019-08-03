@@ -4,63 +4,49 @@ const jwt = require('jsonwebtoken');
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 const Mutation = {
-  async signUp(parent, { input }, { db }, info) {
+  // Sign-up mutation
+  async signUp(parent, { input }, context, info) {
+    // Take the user provided email and password, then hash the password
     const { email, password } = input;
-    return db.users.create(
-      {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Try to create a new user
+    try {
+      const user = await context.db.users.create({
         data: {
           email,
-          password,
+          password: hashedPassword,
         },
-      },
-      info,
-    );
-
-    // let user = await context.db.query.user({
-    //   where: {
-    //     email,
-    //   },
-    // });
-    // if (user) {
-    //   throw new Error('An account with that email already exists');
-    // }
-    // const password = await bcrypt.hash(args.password, 10);
-    // user = await context.db.mutation.createUser(
-    //   {
-    //     data: {
-    //       ...args,
-    //       password,
-    //     },
-    //   },
-    //   info,
-    // );
-    // const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
-    // context.response.cookie('token', token, {
-    //   httpOnly: true,
-    //   maxAge: ONE_YEAR,
-    // });
+      });
+      return user;
+    } catch (err) {
+      throw new Error('We were unable to create your account. Try another email.');
+      console.log(err);
+    }
   },
 
+  // Sign-in mutation
   async signIn(parent, { input }, context, info) {
-    const email = args.email.toLowerCase();
-    const user = await context.db.query.user({
-      where: {
-        email,
-      },
-    });
-    if (!user) {
-      throw new Error(`No user found for ${args.email}`);
+    const email = input.email.toLowerCase();
+
+    // Try to find the user with the email, then compare their hashed pass to the provided one
+    try {
+      const user = await context.db.users.findOne({
+        where: {
+          email,
+        },
+      });
+      const passValid = await bcrypt.compare(input.password, user.password);
+      if (!passValid) {
+        throw new Error('Incorrect password');
+      }
+      const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET, {
+        expiresIn: '30d', // token will expire in 30days
+      });
+      return { token, user };
+    } catch (err) {
+      throw new Error(`No user found for ${input.email}`);
     }
-    const passValid = await bcrypt.compare(args.password, user.password);
-    if (!passValid) {
-      throw new Error('Incorrect password');
-    }
-    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
-    context.response.cookie('token', token, {
-      httpOnly: true,
-      maxAge: ONE_YEAR,
-    });
-    return user;
   },
 
   async addDomain(parent, args, context, info) {

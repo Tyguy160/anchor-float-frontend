@@ -39,6 +39,7 @@ const typeDefs = gql`
   }
 
   type SignInPayload {
+    token: String
     user: User
   }
 
