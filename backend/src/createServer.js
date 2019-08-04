@@ -22,6 +22,10 @@ const getUser = (token) => {
 async function createServer() {
   await db.connect();
   return new ApolloServer({
+    cors: {
+      origin: 'http://localhost:3000',
+      credentials: true,
+    },
     typeDefs,
     resolvers,
     context: ({ req }) => {
