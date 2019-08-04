@@ -8,7 +8,7 @@ import signup from '../pages/signup';
 import LoadingGraphic from './LoadingGraphic';
 import {
   Container,
-  SignupHeading,
+  PageHeading,
   SignupFormContainer,
   ContinueButton,
 } from './SignupContainer';
@@ -29,7 +29,7 @@ const LoadingContainer = styled(Container)`
 
 const PricingContainer = styled(Container)``;
 
-const PricingHeading = styled(SignupHeading)``;
+// const PricingHeading = styled(SignupHeading)``;
 
 const StartOverButton = styled(ContinueButton)``;
 
@@ -91,21 +91,19 @@ const WebsiteDetails = styled.div`
 
 class Signup extends Component {
   state = {
-    websiteURL: 'www.example.com',
-    sitemapURLs: 'www.example.com/sitemap.xml',
-    pageCount: 614,
+    websiteURL: '',
   };
 
-  onToken = token => {
-    fetch('/save-stripe-token', {
-      method: 'POST',
-      body: JSON.stringify(token),
-    }).then(response => {
-      response.json().then(data => {
-        alert(`We are in business, ${data.email}`);
-      });
-    });
-  };
+  //   onToken = token => {
+  //     fetch('/save-stripe-token', {
+  //       method: 'POST',
+  //       body: JSON.stringify(token),
+  //     }).then(response => {
+  //       response.json().then(data => {
+  //         alert(`We are in business, ${data.email}`);
+  //       });
+  //     });
+  //   };
 
   createAccount = async (e, signup) => {
     // Prevent the form from submitting
@@ -118,16 +116,16 @@ class Signup extends Component {
     console.log('Created account');
   };
 
-  requestPricing = async (e, pricing) => {
-    // Prevent the form from submitting
-    e.preventDefault();
+  //   requestPricing = async (e, pricing) => {
+  //     // Prevent the form from submitting
+  //     e.preventDefault();
 
-    // Call the mutation
-    const res = await pricing();
+  //     // Call the mutation
+  //     const res = await pricing();
 
-    // console.log(res.data);
-    console.log('Requested pricing');
-  };
+  //     // console.log(res.data);
+  //     console.log('Requested pricing');
+  //   };
 
   handleChange = e => {
     const { name, value, type } = e.target;
@@ -138,63 +136,10 @@ class Signup extends Component {
 
   render() {
     return (
-      /*<Mutation mutation={PAGE_COUNT_QUERY} variables={this.state}>
-        {(getPageCount, { loading, error, data }) =>
-          loading ? (
-            <LoadingContainer>
-              <div>
-                <h1>Hang tight...</h1>
-                <h3>We're generating your site's pricing</h3>
-              </div>
-              <LoadingGraphic />
-            </LoadingContainer>
-          ) : !data ? (
-            <PricingContainer>
-              <PricingHeading>Get your site's report today!</PricingHeading>
-              <InnerPricingContainer>
-                <Pricing>
-                  <Price>{(49 + this.state.pageCount * 0.05).toFixed(2)}</Price>
-                  {}
-                  <PriceDetails>$49 + $0.05/page</PriceDetails>
-                  <hr style={{ width: '100%', size: '1px' }} />
-                  <WebsiteDetails>
-                    <div>www.example.com</div>
-                    <div>{this.state.pageCount} pages</div>
-                  </WebsiteDetails>
-                </Pricing>
-                <ButtonContainer>
-                  <StartOverButton type="submit" value="Start over" />
-                  <PayWithCardButton
-                    token={this.onToken}
-                    stripeKey="pk_test_mqMxPm3hGXqDIiwIVvAME4Af"
-                    name="Anchor Float" // the pop-in header title
-                    image="/static/logo.png" // the pop-in header image (default none)
-                    description="Affiliate Link Report" // the pop-in header subtitle
-                    amount={4900 + this.state.pageCount * 5} // cents
-                    locale="auto"
-                    zipCode={true}
-                    billingAddress={true}
-                    // ComponentClass="div"
-                    currency="USD"
-                  />
-                </ButtonContainer>
-              </InnerPricingContainer>
-            </PricingContainer>
-          ) : (
-            <SignupContainer
-              error={error}
-              websiteURL={this.state.websiteURL}
-              sitemapURLs={this.state.sitemapURLs}
-              handleChange={this.handleChange}
-            />
-          )
-        }
-      </Mutation>
-      */
       <SignupContainer
         // error={error}
+        createAccount={this.createAccount}
         websiteURL={this.state.websiteURL}
-        sitemapURLs={this.state.sitemapURLs}
         handleChange={this.handleChange}
       />
     );
@@ -202,4 +147,4 @@ class Signup extends Component {
 }
 
 export default Signup;
-export { SIGNUP_MUTATION };
+// export { SIGNUP_MUTATION };

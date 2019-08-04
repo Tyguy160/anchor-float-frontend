@@ -4,8 +4,7 @@ import { CTAButton, CTAButtonContainer } from './StyledCTA';
 const HeroContainer = styled.div`
   color: white;
   background-image: url('../static/water.svg');
-  background-size: 200% 60%;
-
+  background-size: 1000% 80%;
   background-repeat: repeat-x;
   background-position: bottom 0 left 50%;
   background-origin: border-box;
@@ -14,44 +13,50 @@ const HeroContainer = styled.div`
   position: fixed;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 0.4fr 0.6fr;
-  align-items: center;
+`;
+
+const HeroTextContainer = styled.div`
+  display: grid;
+  grid-gap: 20px;
+  color: #565656;
 `;
 
 const HeroHeadline = styled.div`
-  font-size: 3.5em;
+  font-size: 1.5em;
+  padding-left: 20px;
+  padding-right: 20px;
   text-align: center;
-  align-self: end;
-  text-shadow: 1px 1px 3px #888;
+  align-self: center;
 `;
 
 const HeroSubtext = styled.div`
-  font-size: 2em;
+  font-size: 1.2em;
   text-align: center;
-  align-self: end;
+  align-self: center;
+  color: whitesmoke;
+  padding: 0 45px 0 45px;
   text-shadow: 1px 1px 3px #888;
 `;
 
+const HeroCTAButtonContainer = styled(CTAButtonContainer)`
+  justify-content: center;
+  align-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+`;
+
 const HeroCTAButton = styled(CTAButton)`
-  align-self: start;
-  margin: 10px;
+  margin: 10px 50px 10px 50px;
   justify-content: center;
   min-width: 120px;
   min-height: 30px;
   font-size: 1.2em;
   border-radius: 5px;
 `;
-const HeroCTAButtonContainer = styled(CTAButtonContainer)`
-  margin: 50px;
-  align-self: flex-start;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-wrap: wrap;
-`;
 
 export {
   HeroContainer,
+  HeroTextContainer,
   HeroHeadline,
   HeroSubtext,
   HeroCTAButton,

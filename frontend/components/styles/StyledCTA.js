@@ -10,7 +10,7 @@ const CTAButton = styled.div`
   display: grid;
   align-items: center;
   padding: 10px 20px 10px 20px;
-  /* box-shadow: 0px 1px 1px 1px #c4941c; */
+  /* /* box-shadow: 0px 1px 1px 1px #c4941c;  */
   height: 30px;
   cursor: pointer;
   font-family: 'Quicksand', sans-serif;
@@ -20,4 +20,4 @@ const CTAButton = styled.div`
   color: white;
 `;
 
-export { CTAButton, CTAButtonContainer, CTAContainer };
+export { CTAButton, CTAButtonContainer };

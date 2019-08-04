@@ -1,20 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { CTAButtonContainer } from './styles/StyledCTA';
+
 import {
   HeroContainer,
+  HeroTextContainer,
   HeroHeadline,
   HeroSubtext,
   HeroCTAButton,
   HeroCTAButtonContainer,
 } from './styles/StyledHero';
-
-const HeroTextContainer = styled.div`
-  display: grid;
-  grid-gap: 20px;
-  color: #565656;
-`;
 
 const Hero = () => {
   return (
@@ -26,7 +21,9 @@ const Hero = () => {
         </HeroSubtext>
       </HeroTextContainer>
       <HeroCTAButtonContainer>
-        <HeroCTAButton>Learn more</HeroCTAButton>
+        <Link href="/about" passHref>
+          <HeroCTAButton>Learn more</HeroCTAButton>
+        </Link>
         <Link href="/signup" passHref>
           <HeroCTAButton>Sign up</HeroCTAButton>
         </Link>

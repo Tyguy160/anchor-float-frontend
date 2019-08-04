@@ -2,42 +2,24 @@ import React from 'react';
 import styled from 'styled-components';
 import ErrorMessage from '../components/ErrorMessage';
 
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 50px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-`;
+const Container = styled.div``;
 
-const SignupHeading = styled.h1`
+const PageHeading = styled.h2`
   text-align: center;
 `;
 
 const SignupFormContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  width: 100%;
-  max-width: 700px;
   display: grid;
-  grid-template-columns: 1fr;
-  border-radius: 4px;
-  justify-self: center;
+  grid-template-rows: 1fr auto;
 `;
 
 const SignupForm = styled.form`
   display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 25px;
-  justify-items: center;
-  /* padding: 35px; */
-
-  /* @media screen and (min-width: 550px) {
-    box-shadow: 0px 2px 10px 2px #ccc;
-  } */
+  padding: 20px 0px 20px 0px;
+  grid-gap: 15px;
+  justify-content: center;
 `;
 
 const ContinueButton = styled.input`
@@ -48,7 +30,7 @@ const ContinueButton = styled.input`
   justify-self: center;
   width: 100px;
   font-size: 1em;
-  margin: 30px;
+  margin-bottom: 20px;
   outline: none;
   :active {
     background-color: #bbb;
@@ -57,20 +39,22 @@ const ContinueButton = styled.input`
 
 const SignupInputContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-self: flex-start;
+  justify-self: flex-end;
   flex-wrap: wrap;
+  label {
+    align-self: center;
+  }
 `;
 
 const SignupTextInput = styled.input`
   border-radius: 4px;
   border: 1px solid #dedede;
-  height: 3em;
+  height: 2em;
   font-family: 'Assistant', sans-serif;
   font-size: 1em;
   outline: none;
-  padding-left: 10px;
-  padding-right: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 const SignupTextareaInput = styled.textarea`
@@ -88,28 +72,25 @@ const SignupTextareaInput = styled.textarea`
 const SignupContainer = props => {
   return (
     <Container>
-      {/* <SignupHeading>
-        Locate unavailable affiliate links on your site
-      </SignupHeading> */}
+      <PageHeading>Register</PageHeading>
       <SignupFormContainer>
         <ErrorMessage error={props.error} />
         <SignupForm
           id="urlForm"
-          onSubmit={e => this.requestPricing(e, determinePricing)}>
-          Register
+          onSubmit={e => this.createAccount(e, determinePricing)}>
           <SignupInputContainer>
-            <label htmlFor="websiteURL">Website URL</label>
+            <label htmlFor="websiteURL">Website</label>
             <SignupTextInput
               id="websiteURL"
               name="websiteURL"
               type="text"
-              placeholder="https://example.com/"
+              //   placeholder="https://example.com/"
               required
               value={props.websiteURL}
               onChange={props.handleChange}
             />
           </SignupInputContainer>
-          <SignupInputContainer>
+          {/* <SignupInputContainer>
             <label htmlFor="sitemapURLs">Sitemap URL(s)</label>
             <SignupTextInput
               id="sitemapURLs"
@@ -119,7 +100,7 @@ const SignupContainer = props => {
               value={props.sitemapURLs}
               onChange={props.handleChange}
             />
-          </SignupInputContainer>
+          </SignupInputContainer> */}
           <SignupInputContainer>
             <label htmlFor="name">Name</label>
             <SignupTextInput
@@ -176,4 +157,4 @@ const SignupContainer = props => {
 };
 
 export default SignupContainer;
-export { Container, SignupHeading, SignupFormContainer, ContinueButton };
+export { Container, PageHeading, SignupFormContainer, ContinueButton };

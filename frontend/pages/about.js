@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const AboutSection = styled.div`
-  /* padding: 20px; */
+  background-color: whitesmoke;
 `;
 
 const AboutHeading = styled.h2`
@@ -11,7 +11,7 @@ const AboutHeading = styled.h2`
 `;
 
 const AboutContent = styled.div`
-  padding: 0px 25% 0px 25%;
+  padding: 0px 40px 0px 40px;
   font-size: 1.25em;
   line-height: 1.5em;
 `;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const ErrorMesage = styled.div`
+const ErrorMessage = styled.div`
   display: grid;
   height: 100%;
   align-items: center;
@@ -17,10 +17,10 @@ export default class Error extends React.Component {
 
   render() {
     return (
-      <ErrorMesage>
+      <ErrorMessage>
         <h2>{this.props.statusCode}</h2>
         <p>Uh oh...something went wrong. That page doesn't seem to exist 🤷‍</p>
-      </ErrorMesage>
+      </ErrorMessage>
     );
   }
 }
