@@ -28,8 +28,8 @@ const Mutation = {
 
       return user;
     } catch (err) {
-      throw new Error('We were unable to create your account. Try another email.');
       console.log(err);
+      throw new Error('We were unable to create your account. Try another email.');
     }
   },
 
