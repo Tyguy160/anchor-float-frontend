@@ -9,7 +9,6 @@ const resolvers = { Mutation, Query };
 const jwt = require('jsonwebtoken');
 
 const getUser = (token) => {
-  console.log(process.env.APP_SECRET);
   try {
     if (token) {
       return jwt.verify(token, process.env.APP_SECRET);
@@ -30,7 +29,7 @@ async function createServer() {
     typeDefs,
     resolvers,
     context: ({ req, res }) => {
-      console.log(`Request headers ${JSON.stringify(req.headers)}`);
+      console.log(`Request headers ${JSON.stringify(req.headers, null, 2)}`);
       const tokenWithBearer = req.headers.authorization || '';
       const token = tokenWithBearer.split(' ')[1];
       const user = getUser(token);

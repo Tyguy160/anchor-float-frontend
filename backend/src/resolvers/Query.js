@@ -1,6 +1,6 @@
 const Query = {
   me(parent, args, { user, db }, info) {
-    console.log(user);
+    console.log('User:' + user);
     if (!user) {
       throw new Error('Not Authenticated');
     }
