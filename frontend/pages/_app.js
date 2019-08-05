@@ -1,6 +1,6 @@
 import App, { Container } from 'next/app';
 import Page from '../components/Page';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-hooks';
 import withData from '../lib/withData';
 import { createGlobalStyle } from 'styled-components';
 

@@ -1,24 +1,32 @@
-// import React from 'react';
-// import { Query } from 'react-apollo';
-// import SignIn from './SignIn';
-// import { CURRENT_USER_QUERY } from './User';
-// const Authenticate = props => {
-//   return (
-//     <Query query={CURRENT_USER_QUERY}>
-//       {({ data, loading }) => {
-//         if (loading) return <p>Loading...</p>;
-//         if (!data.me) {
-//           return (
-//             <div>
-//               <p>Please sign in before continuing 🔑</p>
-//               <SignIn />
-//             </div>
-//           );
-//         }
-//         return props.children;
-//       }}
-//     </Query>
-//   );
-// };
+import React from 'react';
 
-// export default Authenticate;
+import SignIn from './SignIn';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+const GET_CURRENT_USER = gql`
+  query me {
+    me {
+      id
+    }
+  }
+`;
+
+const Authenticate = props => {
+  const { loading, data } = useQuery(GET_CURRENT_USER);
+
+  console.log(`Data: ` + JSON.stringify(data));
+  if (loading) return <p>Loading...</p>;
+  if (data) {
+    return props.children;
+  }
+  if (!data) {
+    return (
+      <div>
+        <p>Please sign in before continuing 🔑</p>
+        <SignIn />
+      </div>
+    );
+  }
+};
+
+export default Authenticate;
