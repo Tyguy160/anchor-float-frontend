@@ -1,4 +1,4 @@
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer } = require('apollo-server-express');
 const Mutation = require('./resolvers/Mutation');
 const Query = require('./resolvers/Query');
 const db = require('./db');
@@ -9,6 +9,7 @@ const resolvers = { Mutation, Query };
 const jwt = require('jsonwebtoken');
 
 const getUser = (token) => {
+  console.log(process.env.APP_SECRET);
   try {
     if (token) {
       return jwt.verify(token, process.env.APP_SECRET);
@@ -28,14 +29,16 @@ async function createServer() {
     },
     typeDefs,
     resolvers,
-    context: ({ req }) => {
+    context: ({ req, res }) => {
+      console.log(`Request headers ${JSON.stringify(req.headers)}`);
       const tokenWithBearer = req.headers.authorization || '';
       const token = tokenWithBearer.split(' ')[1];
       const user = getUser(token);
-
       return {
         user,
         db,
+        req,
+        res,
       };
     },
   });

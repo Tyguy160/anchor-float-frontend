@@ -4,7 +4,6 @@ const typeDefs = gql`
   type User {
     id: String
     email: String
-    password: String
   }
 
   type Domain {
@@ -30,7 +29,6 @@ const typeDefs = gql`
   type SignUpPayload {
     id: String
     email: String
-    password: String
   }
 
   input SignInInput {

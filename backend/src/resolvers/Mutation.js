@@ -18,6 +18,14 @@ const Mutation = {
           password: hashedPassword,
         },
       });
+
+      const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET, {
+        expiresIn: '30d', // token will expire in 30days
+      });
+      context.res.cookie('token', token, {
+        httpOnly: true,
+      });
+
       return user;
     } catch (err) {
       throw new Error('We were unable to create your account. Try another email.');
@@ -43,6 +51,10 @@ const Mutation = {
       const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET, {
         expiresIn: '30d', // token will expire in 30days
       });
+      context.res.cookie('token', token, {
+        httpOnly: true,
+      });
+
       return { token, user };
     } catch (err) {
       throw new Error(`No user found for ${input.email}`);
