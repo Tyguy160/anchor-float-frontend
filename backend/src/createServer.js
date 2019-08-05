@@ -25,9 +25,7 @@ async function createServer() {
     typeDefs,
     resolvers,
     context: ({ req, res }) => {
-      console.log(`Request headers ${JSON.stringify(req.headers, null, 2)}`);
-      const tokenWithBearer = req.headers.authorization || '';
-      const token = tokenWithBearer.split(' ')[1];
+      const token = req.cookies.token || '';
       const user = getUser(token);
       return {
         user,
