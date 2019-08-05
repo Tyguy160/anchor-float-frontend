@@ -1,4 +1,4 @@
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer } = require('apollo-server-express');
 const Mutation = require('./resolvers/Mutation');
 const Query = require('./resolvers/Query');
 const db = require('./db');
@@ -22,20 +22,16 @@ const getUser = (token) => {
 async function createServer() {
   await db.connect();
   return new ApolloServer({
-    cors: {
-      origin: 'http://localhost:3000',
-      credentials: true,
-    },
     typeDefs,
     resolvers,
-    context: ({ req }) => {
-      const tokenWithBearer = req.headers.authorization || '';
-      const token = tokenWithBearer.split(' ')[1];
+    context: ({ req, res }) => {
+      const token = req.cookies.token || '';
       const user = getUser(token);
-
       return {
         user,
         db,
+        req,
+        res,
       };
     },
   });

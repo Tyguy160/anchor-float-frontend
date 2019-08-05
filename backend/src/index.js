@@ -1,11 +1,21 @@
-require('dotenv').config({
-  path: '.env',
-});
+require('dotenv').config();
 
-const createServer = require('./createServer');
+const express = require('express');
+const cookieParser = require('cookie-parser');
 
-createServer().then((server) => {
-  server.listen().then(({ url }) => {
-    console.log(url);
+const createApolloServer = require('./createServer');
+
+const app = express();
+app.use(cookieParser());
+
+createApolloServer().then((server) => {
+  server.applyMiddleware({
+    app,
+    path: '/graphql',
+    cors: {
+      origin: 'http://localhost:3000',
+      credentials: true,
+    },
   });
+  app.listen({ port: process.env.PORT }, () => console.log(`🚀 Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`));
 });

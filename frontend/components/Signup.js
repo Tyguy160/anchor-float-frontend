@@ -1,150 +1,181 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import StripeCheckout from 'react-stripe-checkout';
+import { useMutation } from '@apollo/react-hooks';
+import ErrorMessage from './ErrorMessage';
+import Router from 'next/router';
 
-import signup from '../pages/signup';
-import LoadingGraphic from './LoadingGraphic';
-import {
-  Container,
-  PageHeading,
-  SignupFormContainer,
-  ContinueButton,
-} from './SignupContainer';
-import SignupContainer from './SignupContainer';
+const Container = styled.div``;
 
-const PAGE_COUNT_QUERY = gql`
-  mutation PAGE_COUNT_QUERY($domain: String!, $sitemap: String!) {
-    getPageCount(domain: $name, email: $email, password: $password) {
+const PageHeading = styled.h2`
+  text-align: center;
+`;
+
+const SignupFormContainer = styled.div`
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  display: grid;
+  grid-template-rows: 1fr auto;
+`;
+
+const SignupForm = styled.form`
+  display: grid;
+  padding: 20px 0px 20px 0px;
+  grid-gap: 15px;
+  justify-content: center;
+`;
+
+const ContinueButton = styled.input`
+  height: 45px;
+  border-radius: 4px;
+  background-color: #ccc;
+  border: none;
+  justify-self: center;
+  width: 100px;
+  font-size: 1em;
+  margin-bottom: 20px;
+  outline: none;
+  :active {
+    background-color: #bbb;
+  }
+`;
+
+const SignupInputContainer = styled.div`
+  display: flex;
+  justify-self: flex-end;
+  flex-wrap: wrap;
+  label {
+    align-self: center;
+  }
+`;
+
+const SignupTextInput = styled.input`
+  border-radius: 4px;
+  border: 1px solid #dedede;
+  height: 2em;
+  font-family: 'Assistant', sans-serif;
+  font-size: 1em;
+  outline: none;
+  margin-left: 10px;
+  margin-right: 10px;
+`;
+
+const SIGNUP_MUTATION = gql`
+  mutation SIGNUP_MUTATION($input: SignUpInput!) {
+    signUp(input: $input) {
       id
+      email
     }
   }
 `;
 
-const LoadingContainer = styled(Container)`
-  text-align: center;
-  justify-items: center;
-`;
+const Signup = props => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-const PricingContainer = styled(Container)``;
+  const [signUp, { error, data }] = useMutation(SIGNUP_MUTATION, {
+    variables: { input: { email, password } },
+  });
 
-// const PricingHeading = styled(SignupHeading)``;
-
-const StartOverButton = styled(ContinueButton)``;
-
-const PayWithCardButton = styled(StripeCheckout)`
-  height: 45px;
-  justify-self: center;
-  align-self: center;
-  span {
-    background-image: none !important;
-    box-shadow: none !important;
-  }
-`;
-
-const InnerPricingContainer = styled(SignupFormContainer)`
-  max-width: 350px;
-`;
-
-const Pricing = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  border-radius: 4px;
-  padding: 25px;
-
-  @media screen and (min-width: 400px) {
-    box-shadow: 0px 2px 10px 2px #ccc;
-  }
-`;
-
-const ButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-`;
-
-const Price = styled.div`
-  margin: 0;
-  font-size: 3em;
-  font-weight: 300;
-  padding: 0;
-  text-align: center;
-  /* :before {
-    content: '$';
-    font-size: 0.7em;
-    vertical-align: text-top;
-  } */
-`;
-
-const PriceDetails = styled.div`
-  color: #999;
-  text-align: center;
-  padding-bottom: 10px;
-`;
-
-const WebsiteDetails = styled.div`
-  text-align: center;
-  padding-top: 10px;
-  display: grid;
-  grid-gap: 10px;
-`;
-
-class Signup extends Component {
-  state = {
-    websiteURL: '',
-  };
-
-  //   onToken = token => {
-  //     fetch('/save-stripe-token', {
-  //       method: 'POST',
-  //       body: JSON.stringify(token),
-  //     }).then(response => {
-  //       response.json().then(data => {
-  //         alert(`We are in business, ${data.email}`);
-  //       });
-  //     });
-  //   };
-
-  createAccount = async (e, signup) => {
+  const createAccount = async e => {
     // Prevent the form from submitting
     e.preventDefault();
 
-    // Call the mutation
-    const res = await signup();
+    if (password === confirmPassword) {
+      // Call the mutation
+      const res = await signUp();
 
-    console.log(res.data);
-    console.log('Created account');
+      if (res) {
+        console.log('Created account');
+        Router.push({
+          pathname: '/dashboard',
+        });
+      }
+    } else {
+      console.log("Didn't work 🤷‍");
+    }
   };
 
-  //   requestPricing = async (e, pricing) => {
-  //     // Prevent the form from submitting
-  //     e.preventDefault();
-
-  //     // Call the mutation
-  //     const res = await pricing();
-
-  //     // console.log(res.data);
-  //     console.log('Requested pricing');
-  //   };
-
-  handleChange = e => {
+  const handleChange = (e, hookType) => {
     const { name, value, type } = e.target;
-    this.setState({
-      [name]: value,
-    });
+    switch (hookType) {
+      case 'NAME':
+        setName(value);
+        break;
+      case 'EMAIL':
+        setEmail(value);
+        break;
+      case 'PASSWORD':
+        setPassword(value);
+        break;
+      case 'CONFIRM_PASSWORD':
+        setConfirmPassword(value);
+        break;
+    }
   };
 
-  render() {
-    return (
-      <SignupContainer
-        // error={error}
-        createAccount={this.createAccount}
-        websiteURL={this.state.websiteURL}
-        handleChange={this.handleChange}
-      />
-    );
-  }
-}
+  return (
+    <Container handleChange={handleChange}>
+      <PageHeading>Register</PageHeading>
+      <SignupFormContainer>
+        <ErrorMessage error={props.error} />
+        <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
+          <SignupInputContainer>
+            <label htmlFor="name">Name</label>
+            <SignupTextInput
+              id="name"
+              name="name"
+              type="text"
+              placeholder=""
+              required
+              value={name}
+              onChange={e => handleChange(e, 'NAME')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="email">Email Address</label>
+            <SignupTextInput
+              id="email"
+              name="email"
+              type="text"
+              placeholder=""
+              required
+              value={email}
+              onChange={e => handleChange(e, 'EMAIL')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="password">Password</label>
+            <SignupTextInput
+              id="password"
+              name="password"
+              type="password"
+              placeholder=""
+              required
+              value={password}
+              onChange={e => handleChange(e, 'PASSWORD')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <SignupTextInput
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder=""
+              required
+              value={confirmPassword}
+              onChange={e => handleChange(e, 'CONFIRM_PASSWORD')}
+            />
+          </SignupInputContainer>
+        </SignupForm>
+        <ContinueButton type="submit" value="Continue" form="urlForm" />
+      </SignupFormContainer>
+    </Container>
+  );
+};
 
 export default Signup;
-// export { SIGNUP_MUTATION };
+export { Container, PageHeading, SignupFormContainer, ContinueButton };
