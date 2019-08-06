@@ -13,8 +13,6 @@ const GET_CURRENT_USER = gql`
 
 const Authenticate = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
-
-  console.log(`Data: ` + JSON.stringify(data));
   if (loading) return <p>Loading...</p>;
   if (data) {
     return props.children;
