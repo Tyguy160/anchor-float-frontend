@@ -3,13 +3,10 @@ const bcrypt = require('bcryptjs');
 const { getUserTokenFromId } = require('../user');
 
 const Mutation = {
-  // Sign-up mutation
   async signUp(parent, { input }, context) {
-    // Take the user provided email and password, then hash the password
     const { email, password } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Try to create a new user
     try {
       const user = await context.db.users.create({
         data: {
@@ -29,11 +26,9 @@ const Mutation = {
     }
   },
 
-  // Sign-in mutation
   async signIn(parent, { input }, context) {
     const email = input.email.toLowerCase();
 
-    // Try to find the user with the email, then compare their hashed pass to the provided one
     try {
       const user = await context.db.users.findOne({
         where: {
@@ -61,7 +56,6 @@ const Mutation = {
       throw new Error('You must be signed in');
     }
 
-    // get user but with domains
     user = await context.db.query.user(
       { where: { id: user.id } },
       '{ id, email, name, domains { id, hostname } }',
