@@ -1,11 +1,10 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
-const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
+const { getUserTokenFromId } = require('../user');
 
 const Mutation = {
   // Sign-up mutation
-  async signUp(parent, { input }, context, info) {
+  async signUp(parent, { input }, context) {
     // Take the user provided email and password, then hash the password
     const { email, password } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,22 +18,19 @@ const Mutation = {
         },
       });
 
-      const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET, {
-        expiresIn: '30d', // token will expire in 30days
-      });
+      const token = getUserTokenFromId(user.id);
       context.res.cookie('token', token, {
         httpOnly: true,
       });
 
       return user;
     } catch (err) {
-      console.log(err);
       throw new Error('We were unable to create your account. Try another email.');
     }
   },
 
   // Sign-in mutation
-  async signIn(parent, { input }, context, info) {
+  async signIn(parent, { input }, context) {
     const email = input.email.toLowerCase();
 
     // Try to find the user with the email, then compare their hashed pass to the provided one
@@ -48,9 +44,7 @@ const Mutation = {
       if (!passValid) {
         throw new Error('Incorrect password');
       }
-      const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET, {
-        expiresIn: '30d', // token will expire in 30days
-      });
+      const token = getUserTokenFromId(user.id);
       context.res.cookie('token', token, {
         httpOnly: true,
       });
