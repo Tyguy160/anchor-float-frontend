@@ -1,6 +1,5 @@
 const Query = {
   me(parent, args, { user, db }, info) {
-    console.log('User:' + user);
     if (!user) {
       throw new Error('Not Authenticated');
     }
@@ -10,9 +9,6 @@ const Query = {
       },
       info,
     );
-  },
-  users(parent, args, context, info) {
-    return context.db.users.findMany();
   },
 };
 
