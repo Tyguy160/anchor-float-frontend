@@ -14,8 +14,9 @@ function populateUser(req) {
 }
 
 function getUserTokenFromId(userId) {
+  const EXPIRES_IN = '30d';
   return jwt.sign({ userId }, process.env.APP_SECRET, {
-    expiresIn: '30d', // token will expire in 30days
+    expiresIn: EXPIRES_IN,
   });
 }
 
