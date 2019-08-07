@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import SignOut from './SignOut';
+
 const GET_CURRENT_USER = gql`
   query me {
     me {
