@@ -17,5 +17,7 @@ createApolloServer().then((server) => {
       credentials: true,
     },
   });
+
+  // eslint-disable-next-line no-console
   app.listen({ port: process.env.PORT }, () => console.log(`🚀 Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`));
 });
