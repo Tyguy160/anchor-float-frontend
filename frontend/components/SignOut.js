@@ -4,15 +4,13 @@ import { StyledLink } from './Nav';
 import Router from 'next/router';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
-const SIGNOUT_MUTATION = gql`
-  mutation SIGNOUT_MUTATION {
+const SIGN_OUT_MUTATION = gql`
+  mutation SIGN_OUT_MUTATION {
     signOut {
       message
     }
   }
 `;
-
-
 
 const SignOut = props => {
   const [signOut] = useMutation(SIGNOUT_MUTATION);
