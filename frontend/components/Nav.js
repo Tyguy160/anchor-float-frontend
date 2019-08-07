@@ -59,8 +59,7 @@ export const StyledLink = styled.a`
 
 const Nav = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
-
-  if (loading || !data) {
+  if (loading || !data.me) {
     return (
       <NavBar>
         <Link href="/" passHref>
