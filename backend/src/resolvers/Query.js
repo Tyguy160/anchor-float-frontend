@@ -1,7 +1,7 @@
 const Query = {
   me(parent, args, { user, db }, info) {
     if (!user) {
-      throw new Error('Not Authenticated');
+      return null;
     }
     return db.users.findOne(
       {

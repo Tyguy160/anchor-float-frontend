@@ -19,6 +19,7 @@ const typeDefs = gql`
     signUp(input: SignUpInput!): SignUpPayload
     signIn(input: SignInInput!): SignInPayload
     addDomain(input: AddDomainInput!): AddDomainPayload
+    signOut: SignOutPayload
   }
 
   input SignUpInput {
@@ -47,6 +48,10 @@ const typeDefs = gql`
 
   type AddDomainPayload {
     domain: Domain
+  }
+
+  type SignOutPayload {
+    message: String
   }
 `;
 
