@@ -1,10 +1,8 @@
 import React from 'react';
-import { CURRENT_USER_QUERY } from './User';
-import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { StyledLink } from './Nav';
 import Router from 'next/router';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
 const SIGNOUT_MUTATION = gql`
   mutation SIGNOUT_MUTATION {
@@ -14,41 +12,23 @@ const SIGNOUT_MUTATION = gql`
   }
 `;
 
-const GET_CURRENT_USER = gql`
-  query me {
-    me {
-      id
-    }
-  }
-`;
+
 
 const SignOut = props => {
-  const [signOut, { error, data }] = useMutation(SIGNOUT_MUTATION, {
-    refetchQueries: ['me'],
-  });
+  const [signOut] = useMutation(SIGNOUT_MUTATION);
+  const client = useApolloClient();
 
-  const {
-    client,
-    loading,
-    data: { currentUser },
-  } = useQuery(GET_CURRENT_USER);
+  const handleSignOutClick = async e => {
+    e.preventDefault();
+    await Promise.all([signOut(), client.resetStore()]);
+    Router.push({
+      pathname: '/',
+    }); 
+  }
 
   return (
     <StyledLink
-      onClick={async () => {
-        try {
-          // ! Not a good way to do the cache reset...
-          const res = await signOut().then(() => client.resetStore());
-
-          console.log({ res });
-          // client.resetStore();
-          Router.push({
-            pathname: '/',
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      }}>
+      onClick={handleSignOutClick}>
       Sign Out
     </StyledLink>
   );
