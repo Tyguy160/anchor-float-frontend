@@ -117,6 +117,11 @@ const Mutation = {
 
     return domain;
   },
+
+  signOut(parent, args, context, info) {
+    context.res.clearCookie('token');
+    return { message: 'Successfully logged out 🔑' };
+  },
 };
 
 module.exports = Mutation;

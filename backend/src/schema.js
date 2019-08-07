@@ -10,6 +10,10 @@ const typeDefs = gql`
     hostname: String
   }
 
+  type SuccessMessage {
+    message: String
+  }
+
   type Query {
     me: User
     users: [User]!
@@ -19,6 +23,7 @@ const typeDefs = gql`
     signUp(input: SignUpInput!): SignUpPayload
     signIn(input: SignInInput!): SignInPayload
     addDomain(input: AddDomainInput!): AddDomainPayload
+    signOut: SuccessMessage
   }
 
   input SignUpInput {
