@@ -16,13 +16,15 @@
     "bcryptjs": "2.4.3",
     "cheerio": "^1.0.0-rc.3",
     "cookie-parser": "^1.4.4",
+    "crypto": "^1.0.1",
     "cuid": "^2.1.6",
     "dotenv": "6.0.0",
     "express": "^4.17.1",
     "graphql": "^14.4.2",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^1.19.1",
-    "sitemapper": "^2.2.0"
+    "sitemapper": "^2.2.0",
+    "util": "^0.12.1"
   },
   "license": "MIT",
   "repository": {},

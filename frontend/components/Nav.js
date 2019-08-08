@@ -1,8 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-// import User from './User';
-// import SignOut from './SignOut';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import SignOut from './SignOut';
+
+const GET_CURRENT_USER = gql`
+  query me {
+    me {
+      id
+    }
+  }
+`;
 
 const NavBar = styled.div`
   background: #383838;
@@ -49,42 +58,11 @@ export const StyledLink = styled.a`
   }
 `;
 
-const Nav = () => {
-  return (
-    // <User>
-    //   {payload => (
-    <NavBar>
-      {/* {
-        //payload.data.me && (  // TODO: uncomment this once backend is working
-        <>
-          <Link href="/dashboard" passHref>
-            <Logo>
-              <img
-                src="/static/logo.png"
-                style={{
-                  maxHeight: `30px`,
-                }}
-              />
-              <div style={{ width: `100%` }}>Anchor Float</div>
-            </Logo>
-          </Link>
-          <Links>
-            <Link href="/dashboard" passHref>
-              <StyledLink>Dashboard</StyledLink>
-            </Link>
-            <Link href="/domains" passHref>
-              <StyledLink>Domains</StyledLink>
-            </Link>
-            <Link href="/account" passHref>
-              <StyledLink>Account</StyledLink>
-            </Link>
-            {/* <SignOut />
-          </Links>
-        </>
-        // )
-      } */}
-      {/* TODO: uncomment this once backend is working !payload.data.me && */}
-      <>
+const Nav = props => {
+  const { loading, data } = useQuery(GET_CURRENT_USER);
+  if (loading || !data.me) {
+    return (
+      <NavBar>
         <Link href="/" passHref>
           <Logo>
             <img
@@ -117,11 +95,39 @@ const Nav = () => {
             <StyledLink>Sign In</StyledLink>
           </Link>
         </Links>
-      </>
-    </NavBar>
-    //   )}
-    // </User>
-  );
+      </NavBar>
+    );
+  }
+  if (data) {
+    return (
+      <NavBar>
+        <Link href="/" passHref>
+          <Logo>
+            <img
+              src="/static/logo.png"
+              style={{
+                maxHeight: `30px`,
+                marginTop: `5px`,
+              }}
+            />
+            <div>Anchor Float</div>
+          </Logo>
+        </Link>
+        <Links>
+          <Link href="/dashboard" passHref>
+            <StyledLink>Dashboard</StyledLink>
+          </Link>
+          {/* <Link href="/domains" passHref>
+            <StyledLink>Domains</StyledLink>
+          </Link> */}
+          <Link href="/account" passHref>
+            <StyledLink>Account</StyledLink>
+          </Link>
+          <SignOut />
+        </Links>
+      </NavBar>
+    );
+  }
 };
 
 export default Nav;

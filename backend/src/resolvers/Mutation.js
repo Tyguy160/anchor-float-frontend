@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs');
+const { randomBytes } = require('crypto');
+const { promisify } = require('util');
 
 const { getUserTokenFromId } = require('../user');
 
@@ -116,6 +118,79 @@ const Mutation = {
     });
 
     return domain;
+  },
+
+  signOut(parent, args, context, info) {
+    context.res.clearCookie('token');
+    return { message: 'Successfully logged out 🔑' };
+  },
+
+  async requestReset(parent, args, context, info) {
+    try {
+      // Check to see if the user exists
+      const user = await context.db.users.findOne({ where: { email: args.email } });
+
+      // Create a reset token and expiry
+      const randomBytesPromisified = promisify(randomBytes);
+      const resetToken = (await randomBytesPromisified(20)).toString('hex');
+      console.log(resetToken);
+      const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+
+      // Update the user with the token and expiry
+      const res = await context.db.users.update({
+        where: { email: args.email },
+        data: { resetToken, resetTokenExpiry },
+      });
+
+      // TODO: Email them the reset token
+      return { message: 'Please check your email for a reset link' };
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  async resetPassword(parent, { input }, context, info) {
+    const { resetToken, password, confirmPassword } = input;
+    // Check if the passwords match
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+
+    // Check if reset token is legitimate
+    // Check if reset token is expired
+    const [user] = await context.db.users.findMany({
+      where: {
+        resetToken,
+        resetTokenExpiry: { gte: Date.now() - 3600000 },
+      },
+    });
+    console.log(user);
+    if (!user) {
+      console.log('this token is either invalid or expired');
+    }
+
+    // Hash new password
+    const newPassword = await bcrypt.hash(password, 10);
+
+    // Save the new password to the user and remove old resetToken fields
+    const updatedUser = await context.db.users.update({
+      where: { email: user.email },
+      data: {
+        password: newPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    // Generate JWT
+    const token = getUserTokenFromId(updatedUser.id);
+
+    // Set the JWT cookie
+    context.res.cookie('token', token, {
+      httpOnly: true,
+    });
+
+    // Return the new user
+    return updatedUser;
   },
 };
 

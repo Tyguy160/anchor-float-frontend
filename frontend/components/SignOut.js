@@ -4,8 +4,8 @@ import { StyledLink } from './Nav';
 import Router from 'next/router';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
-const SIGN_OUT_MUTATION = gql`
-  mutation SIGN_OUT_MUTATION {
+const SIGNOUT_MUTATION = gql`
+  mutation SIGNOUT_MUTATION {
     signOut {
       message
     }
@@ -13,23 +13,22 @@ const SIGN_OUT_MUTATION = gql`
 `;
 
 const SignOut = props => {
-  const [signOut] = useMutation(SIGNOUT_MUTATION);
   const client = useApolloClient();
+  const [signOut] = useMutation(SIGNOUT_MUTATION, {
+    onCompleted: async () => {
+      sessionStorage.clear(); // or localStorage
+      await client.clearStore()
+      await client.resetStore()
+      Router.push('/signin') // redirect user to login page
+    },
+  });
 
   const handleSignOutClick = async e => {
     e.preventDefault();
-    await Promise.all([signOut(), client.resetStore()]);
-    Router.push({
-      pathname: '/',
-    }); 
-  }
+    await signOut();
+  };
 
-  return (
-    <StyledLink
-      onClick={handleSignOutClick}>
-      Sign Out
-    </StyledLink>
-  );
+  return <StyledLink onClick={handleSignOutClick}>Sign Out</StyledLink>;
 };
 
 export default SignOut;
