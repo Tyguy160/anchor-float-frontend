@@ -5,7 +5,7 @@ class Account extends Component {
   render(props) {
     return (
       <Authenticate>
-        <div>This is the account page</div>;
+        <div>This is the account page</div>
       </Authenticate>
     );
   }

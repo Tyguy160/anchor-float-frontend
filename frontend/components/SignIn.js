@@ -5,6 +5,7 @@ import Error from './ErrorMessage';
 import Router from 'next/router';
 import styled from 'styled-components';
 import { CURRENT_USER_QUERY } from './User';
+import Link from 'next/link';
 
 const Container = styled.div``;
 const PageHeading = styled.h2`
@@ -80,6 +81,14 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
+const RESET_REQUEST_MUTATION = gql`
+  mutation RESET_REQUEST_MUTATION($email: String!) {
+    requestReset(email: $email) {
+      message
+    }
+  }
+`;
+
 const SignIn = props => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -88,9 +97,14 @@ const SignIn = props => {
     variables: { input: { email, password } },
     refetchQueries: ['me'],
   });
-  return (
-    //   refetchQueries={[{ query: CURRENT_USER_QUERY }]}
 
+  const [resetPassword, { error2, data2 }] = useMutation(
+    RESET_REQUEST_MUTATION,
+    {
+      variables: { email },
+    }
+  );
+  return (
     <Container>
       <PageHeading>Sign into your account</PageHeading>
       <SigninFormContainer>
@@ -134,6 +148,19 @@ const SignIn = props => {
             </label>
           </SigninInputContainer>
           <ContinueButton type="submit">Sign In!</ContinueButton>
+          <a
+            onClick={e => {
+              e.preventDefault();
+              console.log(`Attempting reset for ${email}`);
+              if (!email) {
+                console.log('Sorry, you need to enter an email address above');
+              }
+              resetPassword(email);
+            }}
+            href=""
+            style={{ textAlign: `center`, padding: `5px` }}>
+            <i>Forgot password?</i>
+          </a>
         </SigninForm>
       </SigninFormContainer>
     </Container>
