@@ -4,8 +4,6 @@ import gql from 'graphql-tag';
 import Error from './ErrorMessage';
 import Router from 'next/router';
 import styled from 'styled-components';
-import { CURRENT_USER_QUERY } from './User';
-import Link from 'next/link';
 
 const Container = styled.div``;
 const PageHeading = styled.h2`
@@ -61,14 +59,10 @@ const ContinueButton = styled.button`
   }
 `;
 
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($input: SignInInput!) {
-    signIn(input: $input) {
-      token
-      user {
-        id
-        email
-      }
+const REQUEST_RESET_MUTATION = gql`
+  mutation REQUEST_RESET_MUTATION($input: RequestResetInput!) {
+    requestReset(input: $input) {
+      message
     }
   }
 `;
@@ -81,43 +75,26 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
-const RESET_REQUEST_MUTATION = gql`
-  mutation RESET_REQUEST_MUTATION($email: String!) {
-    requestReset(email: $email) {
-      message
-    }
-  }
-`;
-
-const SignIn = props => {
-  const [password, setPassword] = useState('');
+const RequestReset = props => {
   const [email, setEmail] = useState('');
 
-  const [signIn, { error, data }] = useMutation(SIGNIN_MUTATION, {
-    variables: { input: { email, password } },
-    refetchQueries: ['me'],
+  const [requestReset, { error, data }] = useMutation(REQUEST_RESET_MUTATION, {
+    variables: { input: { email } },
   });
-
-  const [resetPassword, { error2, data2 }] = useMutation(
-    RESET_REQUEST_MUTATION,
-    {
-      variables: { email },
-    }
-  );
   return (
     <Container>
-      <PageHeading>Sign into your account</PageHeading>
+      <PageHeading>Reset your password</PageHeading>
       <SigninFormContainer>
+        <div style={{ textAlign: `center`, paddingTop: `15px` }}>
+          {data ? <i>A reset link has been sent to your email.</i> : <i />}
+        </div>
         <SigninForm
           method="post"
           onSubmit={async e => {
             e.preventDefault();
             try {
-              const res = await signIn();
+              const res = await requestReset();
               console.log({ res });
-              Router.push({
-                pathname: '/dashboard',
-              });
             } catch (err) {
               console.log({ err });
             }
@@ -132,38 +109,17 @@ const SignIn = props => {
                 // placeholder="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                disabled={data}
               />
             </label>
           </SigninInputContainer>
-          <SigninInputContainer>
-            <label htmlFor="password">
-              Password
-              <SigninTextInput
-                type="password"
-                name="password"
-                // placeholder="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </label>
-          </SigninInputContainer>
-          <ContinueButton type="submit">Sign In!</ContinueButton>
-          <Link
-            // onClick={e => {
-            //   e.preventDefault();
-            //   console.log(`Attempting reset for ${email}`);
-            //   if (!email) {
-            //     console.log('Sorry, you need to enter an email address above');
-            //   }
-            //   resetPassword(email);
-            // }}
-            href="/request-reset">
-            <i>Forgot password?</i>
-          </Link>
+          <ContinueButton type="submit" disabled={data}>
+            Reset
+          </ContinueButton>
         </SigninForm>
       </SigninFormContainer>
     </Container>
   );
 };
 
-export default SignIn;
+export default RequestReset;
