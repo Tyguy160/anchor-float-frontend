@@ -20,7 +20,7 @@ const typeDefs = gql`
     signIn(input: SignInInput!): SignInPayload
     addDomain(input: AddDomainInput!): AddDomainPayload
     signOut: SuccessMessage
-    requestReset(email: String!): SuccessMessage
+    requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
   }
 
@@ -54,6 +54,10 @@ const typeDefs = gql`
 
   type SuccessMessage {
     message: String
+  }
+
+  input RequestResetInput {
+    email: String!
   }
 
   input ResetPasswordInput {

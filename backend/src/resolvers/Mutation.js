@@ -125,10 +125,11 @@ const Mutation = {
     return { message: 'Successfully logged out 🔑' };
   },
 
-  async requestReset(parent, args, context, info) {
+  async requestReset(parent, { input }, context, info) {
+    const { email } = input;
     try {
       // Check to see if the user exists
-      const user = await context.db.users.findOne({ where: { email: args.email } });
+      const user = await context.db.users.findOne({ where: { email } });
 
       // Create a reset token and expiry
       const randomBytesPromisified = promisify(randomBytes);
@@ -138,7 +139,7 @@ const Mutation = {
 
       // Update the user with the token and expiry
       const res = await context.db.users.update({
-        where: { email: args.email },
+        where: { email },
         data: { resetToken, resetTokenExpiry },
       });
 
