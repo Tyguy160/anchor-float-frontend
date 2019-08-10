@@ -114,7 +114,6 @@ const SignIn = props => {
             e.preventDefault();
             try {
               const res = await signIn();
-              console.log({ res });
               Router.push({
                 pathname: '/dashboard',
               });

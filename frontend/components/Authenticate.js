@@ -14,10 +14,10 @@ const GET_CURRENT_USER = gql`
 const Authenticate = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
   if (loading) return <p>Loading...</p>;
-  if (data) {
+  if (data.me) {
     return props.children;
   }
-  if (!data) {
+  if (!data.me) {
     return (
       <div>
         <p>Please sign in before continuing 🔑</p>

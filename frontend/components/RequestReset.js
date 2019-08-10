@@ -94,7 +94,6 @@ const RequestReset = props => {
             e.preventDefault();
             try {
               const res = await requestReset();
-              console.log({ res });
             } catch (err) {
               console.log({ err });
             }

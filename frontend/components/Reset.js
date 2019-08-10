@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import ErrorMessage from './ErrorMessage';
-import Router from 'next/router';
-import Link from 'next/link';
+import Router, { useRouter } from 'next/router';
 
 const Container = styled.div``;
 
@@ -61,26 +60,36 @@ const SignupTextInput = styled.input`
   margin-right: 10px;
 `;
 
-const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION($input: SignUpInput!) {
-    signUp(input: $input) {
+const RESET_PASSWORD_MUTATION = gql`
+  mutation RESET_PASSWORD_MUTATION($input: ResetPasswordInput!) {
+    resetPassword(input: $input) {
       id
       email
     }
   }
 `;
 
-const Reset = props => {
-  console.log(Router.query.resetToken);
+const GET_CURRENT_USER = gql`
+  query me {
+    me {
+      id
+    }
+  }
+`;
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+const Reset = props => {
+  const { resetToken } = props.props.query;
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [signUp, { error, data }] = useMutation(SIGNUP_MUTATION, {
-    variables: { input: { email, password } },
-  });
+  const [resetPassword, { error, data }] = useMutation(
+    RESET_PASSWORD_MUTATION,
+    {
+      variables: { input: { resetToken, password, confirmPassword } },
+      refetchQueries: ['me'],
+    }
+  );
 
   const createAccount = async e => {
     // Prevent the form from submitting
@@ -88,10 +97,10 @@ const Reset = props => {
 
     if (password === confirmPassword) {
       // Call the mutation
-      const res = await signUp();
+      const res = await resetPassword();
 
       if (res) {
-        console.log('Created account');
+        console.log('Reset password');
         Router.push({
           pathname: '/dashboard',
         });
