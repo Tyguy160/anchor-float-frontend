@@ -1,5 +1,7 @@
+const { db } = require('../../prisma/db');
+
 async function scrapePage(url) {
-  return true;
+  return url;
 }
 
 module.exports = { scrapePage };
