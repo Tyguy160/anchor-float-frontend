@@ -10,9 +10,6 @@ const Query = {
       info,
     );
   },
-  users(parent, args, context, info) {
-    return context.db.users.findMany();
-  },
 };
 
 module.exports = Query;
