@@ -5,6 +5,7 @@ const { transport, emailTemplate } = require('../mail');
 const { getUserTokenFromId } = require('../user');
 
 const Mutation = {
+  // Done
   async signUp(parent, { input }, context) {
     const { email, password } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,6 +29,7 @@ const Mutation = {
     }
   },
 
+  // Done
   async signIn(parent, { input }, context) {
     const email = input.email.toLowerCase();
 
@@ -52,79 +54,84 @@ const Mutation = {
     }
   },
 
+  // TODO
   async addDomain(parent, args, context, info) {
-    let { user } = context.request;
-    if (!user) {
-      throw new Error('You must be signed in');
-    }
+    const domain = '';
+    // const { user } = context.request;
+    console.log(context.res);
+    // if (!user) {
+    //   throw new Error('You must be signed in');
+    // }
 
-    user = await context.db.query.user(
-      { where: { id: user.id } },
-      '{ id, email, name, domains { id, hostname } }',
-    );
+    // user = await context.db.query.user(
+    //   { where: { id: user.id } },
+    //   '{ id, email, name, domains { id, hostname } }',
+    // );
 
-    let { hostname } = args;
-    hostname = hostname.toLowerCase();
-    const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
-    if (userHasDomain) {
-      throw new Error(`You've alread added ${hostname}`);
-    }
+    // let { hostname } = args;
+    // hostname = hostname.toLowerCase();
+    // const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
+    // if (userHasDomain) {
+    //   throw new Error(`You've alread added ${hostname}`);
+    // }
 
-    let domain = await context.db.query.domain({
-      where: { hostname },
-    });
-    if (!domain) {
-      domain = await context.db.mutation.createDomain(
-        {
-          data: {
-            ...args,
-          },
-        },
-        info,
-      );
-      const domainPrefs = await context.db.mutation.createUserDomainPreferences(
-        {
-          data: {
-            domain: { connect: { id: domain.id } },
-            user: { connect: { id: user.id } },
-          },
-        },
-        `{
-          id
-          domain {
-            id
-          }
-          user {
-            id
-          }
-        }`,
-      );
-      await context.db.mutation.updateDomain({
-        where: { id: domain.id },
-        data: { preferences: { connect: [{ id: domainPrefs.id }] } },
-      });
-    }
-    await context.db.mutation.updateUser({
-      where: { id: user.id },
-      data: {
-        domains: {
-          connect: [
-            {
-              id: domain.id,
-            },
-          ],
-        },
-      },
-    });
+    // let domain = await context.db.query.domain({
+    //   where: { hostname },
+    // });
+    // if (!domain) {
+    //   domain = await context.db.mutation.createDomain(
+    //     {
+    //       data: {
+    //         ...args,
+    //       },
+    //     },
+    //     info,
+    //   );
+    //   const domainPrefs = await context.db.mutation.createUserDomainPreferences(
+    //     {
+    //       data: {
+    //         domain: { connect: { id: domain.id } },
+    //         user: { connect: { id: user.id } },
+    //       },
+    //     },
+    //     `{
+    //       id
+    //       domain {
+    //         id
+    //       }
+    //       user {
+    //         id
+    //       }
+    //     }`,
+    //   );
+    //   await context.db.mutation.updateDomain({
+    //     where: { id: domain.id },
+    //     data: { preferences: { connect: [{ id: domainPrefs.id }] } },
+    //   });
+    // }
+    // await context.db.mutation.updateUser({
+    //   where: { id: user.id },
+    //   data: {
+    //     domains: {
+    //       connect: [
+    //         {
+    //           id: domain.id,
+    //         },
+    //       ],
+    //     },
+    //   },
+    // });
 
     return domain;
   },
 
+  // Done
   signOut(parent, args, context, info) {
     context.res.clearCookie('token');
     return { message: 'Successfully logged out 🔑' };
   },
 
+  // Done
   async requestReset(parent, { input }, context, info) {
     const { email } = input;
     try {
@@ -160,6 +167,8 @@ const Mutation = {
       console.log(err);
     }
   },
+
+  // Done
   async resetPassword(parent, { input }, context, info) {
     const { resetToken, password, confirmPassword } = input;
     // Check if the passwords match

@@ -23,6 +23,7 @@ model Domain {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   hostname  String
+  pages     Page[]
 }
 
 model Page {
@@ -33,6 +34,7 @@ model Page {
   pageTitle String?
   wordCount Int?
   links     Link[]
+  domain    Domain
 }
 
 model Link {
