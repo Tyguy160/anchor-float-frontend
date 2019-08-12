@@ -17,7 +17,7 @@ describe('parseMarkup', () => {
   });
 
   test('returns a word count', () => {
-    expect(parsedPageInfo.wordCount).toBe(1403);
+    expect(parsedPageInfo.wordCount).toBe(1404);
   });
 
   test('throws if not passed any markup', () => {

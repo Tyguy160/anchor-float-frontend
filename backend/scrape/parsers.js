@@ -28,7 +28,8 @@ function parseMarkup(markupString, options = {}) {
     return $(this).text();
   }).get().join(' ');
 
-  const wordCount = str.replace(/\s\s+/g, ' ').split(' ').length;
+  const ALL_WHITESPACE_REGEX = /\s+/g;
+  const wordCount = str.replace(ALL_WHITESPACE_REGEX, ' ').split(' ').length;
 
   // Get links that go somewhere
   const LINK_SELECTOR = 'a[href!=""]:not([href^=#])';
@@ -37,7 +38,7 @@ function parseMarkup(markupString, options = {}) {
       const node = $(this);
       return {
         href: node.attr('href'),
-        text: node.text().trim(),
+        text: node.text().trim().replace(ALL_WHITESPACE_REGEX, ' '),
         rel: node.attr('rel') || null,
         title: node.attr('title') || null,
       };
