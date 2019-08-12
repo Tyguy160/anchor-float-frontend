@@ -3,9 +3,13 @@
     "airbnb"
   ],
   "plugins": [
-    "ignore-generated-and-nolint"
+    "ignore-generated-and-nolint",
+    "jest"
   ],
   "rules": {
     "no-console": 2,
+  },
+  "env": {
+    "jest/globals": true
   }
 }

@@ -1,6 +1,6 @@
 const { ApolloServer } = require('apollo-server-express');
 
-const db = require('./db');
+const { db } = require('../prisma/db');
 const typeDefs = require('./schema');
 const Mutation = require('./resolvers/Mutation');
 const Query = require('./resolvers/Query');
