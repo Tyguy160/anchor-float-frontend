@@ -44,6 +44,7 @@ model Page {
   pageTitle String?
   wordCount Int?
   links     Link[]
+  domain    Domain
 }
 
 model Link {

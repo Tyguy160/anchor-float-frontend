@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
-
+const { transport, emailTemplate } = require('../mail');
 const { getUserTokenFromId } = require('../user');
 
 const Mutation = {
+  // Done
   async signUp(parent, { input }, context) {
     const { email, password } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,6 +29,7 @@ const Mutation = {
     }
   },
 
+  // Done
   async signIn(parent, { input }, context) {
     const email = input.email.toLowerCase();
 
@@ -52,102 +54,121 @@ const Mutation = {
     }
   },
 
+  // TODO
   async addDomain(parent, args, context, info) {
-    let { user } = context.request;
-    if (!user) {
-      throw new Error('You must be signed in');
-    }
+    const domain = '';
+    // const { user } = context.request;
+    console.log(context.res);
+    // if (!user) {
+    //   throw new Error('You must be signed in');
+    // }
 
-    user = await context.db.query.user(
-      { where: { id: user.id } },
-      '{ id, email, name, domains { id, hostname } }',
-    );
+    // user = await context.db.query.user(
+    //   { where: { id: user.id } },
+    //   '{ id, email, name, domains { id, hostname } }',
+    // );
 
-    let { hostname } = args;
-    hostname = hostname.toLowerCase();
-    const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
-    if (userHasDomain) {
-      throw new Error(`You've alread added ${hostname}`);
-    }
+    // let { hostname } = args;
+    // hostname = hostname.toLowerCase();
+    // const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
+    // if (userHasDomain) {
+    //   throw new Error(`You've alread added ${hostname}`);
+    // }
 
-    let domain = await context.db.query.domain({
-      where: { hostname },
-    });
-    if (!domain) {
-      domain = await context.db.mutation.createDomain(
-        {
-          data: {
-            ...args,
-          },
-        },
-        info,
-      );
-      const domainPrefs = await context.db.mutation.createUserDomainPreferences(
-        {
-          data: {
-            domain: { connect: { id: domain.id } },
-            user: { connect: { id: user.id } },
-          },
-        },
-        `{
-          id
-          domain {
-            id
-          }
-          user {
-            id
-          }
-        }`,
-      );
-      await context.db.mutation.updateDomain({
-        where: { id: domain.id },
-        data: { preferences: { connect: [{ id: domainPrefs.id }] } },
-      });
-    }
-    await context.db.mutation.updateUser({
-      where: { id: user.id },
-      data: {
-        domains: {
-          connect: [
-            {
-              id: domain.id,
-            },
-          ],
-        },
-      },
-    });
+    // let domain = await context.db.query.domain({
+    //   where: { hostname },
+    // });
+    // if (!domain) {
+    //   domain = await context.db.mutation.createDomain(
+    //     {
+    //       data: {
+    //         ...args,
+    //       },
+    //     },
+    //     info,
+    //   );
+    //   const domainPrefs = await context.db.mutation.createUserDomainPreferences(
+    //     {
+    //       data: {
+    //         domain: { connect: { id: domain.id } },
+    //         user: { connect: { id: user.id } },
+    //       },
+    //     },
+    //     `{
+    //       id
+    //       domain {
+    //         id
+    //       }
+    //       user {
+    //         id
+    //       }
+    //     }`,
+    //   );
+    //   await context.db.mutation.updateDomain({
+    //     where: { id: domain.id },
+    //     data: { preferences: { connect: [{ id: domainPrefs.id }] } },
+    //   });
+    // }
+    // await context.db.mutation.updateUser({
+    //   where: { id: user.id },
+    //   data: {
+    //     domains: {
+    //       connect: [
+    //         {
+    //           id: domain.id,
+    //         },
+    //       ],
+    //     },
+    //   },
+    // });
 
     return domain;
   },
 
+  // Done
   signOut(parent, args, context, info) {
     context.res.clearCookie('token');
     return { message: 'Successfully logged out 🔑' };
   },
 
-  async requestReset(parent, args, context, info) {
+  // Done
+  async requestReset(parent, { input }, context, info) {
+    const { email } = input;
     try {
       // Check to see if the user exists
-      const user = await context.db.users.findOne({ where: { email: args.email } });
+      const user = await context.db.users.findOne({ where: { email } });
 
       // Create a reset token and expiry
       const randomBytesPromisified = promisify(randomBytes);
       const resetToken = (await randomBytesPromisified(20)).toString('hex');
-      console.log(resetToken);
       const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
 
       // Update the user with the token and expiry
       const res = await context.db.users.update({
-        where: { email: args.email },
+        where: { email },
         data: { resetToken, resetTokenExpiry },
       });
 
       // TODO: Email them the reset token
+      const mailRes = await transport.sendMail({
+        from: 'support@anchorfloat.com',
+        to: user.email,
+        subject: 'Reset Your Password',
+        html: emailTemplate(
+          `Your password reset token is here.
+          \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
+            Click here</a> to reset your password.`,
+        ),
+      });
+
+      // Return the message
       return { message: 'Please check your email for a reset link' };
     } catch (err) {
       console.log(err);
     }
   },
+
+  // Done
   async resetPassword(parent, { input }, context, info) {
     const { resetToken, password, confirmPassword } = input;
     // Check if the passwords match
@@ -163,7 +184,7 @@ const Mutation = {
         resetTokenExpiry: { gte: Date.now() - 3600000 },
       },
     });
-    console.log(user);
+
     if (!user) {
       console.log('this token is either invalid or expired');
     }
