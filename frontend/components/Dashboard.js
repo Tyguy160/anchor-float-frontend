@@ -42,7 +42,13 @@ const StyledTable = styled.table`
 const Dashboard = () => {
   return (
     <DashboardContainer>
+      <select>
+        <option>https://www.triplebarcoffee.com</option>
+        <option>https://www.anchorfloat.com</option>
+      </select>
       <h2>Dashboard</h2>
+      <button>Scan now</button>
+      <button>Settings</button>
       <StyledTable>
         <thead>
           <tr style={{ borderBottom: `2px gray solid` }}>
@@ -116,6 +122,32 @@ const Dashboard = () => {
           </tr>
         </tbody>
       </StyledTable>
+      <h2>Previous scans</h2>
+      <div>
+        <ul>
+          <li>
+            <div>
+              https://www.TripleBarCoffee.com
+              <button>+</button>
+            </div>
+            <i>07/02/19 17:54 UTC</i>
+          </li>
+          <li>
+            <div>
+              https://www.TripleBarCoffee.com
+              <button>+</button>
+            </div>
+            <i>07/05/19 17:54 UTC</i>
+          </li>
+          <li>
+            <div>
+              https://www.TripleBarCoffee.com
+              <button>+</button>
+            </div>
+            <i>07/08/19 17:54 UTC</i>
+          </li>
+        </ul>
+      </div>
       {/*         
         // getTdProps={(state, rowInfo, column) => {
         //   return {

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import Authenticate from '../components/Authenticate';
-
-class Account extends Component {
+import Account from '../components/Account';
+class AccountPage extends Component {
   render(props) {
     return (
       <Authenticate>
-        <div>This is the account page</div>
+        <Account />
       </Authenticate>
     );
   }
 }
 
-export default Account;
+export default AccountPage;
