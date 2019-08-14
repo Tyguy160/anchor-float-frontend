@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 const SignupFormContainer = styled.div`
   background-color: white;
@@ -50,11 +52,24 @@ const SignupTextInput = styled.input`
   margin-right: 10px;
 `;
 
+const USERSITES_QUERY = gql`
+  query userSites {
+    userSites {
+      sites {
+        hostname
+      }
+    }
+  }
+`;
+
 const Account = props => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  const { loading, error, data } = useQuery(USERSITES_QUERY);
+
+  console.log(data);
   const handleChange = (e, hookType) => {
     const { name, value, type } = e.target;
     switch (hookType) {
@@ -115,7 +130,7 @@ const Account = props => {
         <ContinueButton type="submit" value="Reset" form="urlForm" />
       </SignupFormContainer>
       <h2>Domains</h2>
-      <div>List domains here</div>
+      {/* <div>{console.log(userSites)}</div> */}
       <h4>Add a domain</h4>
       <h2>Domain Settings</h2>
       <select>
