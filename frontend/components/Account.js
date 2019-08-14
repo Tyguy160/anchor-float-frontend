@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 const SignupFormContainer = styled.div`
@@ -55,9 +55,15 @@ const SignupTextInput = styled.input`
 const USERSITES_QUERY = gql`
   query userSites {
     userSites {
-      sites {
-        hostname
-      }
+      hostname
+    }
+  }
+`;
+
+const ADD_USERSITE_MUTATION = gql`
+  mutation ADD_USERSITE_MUTATION($hostname: String!) {
+    addUserSite(hostname: $hostname) {
+      hostname
     }
   }
 `;
@@ -66,10 +72,17 @@ const Account = props => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [addDomain, setAddDomain] = useState('');
 
-  const { loading, error, data } = useQuery(USERSITES_QUERY);
+  const { loading, error: userSitesError, data: userSites } = useQuery(
+    USERSITES_QUERY
+  );
 
-  console.log(data);
+  const [addUserSite, { error, data }] = useMutation(ADD_USERSITE_MUTATION, {
+    variables: { input: { addDomain } },
+    refetchQueries: ['userSites'],
+  });
+
   const handleChange = (e, hookType) => {
     const { name, value, type } = e.target;
     switch (hookType) {
@@ -78,6 +91,9 @@ const Account = props => {
         break;
       case 'CONFIRM_NEW_PASSWORD':
         setConfirmPassword(value);
+        break;
+      case 'ADD_DOMAIN':
+        setAddDomain(value);
         break;
     }
   };
@@ -130,8 +146,39 @@ const Account = props => {
         <ContinueButton type="submit" value="Reset" form="urlForm" />
       </SignupFormContainer>
       <h2>Domains</h2>
-      {/* <div>{console.log(userSites)}</div> */}
-      <h4>Add a domain</h4>
+      {console.log(userSites)}
+      {userSites.userSites ? (
+        <div>
+          <ul>
+            {userSites.userSites.map(site => (
+              <li>{site.hostname}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div />
+      )}
+      <SignupFormContainer>
+        <SignupForm id="addDomainForm" onSubmit={e => addUserSite(e)}>
+          <SignupInputContainer>
+            <label htmlFor="addDomain">Domain</label>
+            <SignupTextInput
+              id="addDomainInput"
+              name="addDomain"
+              type="text"
+              placeholder=""
+              required
+              value={addDomain}
+              onChange={e => handleChange(e, 'ADD_DOMAIN')}
+            />
+          </SignupInputContainer>
+          <ContinueButton
+            type="submit"
+            value="Add domain"
+            form="addDomainForm"
+          />
+        </SignupForm>
+      </SignupFormContainer>
       <h2>Domain Settings</h2>
       <select>
         <option>https://www.triplebarcoffee.com</option>
