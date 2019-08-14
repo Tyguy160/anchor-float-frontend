@@ -19,10 +19,11 @@ const Query = {
       where: { user: { id: user.userId } },
       select: { site: true },
     });
+    const sites = userSites.map(userSite => ({
+      hostname: userSite.site.hostname,
+    }));
 
-    const sites = userSites.map(userSite => userSite.site);
-    console.log(...sites);
-    return { sites };
+    return [...sites];
   },
 };
 

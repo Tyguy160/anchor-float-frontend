@@ -12,7 +12,7 @@ const typeDefs = gql`
 
   type Query {
     me: User
-    userSites: UserSitesPayload
+    userSites: [UserSite]
   }
 
   type Mutation {
