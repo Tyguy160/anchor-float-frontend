@@ -25,9 +25,7 @@ const Mutation = {
 
       return user;
     } catch (err) {
-      throw new Error(
-        'We were unable to create your account. Try another email.'
-      );
+      throw new Error('We were unable to create your account. Try another email.');
     }
   },
 
@@ -63,7 +61,7 @@ const Mutation = {
       input: { hostname },
     },
     { user, db },
-    info
+    info,
   ) {
     if (!user) {
       throw new Error('You must be signed in');
@@ -139,10 +137,8 @@ const Mutation = {
         subject: 'Reset Your Password',
         html: emailTemplate(
           `Your password reset token is here.
-          \n\n <a href="${
-            process.env.FRONTEND_URL
-          }/reset?resetToken=${resetToken}">
-            Click here</a> to reset your password.`
+          \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
+            Click here</a> to reset your password.`,
         ),
       });
 

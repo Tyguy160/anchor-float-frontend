@@ -67,7 +67,7 @@ const typeDefs = gql`
   }
 
   type UserSitesPayload {
-    sites: [UserSite]
+    userSites: [UserSite]
   }
 `;
 

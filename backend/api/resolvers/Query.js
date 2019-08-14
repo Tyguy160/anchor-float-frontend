@@ -7,7 +7,7 @@ const Query = {
       {
         where: { id: user.userId },
       },
-      info
+      info,
     );
   },
 
@@ -17,12 +17,12 @@ const Query = {
     }
     const userSites = await db.userSites.findMany({
       where: { user: { id: user.userId } },
-      // include: ['sites'],
+      select: { site: true },
     });
 
-    console.log({ userSites });
-
-    return { sites: [{ hostname: 'mattssite.com' }] };
+    const sites = userSites.map(userSite => userSite.site);
+    console.log(...sites);
+    return { sites };
   },
 };
 
