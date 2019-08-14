@@ -6,18 +6,19 @@ const typeDefs = gql`
     email: String
   }
 
-  type Domain {
+  type UserSite {
     hostname: String
   }
 
   type Query {
     me: User
+    userSites: UserSitesPayload
   }
 
   type Mutation {
     signUp(input: SignUpInput!): SignUpPayload
     signIn(input: SignInInput!): SignInPayload
-    addDomain(input: AddDomainInput!): AddDomainPayload
+    addUserSite(input: AddUserSiteInput!): AddUserSitePayload
     signOut: SuccessMessage
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
@@ -43,12 +44,12 @@ const typeDefs = gql`
     user: User
   }
 
-  input AddDomainInput {
+  input AddUserSiteInput {
     hostname: String!
   }
 
-  type AddDomainPayload {
-    domain: Domain
+  type AddUserSitePayload {
+    UserSite: UserSite
   }
 
   type SuccessMessage {
@@ -63,6 +64,10 @@ const typeDefs = gql`
     resetToken: String!
     password: String!
     confirmPassword: String!
+  }
+
+  type UserSitesPayload {
+    sites: [UserSite]
   }
 `;
 

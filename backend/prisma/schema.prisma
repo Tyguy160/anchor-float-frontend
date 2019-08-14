@@ -20,11 +20,12 @@ model User {
 }
 
 model UserSite {
-  id               String   @default(cuid()) @id @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               String    @default(cuid()) @id @unique
+  createdAt        DateTime? @default(now())
+  updatedAt        DateTime? @updatedAt
   associatesApiKey String?
   contentSelector  String?
+  user             User
   site             Site
 }
 
@@ -44,7 +45,7 @@ model Page {
   pageTitle String?
   wordCount Int?
   links     Link[]
-  domain    Domain
+  site      Site
 }
 
 model Link {

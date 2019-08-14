@@ -25,7 +25,9 @@ const Mutation = {
 
       return user;
     } catch (err) {
-      throw new Error('We were unable to create your account. Try another email.');
+      throw new Error(
+        'We were unable to create your account. Try another email.'
+      );
     }
   },
 
@@ -55,74 +57,55 @@ const Mutation = {
   },
 
   // TODO
-  async addDomain(parent, args, context, info) {
-    const domain = '';
-    // const { user } = context.request;
-    console.log(context.res);
-    // if (!user) {
-    //   throw new Error('You must be signed in');
-    // }
+  async addUserSite(
+    parent,
+    {
+      input: { hostname },
+    },
+    { user, db },
+    info
+  ) {
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
 
-    // user = await context.db.query.user(
-    //   { where: { id: user.id } },
-    //   '{ id, email, name, domains { id, hostname } }',
-    // );
+    // validate hostname
+    const hostnameValidator = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/g;
+    const validHostname = hostnameValidator.test(hostname);
 
-    // let { hostname } = args;
-    // hostname = hostname.toLowerCase();
-    // const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
-    // if (userHasDomain) {
-    //   throw new Error(`You've alread added ${hostname}`);
-    // }
+    if (!validHostname) {
+      throw new Error('Not a valid hostname');
+    }
 
-    // let domain = await context.db.query.domain({
-    //   where: { hostname },
-    // });
-    // if (!domain) {
-    //   domain = await context.db.mutation.createDomain(
-    //     {
-    //       data: {
-    //         ...args,
-    //       },
-    //     },
-    //     info,
-    //   );
-    //   const domainPrefs = await context.db.mutation.createUserDomainPreferences(
-    //     {
-    //       data: {
-    //         domain: { connect: { id: domain.id } },
-    //         user: { connect: { id: user.id } },
-    //       },
-    //     },
-    //     `{
-    //       id
-    //       domain {
-    //         id
-    //       }
-    //       user {
-    //         id
-    //       }
-    //     }`,
-    //   );
-    //   await context.db.mutation.updateDomain({
-    //     where: { id: domain.id },
-    //     data: { preferences: { connect: [{ id: domainPrefs.id }] } },
-    //   });
-    // }
-    // await context.db.mutation.updateUser({
-    //   where: { id: user.id },
-    //   data: {
-    //     domains: {
-    //       connect: [
-    //         {
-    //           id: domain.id,
-    //         },
-    //       ],
-    //     },
-    //   },
-    // });
+    const site = await db.sites.upsert({
+      where: { hostname },
+      update: { hostname },
+      create: { hostname },
+    });
 
-    return domain;
+    const userSites = await db.userSites.findMany({
+      where: {
+        user: {
+          id: user.userId,
+        },
+        site: {
+          id: site.id,
+        },
+      },
+    });
+
+    if (userSites.length) {
+      throw new Error('That site has already been added to your account');
+    } else {
+      const userSite = await db.userSites.create({
+        data: {
+          site: { connect: { id: site.id } },
+          user: { connect: { id: user.userId } },
+        },
+      });
+    }
+
+    return { domain: { hostname } };
   },
 
   // Done
@@ -156,8 +139,10 @@ const Mutation = {
         subject: 'Reset Your Password',
         html: emailTemplate(
           `Your password reset token is here.
-          \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
-            Click here</a> to reset your password.`,
+          \n\n <a href="${
+            process.env.FRONTEND_URL
+          }/reset?resetToken=${resetToken}">
+            Click here</a> to reset your password.`
         ),
       });
 
