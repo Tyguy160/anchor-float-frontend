@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
@@ -31,11 +30,11 @@ const ADD_USERSITE_MUTATION = gql`
 
 const DomainList = props => {
   const [addDomain, setAddDomain] = useState('');
-  const { loading, error: userSitesError, data: userSites } = useQuery(
+  const { data: userSites } = useQuery(
     USERSITES_QUERY
   );
 
-  const [addUserSite, { error, data }] = useMutation(ADD_USERSITE_MUTATION, {
+  const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
     variables: { input: { hostname: addDomain } },
     refetchQueries: ['userSites'],
   });
@@ -58,16 +57,14 @@ const DomainList = props => {
   return (
     <div>
       <h2>Domains</h2>
-      {userSites.userSites ? (
+      {userSites.userSites && (
         <div>
           <ul>
             {userSites.userSites.map(site => (
-              <li>{site.hostname}</li>
+              <li key={site.hostname}>{site.hostname}</li>
             ))}
           </ul>
         </div>
-      ) : (
-        <div />
       )}
       <SignupFormContainer>
         <SignupForm
