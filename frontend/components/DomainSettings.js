@@ -1,15 +1,6 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React from 'react';
+import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-
-import {
-  SignupForm,
-  SignupFormContainer,
-  SignupInputContainer,
-  SignupTextInput,
-  ContinueButton,
-} from './styles/styles';
 
 const USERSITES_QUERY = gql`
   query userSites {
@@ -20,20 +11,19 @@ const USERSITES_QUERY = gql`
 `;
 
 const DomainSettings = props => {
-  const { loading, error: userSitesError, data: userSites } = useQuery(
+  const { data: userSites } = useQuery(
     USERSITES_QUERY
   );
 
   return (
     <div>
       <h2>Domain Settings</h2>
-      <select>
-        {userSites.userSites ? (
-          userSites.userSites.map(site => <option>{site.hostname}</option>)
-        ) : (
-          <option />
-        )}
-        <option selected disabled value="">
+      <select defaultValue="">
+        {
+          userSites.userSites &&
+            userSites.userSites.map(site => <option key={site.hostname}>{site.hostname}</option>)
+        }
+        <option disabled value="">
           Select a domain
         </option>
       </select>
