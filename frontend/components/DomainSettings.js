@@ -24,21 +24,6 @@ const DomainSettings = props => {
     USERSITES_QUERY
   );
 
-  const handleChange = (e, hookType) => {
-    const { name, value, type } = e.target;
-    switch (hookType) {
-      case 'NEW_PASSWORD':
-        setPassword(value);
-        break;
-      case 'CONFIRM_NEW_PASSWORD':
-        setConfirmPassword(value);
-        break;
-      case 'ADD_DOMAIN':
-        setAddDomain(value);
-        break;
-    }
-  };
-
   return (
     <div>
       <h2>Domain Settings</h2>

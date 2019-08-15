@@ -7,11 +7,10 @@ import DomainSettings from './DomainSettings';
 const Account = props => {
   return (
     <div>
-      {/* // TODO: Uncomment this when complete */}
-      {/* <SubscriptionInfo /> */}
+      <SubscriptionInfo />
 
       {/* // TODO: Uncomment this when complete */}
-      {/* <ChangePassword /> */}
+      <ChangePassword />
 
       {/* A list of the current domains and a tool to add a new domain */}
       <DomainList />

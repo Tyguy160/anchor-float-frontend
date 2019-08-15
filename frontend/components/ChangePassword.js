@@ -1,6 +1,8 @@
 // ! NOT WORKING YET
 
 import React, { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 import {
   SignupForm,
   SignupFormContainer,
@@ -14,14 +16,46 @@ const ChangePassword = props => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  const handleChange = (e, hookType) => {
+    const { name, value, type } = e.target;
+    switch (hookType) {
+      case 'CURRENT_PASSWORD':
+        setCurrentPassword(value);
+        break;
+      case 'NEW_PASSWORD':
+        setNewPassword(value);
+        break;
+      case 'CONFIRM_NEW_PASSWORD':
+        setConfirmNewPassword(value);
+        break;
+    }
+  };
+
   return (
     <div>
       <h2>Change Your Password</h2>
       <SignupFormContainer>
         {/* <ErrorMessage error={props.error} /> */}
-        <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
+        <SignupForm
+          id="urlForm"
+          onSubmit={async e => {
+            e.preventDefault();
+            if (newPassword === confirmNewPassword) {
+              try {
+                console.log('password changed');
+                //   const res = await addUserSite(addDomain);
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmNewPassword('');
+              } catch (err) {
+                console.log({ err });
+              }
+            } else {
+              console.log("Your new passwords don't match 🤷‍");
+            }
+          }}>
           <SignupInputContainer>
-            <label htmlFor="newPassword">Current Password</label>
+            <label htmlFor="currentPassword">Current Password</label>
             <SignupTextInput
               id="currentPassword"
               name="currentPassword"
