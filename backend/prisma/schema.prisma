@@ -30,11 +30,12 @@ model UserSite {
 }
 
 model Site {
-  id        String   @default(cuid()) @id @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  hostname  String   @unique
+  id        String     @default(cuid()) @id @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  hostname  String     @unique
   pages     Page[]
+  userSites UserSite[]
 }
 
 model Page {
