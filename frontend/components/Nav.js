@@ -5,56 +5,13 @@ import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import SignOut from './SignOut';
 
+import { NavBar, Logo, Links, StyledLink } from './styles/styles';
+
 const GET_CURRENT_USER = gql`
   query me {
     me {
       id
     }
-  }
-`;
-
-const NavBar = styled.div`
-  background: #383838;
-  height: 60px;
-  box-shadow: 0px 2px 2px 2px #787878;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  @media screen and (max-width: 850px) {
-    height: 150px;
-  }
-`;
-
-const Logo = styled.div`
-  @media screen and (max-width: 850px) {
-    color: #efefef;
-    font-size: 2em;
-    text-decoration: none;
-    text-align: center;
-
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-gap: 20px;
-    justify-content: center;
-    align-self: center;
-  }
-`;
-
-const Links = styled.div`
-  display: flex;
-  @media screen and (max-width: 850px) {
-    justify-self: center;
-    align-self: end;
-    padding-bottom: 15px;
-  }
-`;
-
-export const StyledLink = styled.a`
-  color: #efefef;
-  text-decoration: none;
-  padding: 0px 20px 0px 20px;
-  cursor: pointer;
-  @media screen and (max-width: 850px) {
-    justify-self: center;
   }
 `;
 

@@ -30,7 +30,7 @@ const ADD_USERSITE_MUTATION = gql`
 
 const DomainList = props => {
   const [addDomain, setAddDomain] = useState('');
-  const { data: userSites } = useQuery(
+  const { loading: domainsLoading, data: userSites } = useQuery(
     USERSITES_QUERY
   );
 
@@ -57,6 +57,8 @@ const DomainList = props => {
   return (
     <div>
       <h2>Domains</h2>
+      {domainsLoading ? <div>Loading...</div> : <div />}
+      {console.log(userSites)}
       {userSites.userSites && (
         <div>
           <ul>
