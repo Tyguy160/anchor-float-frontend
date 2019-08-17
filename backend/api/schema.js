@@ -8,6 +8,7 @@ const typeDefs = gql`
 
   type UserSite {
     hostname: String
+    scanFreq: String
   }
 
   type Query {
@@ -46,6 +47,8 @@ const typeDefs = gql`
 
   input AddUserSiteInput {
     hostname: String!
+    apiKey: String!
+    scanFreq: String!
   }
 
   type AddUserSitePayload {

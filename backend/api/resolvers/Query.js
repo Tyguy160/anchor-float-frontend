@@ -17,10 +17,12 @@ const Query = {
     }
     const userSites = await db.userSites.findMany({
       where: { user: { id: user.userId } },
-      select: { site: true },
+      select: { site: true, scanFreq: true },
     });
+    console.log(userSites);
     const sites = userSites.map(userSite => ({
       hostname: userSite.site.hostname,
+      scanFreq: userSite.scanFreq,
     }));
 
     return [...sites];

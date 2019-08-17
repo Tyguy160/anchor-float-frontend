@@ -27,7 +27,7 @@ model UserSite {
   contentSelector  String?
   user             User
   site             Site
-  scanFreq         String?
+  scanFreq         Int?
 }
 
 model Site {

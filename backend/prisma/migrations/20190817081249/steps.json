@@ -1,0 +1,35 @@
+{
+  "version": "0.1.9",
+  "steps": [
+    {
+      "stepType": "CreateField",
+      "model": "UserSite",
+      "name": "scanFreq",
+      "type": {
+        "Base": "Int"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Site",
+      "name": "userSites",
+      "type": {
+        "Relation": {
+          "to": "UserSite",
+          "to_fields": [],
+          "name": "SiteToUserSite",
+          "on_delete": "None"
+        }
+      },
+      "arity": "list",
+      "isUnique": false
+    },
+    {
+      "stepType": "DeleteField",
+      "model": "Site",
+      "name": "userSite"
+    }
+  ]
+}

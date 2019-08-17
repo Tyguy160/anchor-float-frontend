@@ -58,7 +58,7 @@ const Mutation = {
   async addUserSite(
     parent,
     {
-      input: { hostname },
+      input: { hostname, apiKey, scanFreq },
     },
     { user, db },
     info,
@@ -99,6 +99,8 @@ const Mutation = {
         data: {
           site: { connect: { id: site.id } },
           user: { connect: { id: user.userId } },
+          associatesApiKey: apiKey,
+          scanFreq,
         },
       });
     }
