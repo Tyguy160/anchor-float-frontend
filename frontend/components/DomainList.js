@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { USERSITES_QUERY, ADD_USERSITE_MUTATION } from './resolvers/resolvers';
 
 import {
   SignupForm,
@@ -10,32 +11,16 @@ import {
   ContinueButton,
 } from './styles/styles';
 
-const USERSITES_QUERY = gql`
-  query userSites {
-    userSites {
-      hostname
-    }
-  }
-`;
-
-const ADD_USERSITE_MUTATION = gql`
-  mutation ADD_USERSITE_MUTATION($input: AddUserSiteInput!) {
-    addUserSite(input: $input) {
-      UserSite {
-        hostname
-      }
-    }
-  }
-`;
-
 const DomainList = props => {
-  const [addDomain, setAddDomain] = useState('');
+  const [domain, setDomain] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [scanFreq, setScanFreq] = useState('7');
   const { loading: domainsLoading, data: userSites } = useQuery(
     USERSITES_QUERY
   );
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
-    variables: { input: { hostname: addDomain } },
+    variables: { input: { hostname: domain, apiKey, scanFreq } },
     refetchQueries: ['userSites'],
   });
 
@@ -48,8 +33,14 @@ const DomainList = props => {
       case 'CONFIRM_NEW_PASSWORD':
         setConfirmPassword(value);
         break;
-      case 'ADD_DOMAIN':
-        setAddDomain(value);
+      case 'DOMAIN':
+        setDomain(value);
+        break;
+      case 'API_KEY':
+        setApiKey(value);
+        break;
+      case 'SCAN_FREQ':
+        setScanFreq(value);
         break;
     }
   };
@@ -63,7 +54,9 @@ const DomainList = props => {
         <div>
           <ul>
             {userSites.userSites.map(site => (
-              <li key={site.hostname}>{site.hostname}</li>
+              <li key={site.hostname}>
+                {site.hostname} - Every {site.scanFreq} days
+              </li>
             ))}
           </ul>
         </div>
@@ -75,22 +68,51 @@ const DomainList = props => {
           onSubmit={async e => {
             e.preventDefault();
             try {
-              const res = await addUserSite(addDomain);
-              setAddDomain('');
+              const res = await addUserSite(domain);
+              setDomain('');
+              setApiKey('');
+              setScanFreq(7);
             } catch (err) {
               console.log({ err });
             }
           }}>
           <SignupInputContainer>
-            <label htmlFor="addDomain">Domain</label>
+            <label htmlFor="domain">Domain</label>
             <SignupTextInput
-              id="addDomainInput"
-              name="addDomain"
+              id="domainInput"
+              name="domain"
               type="text"
               placeholder=""
               required
-              value={addDomain}
-              onChange={e => handleChange(e, 'ADD_DOMAIN')}
+              value={domain}
+              onChange={e => handleChange(e, 'DOMAIN')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="apiKey">Amazon API Key</label>
+            <SignupTextInput
+              id="apiKeyInput"
+              name="apiKey"
+              type="text"
+              placeholder=""
+              required
+              value={apiKey}
+              onChange={e => handleChange(e, 'API_KEY')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="scanFreq">
+              Scan Frequency: every <b>{scanFreq}</b> days
+            </label>
+            <SignupTextInput
+              id="scanFreqInput"
+              name="scanFreq"
+              type="range"
+              min="1"
+              max="14"
+              required
+              value={scanFreq}
+              onChange={e => handleChange(e, 'SCAN_FREQ')}
             />
           </SignupInputContainer>
           <ContinueButton

@@ -6,6 +6,8 @@ import Error from './ErrorMessage';
 import AddDomain from './AddDomain';
 import styled from 'styled-components';
 import DomainDataDisplay from './DomainDataDisplay';
+import { useQuery } from '@apollo/react-hooks';
+import { USERSITES_QUERY } from './resolvers/resolvers';
 
 const StyledAddDomainButton = styled.button`
   margin: 10px;
@@ -40,11 +42,20 @@ const StyledTable = styled.table`
 `;
 
 const Dashboard = () => {
+  const { loading: domainsLoading, data: userSites } = useQuery(
+    USERSITES_QUERY
+  );
+
   return (
     <DashboardContainer>
-      <select>
-        <option>https://www.triplebarcoffee.com</option>
-        <option>https://www.anchorfloat.com</option>
+      <select defaultValue="">
+        {userSites.userSites &&
+          userSites.userSites.map(site => (
+            <option key={site.hostname}>{site.hostname}</option>
+          ))}
+        <option disabled value="">
+          Select a domain
+        </option>
       </select>
       <h2>Dashboard</h2>
       <button>Scan now</button>

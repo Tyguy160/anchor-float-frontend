@@ -5,60 +5,15 @@ import { useMutation } from '@apollo/react-hooks';
 import ErrorMessage from './ErrorMessage';
 import Router from 'next/router';
 
-const Container = styled.div``;
-
-const PageHeading = styled.h2`
-  text-align: center;
-`;
-
-const SignupFormContainer = styled.div`
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  display: grid;
-  grid-template-rows: 1fr auto;
-`;
-
-const SignupForm = styled.form`
-  display: grid;
-  padding: 20px 0px 20px 0px;
-  grid-gap: 15px;
-  justify-content: center;
-`;
-
-const ContinueButton = styled.input`
-  height: 45px;
-  border-radius: 4px;
-  background-color: #ccc;
-  border: none;
-  justify-self: center;
-  width: 100px;
-  font-size: 1em;
-  margin-bottom: 20px;
-  outline: none;
-  :active {
-    background-color: #bbb;
-  }
-`;
-
-const SignupInputContainer = styled.div`
-  display: flex;
-  justify-self: flex-end;
-  flex-wrap: wrap;
-  label {
-    align-self: center;
-  }
-`;
-
-const SignupTextInput = styled.input`
-  border-radius: 4px;
-  border: 1px solid #dedede;
-  height: 2em;
-  font-family: 'Assistant', sans-serif;
-  font-size: 1em;
-  outline: none;
-  margin-left: 10px;
-  margin-right: 10px;
-`;
+import {
+  SignupForm,
+  CenteredHeading,
+  SignupFormContainer,
+  SignupInputContainer,
+  SignupTextInput,
+  ContinueButton,
+  PageSection,
+} from './styles/styles';
 
 const SIGNUP_MUTATION = gql`
   mutation SIGNUP_MUTATION($input: SignUpInput!) {
@@ -117,10 +72,10 @@ const Signup = props => {
   };
 
   return (
-    <Container handleChange={handleChange}>
-      <PageHeading>Register</PageHeading>
+    <PageSection handleChange={handleChange}>
+      <CenteredHeading>Register</CenteredHeading>
       <SignupFormContainer>
-        <ErrorMessage error={props.error} />
+        {/* <ErrorMessage error={props.error} /> */}
         <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
           <SignupInputContainer>
             <label htmlFor="name">Name</label>
@@ -170,12 +125,11 @@ const Signup = props => {
               onChange={e => handleChange(e, 'CONFIRM_PASSWORD')}
             />
           </SignupInputContainer>
+          <ContinueButton type="submit" value="Continue" form="urlForm" />
         </SignupForm>
-        <ContinueButton type="submit" value="Continue" form="urlForm" />
       </SignupFormContainer>
-    </Container>
+    </PageSection>
   );
 };
 
 export default Signup;
-export { Container, PageHeading, SignupFormContainer, ContinueButton };

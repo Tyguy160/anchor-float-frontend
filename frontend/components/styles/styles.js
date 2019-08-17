@@ -3,13 +3,17 @@ import styled from 'styled-components';
 const SignupFormContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  display: grid;
-  grid-template-rows: 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1050px;
+  /* grid-template-rows: 1fr auto; */
+  border-radius: 5px;
 `;
 
 const SignupForm = styled.form`
   display: grid;
-  padding: 20px 0px 20px 0px;
+  padding: 20px;
   grid-gap: 15px;
   justify-content: center;
 `;
@@ -22,7 +26,6 @@ const ContinueButton = styled.input`
   justify-self: center;
   width: 100px;
   font-size: 1em;
-  margin-bottom: 20px;
   outline: none;
   :active {
     background-color: #bbb;
@@ -45,8 +48,42 @@ const SignupTextInput = styled.input`
   font-family: 'Assistant', sans-serif;
   font-size: 1em;
   outline: none;
+  margin-left: 5px;
+  margin-right: 5px;
+`;
+
+const SigninFormContainer = styled(SignupFormContainer)`
+  /* background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  display: grid;
+  grid-template-rows: 1fr auto; */
+`;
+
+const SigninForm = styled(SignupForm)`
+  /* display: grid;
+  padding: 20px 0px 20px 0px;
+  grid-gap: 15px;
+  justify-content: center; */
+`;
+
+const SigninInputContainer = styled(SignupInputContainer)`
+  /* display: flex;
+  justify-self: flex-end;
+  flex-wrap: wrap;
+  label {
+    align-self: center; */
+  }
+`;
+
+const SigninTextInput = styled(SignupTextInput)`
+  /* border-radius: 4px;
+  border: 1px solid #dedede;
+  height: 2em;
+  font-family: 'Assistant', sans-serif;
+  font-size: 1em;
+  outline: none;
   margin-left: 10px;
-  margin-right: 10px;
+  margin-right: 10px; */
 `;
 
 const NavBar = styled.div`
@@ -225,23 +262,19 @@ const HeroCTAButton = styled(CTAButton)`
 `;
 
 const PageSection = styled.div`
-  padding: 0 10% 0 10%;
   display: grid;
-  align-content: center;
-  > div > p {
-    /* font-size: 1.5em; */
-    /* line-height: 1.8em; */
-    /* padding: 10px 0 10px 0; */
-  }
-  > div > ul > * {
-    /* font-size: 1.5em; */
-  }
+  align-items: center;
+  justify-items: center;
+  grid-template-columns: 1fr;
 `;
 
-const StyledHeading = styled.h2`
+const CenteredHeading = styled.h2`
+  justify-self: center;
   font-size: 2em;
   padding-top: 20px;
+`;
 
+const StyledHeading = styled(CenteredHeading)`
   @media screen and (max-width: 1050px) {
     justify-self: center;
   }
@@ -314,10 +347,15 @@ const StyledPricingCTAButton = styled(CTAButton)`
 const StyledPricingCTAButtonContainer = styled(CTAButtonContainer)``;
 
 export {
+  SigninFormContainer,
+  SigninForm,
+  SigninInputContainer,
+  SigninTextInput,
   SignupForm,
   SignupFormContainer,
   SignupInputContainer,
   SignupTextInput,
+  CenteredHeading,
   ContinueButton,
   NavBar,
   Logo,

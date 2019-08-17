@@ -15,13 +15,14 @@ import {
   CTAButtonContainer,
   StyledHeading,
   PageSection,
+  CenteredHeading,
 } from '../components/styles/styles';
 
 class Pricing extends Component {
   render() {
     return (
       <PageSection id="pricing">
-        <StyledHeading>Pricing</StyledHeading>
+        <CenteredHeading>Pricing</CenteredHeading>
         <PricingContainer>
           <StyledTierContainer>
             <StyledTierHeading>Basic</StyledTierHeading>
