@@ -54,7 +54,7 @@ const Mutation = {
     }
   },
 
-  // TODO
+  // Create UserSite
   async addUserSite(
     parent,
     {
@@ -106,6 +106,43 @@ const Mutation = {
     }
 
     return { domain: { hostname } };
+  },
+
+  // TODO: Update UserSite
+
+  // TODO: Delete UserSite
+  async deleteUserSite(
+    parent,
+    {
+      input: { hostname },
+    },
+    { user, db },
+    info,
+  ) {
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    // Find the Site with the given hostname
+    const site = await db.sites.findOne({
+      where: { hostname },
+    });
+
+    // Find and delete the UserSite with the given ID
+    const res = await db.userSites.deleteMany({
+      where: {
+        user: {
+          id: user.userId,
+        },
+        site: {
+          id: site.id,
+        },
+      },
+    });
+
+    console.log(res);
+
+    return { message: 'Successfully deleted hostname' };
   },
 
   // Done

@@ -19,7 +19,6 @@ const Query = {
       where: { user: { id: user.userId } },
       select: { site: true, scanFreq: true },
     });
-    console.log(userSites);
     const sites = userSites.map(userSite => ({
       hostname: userSite.site.hostname,
       scanFreq: userSite.scanFreq,

@@ -4,6 +4,7 @@ const typeDefs = gql`
   type User {
     id: String
     email: String
+    subscriptionLevel: String
   }
 
   type UserSite {
@@ -23,6 +24,7 @@ const typeDefs = gql`
     signOut: SuccessMessage
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
+    deleteUserSite(input: DeleteUserSiteInput): SuccessMessage
   }
 
   input SignUpInput {
@@ -49,6 +51,10 @@ const typeDefs = gql`
     hostname: String!
     apiKey: String!
     scanFreq: String!
+  }
+
+  input DeleteUserSiteInput {
+    hostname: String!
   }
 
   type AddUserSitePayload {
