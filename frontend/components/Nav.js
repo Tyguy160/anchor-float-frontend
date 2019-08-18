@@ -5,15 +5,9 @@ import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import SignOut from './SignOut';
 
-import { NavBar, Logo, Links, StyledLink } from './styles/styles';
+import { GET_CURRENT_USER } from './resolvers/resolvers';
 
-const GET_CURRENT_USER = gql`
-  query me {
-    me {
-      id
-    }
-  }
-`;
+import { NavBar, Logo, Links, StyledLink } from './styles/styles';
 
 const Nav = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);

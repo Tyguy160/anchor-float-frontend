@@ -9,6 +9,7 @@ import {
   SignupInputContainer,
   SignupTextInput,
   ContinueButton,
+  PageSection,
 } from './styles/styles';
 
 const ChangePassword = props => {
@@ -32,7 +33,7 @@ const ChangePassword = props => {
   };
 
   return (
-    <div>
+    <PageSection>
       <h2>Change Your Password</h2>
       <SignupFormContainer>
         {/* <ErrorMessage error={props.error} /> */}
@@ -93,7 +94,7 @@ const ChangePassword = props => {
         </SignupForm>
         <ContinueButton type="submit" value="Reset" form="urlForm" />
       </SignupFormContainer>
-    </div>
+    </PageSection>
   );
 };
 

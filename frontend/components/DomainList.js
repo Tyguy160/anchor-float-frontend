@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { USERSITES_QUERY, ADD_USERSITE_MUTATION } from './resolvers/resolvers';
+import {
+  GET_CURRENT_USER,
+  USERSITES_QUERY,
+  ADD_USERSITE_MUTATION,
+} from './resolvers/resolvers';
 
 import {
   SignupForm,
@@ -9,6 +13,7 @@ import {
   SignupInputContainer,
   SignupTextInput,
   ContinueButton,
+  PageSection,
 } from './styles/styles';
 
 const DomainList = props => {
@@ -18,6 +23,8 @@ const DomainList = props => {
   const { loading: domainsLoading, data: userSites } = useQuery(
     USERSITES_QUERY
   );
+
+  const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
     variables: { input: { hostname: domain, apiKey, scanFreq } },
@@ -45,33 +52,62 @@ const DomainList = props => {
     }
   };
 
+  const getSubscription = sub => {
+    switch (sub) {
+      case '0':
+        return { type: 'free', sites: 1 };
+        break;
+      case '1':
+        return { type: 'Basic', sites: 3 };
+        break;
+      case '2':
+        return { type: 'Standard', sites: 5 };
+        break;
+      case '3':
+        return { type: 'Advanced', sites: 10 };
+        break;
+    }
+  };
+
+  const sub = user.me && getSubscription(user.me.subscriptionLevel);
+
   return (
-    <div>
-      <h2>Domains</h2>
-      {domainsLoading ? <div>Loading...</div> : <div />}
-      {console.log(userSites)}
-      {userSites.userSites && (
-        <div>
-          <ul>
-            {userSites.userSites.map(site => (
-              <li key={site.hostname}>
-                {site.hostname} - Every {site.scanFreq} days
-              </li>
-            ))}
-          </ul>
-        </div>
+    <PageSection>
+      <h2>Add A Domain</h2>
+
+      {userSites.userSites ? (
+        <p>
+          Your <b>{sub.type}</b> subscription lets you add{' '}
+          <b>
+            {sub.sites} {sub.sites > 1 ? ' domains ' : 'domain '}
+          </b>
+          . You have{' '}
+          <b>
+            {sub.sites - userSites.userSites.length}{' '}
+            {sub.sites > 1 ? ' domains ' : 'domain '}
+          </b>{' '}
+          remaining.
+        </p>
+      ) : (
+        ''
       )}
+
       <SignupFormContainer>
         <SignupForm
           id="addDomainForm"
           method="post"
           onSubmit={async e => {
             e.preventDefault();
+            if (userSites.userSites.length >= sub.sites) {
+              throw Error(
+                `You've used up all of your domains. Try deleting an existing one or upgrading to a larger subscription.`
+              );
+            }
             try {
-              const res = await addUserSite(domain);
+              const res = await addUserSite();
               setDomain('');
               setApiKey('');
-              setScanFreq(7);
+              setScanFreq('7');
             } catch (err) {
               console.log({ err });
             }
@@ -122,7 +158,7 @@ const DomainList = props => {
           />
         </SignupForm>
       </SignupFormContainer>
-    </div>
+    </PageSection>
   );
 };
 

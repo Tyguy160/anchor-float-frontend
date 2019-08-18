@@ -3,6 +3,7 @@ import ChangePassword from './ChangePassword';
 import SubscriptionInfo from './SubscriptionInfo';
 import DomainList from './DomainList';
 import DomainSettings from './DomainSettings';
+import { PageSection } from './styles/styles';
 
 const Account = props => {
   return (
@@ -18,10 +19,10 @@ const Account = props => {
       {/* Settings for each domain, selected by a dropdown */}
       <DomainSettings />
 
-      <h2>Other settings</h2>
+      {/* <h2>Other settings</h2>
       <div>Change email address</div>
       <div>Time zone</div>
-      <div>Color scheme</div>
+      <div>Color scheme</div> */}
     </div>
   );
 };
