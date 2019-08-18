@@ -95,7 +95,7 @@ const Mutation = {
     if (userSites.length) {
       throw new Error('That site has already been added to your account');
     } else {
-      const userSite = await db.userSites.create({
+      await db.userSites.create({
         data: {
           site: { connect: { id: site.id } },
           user: { connect: { id: user.userId } },
@@ -108,9 +108,6 @@ const Mutation = {
     return { domain: { hostname } };
   },
 
-  // TODO: Update UserSite
-
-  // TODO: Delete UserSite
   async deleteUserSite(
     parent,
     {
@@ -140,18 +137,14 @@ const Mutation = {
       },
     });
 
-    console.log(res);
-
     return { message: 'Successfully deleted hostname' };
   },
 
-  // Done
   signOut(parent, args, context, info) {
     context.res.clearCookie('token');
     return { message: 'Successfully logged out 🔑' };
   },
 
-  // Done
   async requestReset(parent, { input }, context, info) {
     const { email } = input;
     try {
@@ -184,11 +177,10 @@ const Mutation = {
       // Return the message
       return { message: 'Please check your email for a reset link' };
     } catch (err) {
-      console.log(err);
+      return { message: 'There was an error. Please try again.' };
     }
   },
 
-  // Done
   async resetPassword(parent, { input }, context, info) {
     const { resetToken, password, confirmPassword } = input;
     // Check if the passwords match
@@ -232,6 +224,21 @@ const Mutation = {
 
     // Return the new user
     return updatedUser;
+  },
+
+  async updateUserPlan(parent, { input }, { user, db }) {
+    const { level } = input;
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    await db.users.update({
+      where: { id: user.userId },
+      data: {
+        plan: { connect: { level } },
+      },
+    });
+    return { message: `Updated plan to ${level}` };
   },
 };
 

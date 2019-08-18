@@ -1,17 +1,6 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-  type User {
-    id: String
-    email: String
-    subscriptionLevel: String
-  }
-
-  type UserSite {
-    hostname: String
-    scanFreq: String
-  }
-
   type Query {
     me: User
     userSites: [UserSite]
@@ -20,11 +9,37 @@ const typeDefs = gql`
   type Mutation {
     signUp(input: SignUpInput!): SignUpPayload
     signIn(input: SignInInput!): SignInPayload
-    addUserSite(input: AddUserSiteInput!): AddUserSitePayload
     signOut: SuccessMessage
+    addUserSite(input: AddUserSiteInput!): AddUserSitePayload
+    deleteUserSite(input: DeleteUserSiteInput): SuccessMessage
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
-    deleteUserSite(input: DeleteUserSiteInput): SuccessMessage
+    updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPaylod
+  }
+
+  input UpdateUserPlanInput {
+    level: Int
+  }
+
+  type UpdateUserPlanPaylod{
+    message: String
+  }
+
+  type User {
+    id: String
+    email: String
+    plan: Plan
+  }
+
+  type Plan {
+    name: String
+    level: Int
+    siteLimit: Int
+  }
+
+  type UserSite {
+    hostname: String
+    scanFreq: String
   }
 
   input SignUpInput {

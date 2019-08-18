@@ -9,16 +9,25 @@ generator photon {
 }
 
 model User {
-  id                String     @default(cuid()) @id @unique
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  email             String     @unique
-  password          String
-  resetToken        String?
-  resetTokenExpiry  Int?
-  sites             UserSite[]
-  subscriptionLevel String
+  id               String     @default(cuid()) @id @unique
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  email            String     @unique
+  password         String?
+  resetToken       String?
+  resetTokenExpiry Int?
+  sites            UserSite[]
+  plan             Plan?
+}
 
+model Plan {
+  id          String   @default(cuid()) @id @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String?  @unique
+  level       Int      @unique
+  subscribers User[]
+  siteLimit   Int?
 }
 
 model UserSite {
