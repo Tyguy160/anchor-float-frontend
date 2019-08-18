@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "devdb": "prisma2 dev",
-    "postinstall": "prisma2 generate"
+    "postinstall": "prisma2 generate",
+    "clean": "rm -rf node_modules && rm -rf ./prisma/migrations && rm ./prisma/dev.db && npm i"
   },
   "dependencies": {
     "apollo-server-express": "^2.8.1",
