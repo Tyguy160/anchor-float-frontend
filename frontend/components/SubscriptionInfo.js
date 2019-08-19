@@ -24,14 +24,15 @@ const getSubscription = sub => {
 
 const SubscriptionInfo = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
-  const sub = getSubscription(data.me.subscriptionLevel);
+  const sub = data.me.plan;
+
   return (
     <PageSection>
       <h2>Subscription Information</h2>
       <SignupFormContainer>
         <div>
-          You are have the <b>{sub.type}</b> subscription. You're able to track{' '}
-          <b>{sub.sites}</b> with this type of account.
+          You have the <b>{sub.name}</b> subscription. You're able to track{' '}
+          <b>{sub.siteLimit}</b> with this type of account.
         </div>
       </SignupFormContainer>
     </PageSection>

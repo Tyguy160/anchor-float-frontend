@@ -4,7 +4,12 @@ const GET_CURRENT_USER = gql`
   query me {
     me {
       id
-      subscriptionLevel
+      plan {
+        level
+        siteLimit
+        name
+      }
+      # subscriptionLevel
     }
   }
 `;

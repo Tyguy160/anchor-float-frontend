@@ -74,31 +74,30 @@ const DomainList = props => {
   return (
     <PageSection>
       <h2>Add A Domain</h2>
-
       {userSites.userSites ? (
         <p>
-          Your <b>{sub.type}</b> subscription lets you add{' '}
+          Your <b>{user.me.plan.name}</b> subscription lets you add{' '}
           <b>
-            {sub.sites} {sub.sites > 1 ? ' domains ' : 'domain '}
+            {user.me.plan.siteLimit}{' '}
+            {user.me.plan.siteLimit > 1 ? ' domains ' : 'domain '}
           </b>
           . You have{' '}
           <b>
-            {sub.sites - userSites.userSites.length}{' '}
-            {sub.sites > 1 ? ' domains ' : 'domain '}
+            {user.me.plan.siteLimit - userSites.userSites.length}{' '}
+            {user.me.plan.siteLimit > 1 ? ' domains ' : 'domain '}
           </b>{' '}
           remaining.
         </p>
       ) : (
         ''
       )}
-
       <SignupFormContainer>
         <SignupForm
           id="addDomainForm"
           method="post"
           onSubmit={async e => {
             e.preventDefault();
-            if (userSites.userSites.length >= sub.sites) {
+            if (userSites.userSites.length >= user.me.plan.siteLimit) {
               throw Error(
                 `You've used up all of your domains. Try deleting an existing one or upgrading to a larger subscription.`
               );
