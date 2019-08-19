@@ -238,7 +238,7 @@ const Mutation = {
         plan: { connect: { level } },
       },
     });
-    return { message: `Updated plan to ${level}` };
+    return { level };
   },
 };
 

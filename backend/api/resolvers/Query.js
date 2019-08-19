@@ -1,14 +1,14 @@
 const Query = {
-  me(parent, args, { user, db }, info) {
+  async me(parent, args, { user, db }, info) {
     if (!user) {
       return null;
     }
-    return db.users.findOne(
-      {
-        where: { id: user.userId },
-      },
-      info,
-    );
+    const dbUser = await db.users.findOne({
+      where: { id: user.userId },
+      include: { sites: true, plan: true },
+    });
+    console.log(dbUser);
+    return dbUser;
   },
 
   async userSites(parent, args, { user, db }, info) {

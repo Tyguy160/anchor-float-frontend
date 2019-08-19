@@ -14,15 +14,15 @@ const typeDefs = gql`
     deleteUserSite(input: DeleteUserSiteInput): SuccessMessage
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
-    updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPaylod
+    updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPayload
   }
 
   input UpdateUserPlanInput {
     level: Int
   }
 
-  type UpdateUserPlanPaylod{
-    message: String
+  type UpdateUserPlanPayload {
+    level: Int
   }
 
   type User {

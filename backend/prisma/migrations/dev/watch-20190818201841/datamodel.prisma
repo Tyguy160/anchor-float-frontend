@@ -78,7 +78,7 @@ model Product {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   name         String?
-  asin         String       @unique
+  asin         String
   links        Link[]
   availability Availability
 }
