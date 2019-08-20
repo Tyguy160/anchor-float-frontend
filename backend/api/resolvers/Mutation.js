@@ -50,7 +50,7 @@ const Mutation = {
 
       return { token, user };
     } catch (err) {
-      throw new Error(`No user found for ${input.email}`);
+      throw new Error('Unable to sign in. Check username and password.');
     }
   },
 
@@ -239,6 +239,23 @@ const Mutation = {
       },
     });
     return { level };
+  },
+
+  async updateUserPassword(parent, { input }, { user, db }) {
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+    const { newPassword } = input;
+    if (!newPassword) {
+      throw new Error('You must submit a new password');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await db.users.update({
+      where: { id: user.userId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Updated password' };
   },
 };
 
