@@ -29,28 +29,31 @@ async function parsePageHandler({ Body, MessageId }) {
     console.log(`Invalid url: ${urlStr}`);
     return;
   }
-  const existingPage = await db.query.page({
-    where: { url: url.href },
-  });
-  let newPage;
-  if (!existingPage) {
-    console.log(`Creating page in DB: ${url.href}`);
-    newPage = await db.mutation.createPage({
-      data: { url: url.href },
-    });
-  }
-  const page = existingPage || newPage;
 
-  try {
-    const domain = await db.mutation.upsertDomain({
-      where: { hostname: url.hostname },
-      create: { hostname: url.hostname, pages: { connect: [{ id: page.id }] } },
-      update: { pages: { connect: [{ id: page.id }] } },
-    });
-    console.log(`Created domain: ${domain.hostname}`);
-  } catch (err) {
-    console.log(err);
-  }
+  const newOrExistingSite = await db.sites.upsert({
+    where: { hostname: url.hostname },
+    create: { hostname: url.hostname },
+    update: {},
+  });
+
+  const newOrExistingPage = await db.pages.upsert({
+    where: { url: url.href },
+    create: {
+      url: url.href,
+      site: {
+        connect: {
+          id: newOrExistingSite.id,
+        },
+      },
+    },
+    update: {
+      site: {
+        connect: {
+          id: newOrExistingSite.id,
+        },
+      },
+    },
+  });
 
   const response = await axios.get(url.href).catch(handleResponseErrors);
   console.log(response.status);
