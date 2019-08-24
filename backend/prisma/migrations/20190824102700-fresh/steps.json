@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD:backend/prisma/migrations/20190824102700-fresh/steps.json
-  "version": "0.1.26",
-=======
   "version": "0.2.2",
->>>>>>> fa16ea93553b6b9916f93ab4135c48c419f21021:backend/prisma/migrations/20190820193130/steps.json
   "steps": [
     {
       "stepType": "CreateModel",
