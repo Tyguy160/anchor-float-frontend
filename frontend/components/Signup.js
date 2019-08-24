@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
-import ErrorMessage from './ErrorMessage';
+import Error from './ErrorMessage';
 import Router from 'next/router';
 
 import {
@@ -32,6 +32,7 @@ const Signup = props => {
 
   const [signUp, { error, data }] = useMutation(SIGNUP_MUTATION, {
     variables: { input: { email, password } },
+    refetchQueries: ['me'],
   });
 
   const createAccount = async e => {
@@ -128,6 +129,7 @@ const Signup = props => {
           <ContinueButton type="submit" value="Continue" form="urlForm" />
         </SignupForm>
       </SignupFormContainer>
+      <Error error={error} />
     </PageSection>
   );
 };
