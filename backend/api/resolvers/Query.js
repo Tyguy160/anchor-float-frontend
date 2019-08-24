@@ -9,9 +9,8 @@ const Query = {
         include: { sites: true, plan: true },
       })
       .catch((err) => {
-        throw new Error("We couldn't find your account details");
+        throw new Error('There was an issue finding your account details');
       });
-    console.log(dbUser);
     return dbUser;
   },
 
