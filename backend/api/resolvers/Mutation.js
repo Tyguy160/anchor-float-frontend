@@ -50,88 +50,101 @@ const Mutation = {
 
       return { token, user };
     } catch (err) {
-      throw new Error(`No user found for ${input.email}`);
+      throw new Error('Unable to sign in. Check username and password.');
     }
   },
 
-  // TODO
-  async addDomain(parent, args, context, info) {
-    const domain = '';
-    // const { user } = context.request;
-    console.log(context.res);
-    // if (!user) {
-    //   throw new Error('You must be signed in');
-    // }
+  // Create UserSite
+  async addUserSite(
+    parent,
+    {
+      input: { hostname, apiKey, scanFreq },
+    },
+    { user, db },
+    info,
+  ) {
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
 
-    // user = await context.db.query.user(
-    //   { where: { id: user.id } },
-    //   '{ id, email, name, domains { id, hostname } }',
-    // );
+    // validate hostname
+    const hostnameValidator = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/g;
+    const validHostname = hostnameValidator.test(hostname);
 
-    // let { hostname } = args;
-    // hostname = hostname.toLowerCase();
-    // const userHasDomain = user.domains.map(entry => entry.hostname).includes(hostname);
-    // if (userHasDomain) {
-    //   throw new Error(`You've alread added ${hostname}`);
-    // }
+    if (!validHostname) {
+      throw new Error('Not a valid hostname');
+    }
 
-    // let domain = await context.db.query.domain({
-    //   where: { hostname },
-    // });
-    // if (!domain) {
-    //   domain = await context.db.mutation.createDomain(
-    //     {
-    //       data: {
-    //         ...args,
-    //       },
-    //     },
-    //     info,
-    //   );
-    //   const domainPrefs = await context.db.mutation.createUserDomainPreferences(
-    //     {
-    //       data: {
-    //         domain: { connect: { id: domain.id } },
-    //         user: { connect: { id: user.id } },
-    //       },
-    //     },
-    //     `{
-    //       id
-    //       domain {
-    //         id
-    //       }
-    //       user {
-    //         id
-    //       }
-    //     }`,
-    //   );
-    //   await context.db.mutation.updateDomain({
-    //     where: { id: domain.id },
-    //     data: { preferences: { connect: [{ id: domainPrefs.id }] } },
-    //   });
-    // }
-    // await context.db.mutation.updateUser({
-    //   where: { id: user.id },
-    //   data: {
-    //     domains: {
-    //       connect: [
-    //         {
-    //           id: domain.id,
-    //         },
-    //       ],
-    //     },
-    //   },
-    // });
+    const site = await db.sites.upsert({
+      where: { hostname },
+      update: { hostname },
+      create: { hostname },
+    });
 
-    return domain;
+    const userSites = await db.userSites.findMany({
+      where: {
+        user: {
+          id: user.userId,
+        },
+        site: {
+          id: site.id,
+        },
+      },
+    });
+
+    if (userSites.length) {
+      throw new Error('That site has already been added to your account');
+    } else {
+      await db.userSites.create({
+        data: {
+          site: { connect: { id: site.id } },
+          user: { connect: { id: user.userId } },
+          associatesApiKey: apiKey,
+          scanFreq,
+        },
+      });
+    }
+
+    return { domain: { hostname } };
   },
 
-  // Done
+  async deleteUserSite(
+    parent,
+    {
+      input: { hostname },
+    },
+    { user, db },
+    info,
+  ) {
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    // Find the Site with the given hostname
+    const site = await db.sites.findOne({
+      where: { hostname },
+    });
+
+    // Find and delete the UserSite with the given ID
+    const res = await db.userSites.deleteMany({
+      where: {
+        user: {
+          id: user.userId,
+        },
+        site: {
+          id: site.id,
+        },
+      },
+    });
+
+    return { message: 'Successfully deleted hostname' };
+  },
+
   signOut(parent, args, context, info) {
     context.res.clearCookie('token');
     return { message: 'Successfully logged out 🔑' };
   },
 
-  // Done
   async requestReset(parent, { input }, context, info) {
     const { email } = input;
     try {
@@ -164,11 +177,10 @@ const Mutation = {
       // Return the message
       return { message: 'Please check your email for a reset link' };
     } catch (err) {
-      console.log(err);
+      return { message: 'There was an error. Please try again.' };
     }
   },
 
-  // Done
   async resetPassword(parent, { input }, context, info) {
     const { resetToken, password, confirmPassword } = input;
     // Check if the passwords match
@@ -212,6 +224,38 @@ const Mutation = {
 
     // Return the new user
     return updatedUser;
+  },
+
+  async updateUserPlan(parent, { input }, { user, db }) {
+    const { level } = input;
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+
+    await db.users.update({
+      where: { id: user.userId },
+      data: {
+        plan: { connect: { level } },
+      },
+    });
+    return { level };
+  },
+
+  async updateUserPassword(parent, { input }, { user, db }) {
+    if (!user) {
+      throw new Error('You must be signed in');
+    }
+    const { newPassword } = input;
+    if (!newPassword) {
+      throw new Error('You must submit a new password');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await db.users.update({
+      where: { id: user.userId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Updated password' };
   },
 };
 

@@ -1,26 +1,54 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-  type User {
-    id: String
-    email: String
-  }
-
-  type Domain {
-    hostname: String
-  }
-
   type Query {
     me: User
+    userSites: [UserSite]
   }
 
   type Mutation {
     signUp(input: SignUpInput!): SignUpPayload
     signIn(input: SignInInput!): SignInPayload
-    addDomain(input: AddDomainInput!): AddDomainPayload
     signOut: SuccessMessage
+    addUserSite(input: AddUserSiteInput!): AddUserSitePayload
+    deleteUserSite(input: DeleteUserSiteInput): SuccessMessage
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
+    updateUserPassword(input: UpdatePasswordInput!): UpdatePasswordPayload
+    updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPayload
+  }
+
+  input UpdatePasswordInput {
+    newPassword: String
+  }
+
+  type UpdatePasswordPayload {
+    message: String
+  }
+
+  input UpdateUserPlanInput {
+    level: Int
+  }
+
+  type UpdateUserPlanPayload {
+    level: Int
+  }
+
+  type User {
+    id: String
+    email: String
+    plan: Plan
+  }
+
+  type Plan {
+    name: String
+    level: Int
+    siteLimit: Int
+  }
+
+  type UserSite {
+    hostname: String
+    scanFreq: String
   }
 
   input SignUpInput {
@@ -43,12 +71,18 @@ const typeDefs = gql`
     user: User
   }
 
-  input AddDomainInput {
+  input AddUserSiteInput {
+    hostname: String!
+    apiKey: String!
+    scanFreq: String!
+  }
+
+  input DeleteUserSiteInput {
     hostname: String!
   }
 
-  type AddDomainPayload {
-    domain: Domain
+  type AddUserSitePayload {
+    UserSite: UserSite
   }
 
   type SuccessMessage {
@@ -63,6 +97,10 @@ const typeDefs = gql`
     resetToken: String!
     password: String!
     confirmPassword: String!
+  }
+
+  type UserSitesPayload {
+    userSites: [UserSite]
   }
 `;
 

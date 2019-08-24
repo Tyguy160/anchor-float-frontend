@@ -7,7 +7,8 @@ import { createGlobalStyle } from 'styled-components';
 const GlobalStyle = createGlobalStyle`
   html, body {
     @import url(https://fonts.googleapis.com/css?family=Assistant);
-    font-family: 'Assistant', sans-serif;
+    @import url(https://fonts.googleapis.com/css?family=Quicksand);
+    font-family: 'Quicksand','Assistant', sans-serif;
     padding: 0;
     margin: 0;
     color: #383838;
