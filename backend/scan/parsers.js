@@ -24,9 +24,12 @@ function parseMarkup(markupString, options = {}) {
   } else {
     content = $('body').contents();
   }
-  const str = content.map(function getText() {
-    return $(this).text();
-  }).get().join(' ');
+  const str = content
+    .map(function getText() {
+      return $(this).text();
+    })
+    .get()
+    .join(' ');
 
   const ALL_WHITESPACE_REGEX = /\s+/g;
   const wordCount = str.replace(ALL_WHITESPACE_REGEX, ' ').split(' ').length;
@@ -38,7 +41,10 @@ function parseMarkup(markupString, options = {}) {
       const node = $(this);
       return {
         href: node.attr('href'),
-        text: node.text().trim().replace(ALL_WHITESPACE_REGEX, ' '),
+        text: node
+          .text()
+          .trim()
+          .replace(ALL_WHITESPACE_REGEX, ' '),
         rel: node.attr('rel') || null,
         title: node.attr('title') || null,
       };
