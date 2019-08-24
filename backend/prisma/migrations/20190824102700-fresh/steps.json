@@ -1,9 +1,14 @@
 {
-  "version": "0.1.9",
+  "version": "0.1.26",
   "steps": [
     {
       "stepType": "CreateModel",
       "name": "User",
+      "embedded": false
+    },
+    {
+      "stepType": "CreateModel",
+      "name": "Plan",
       "embedded": false
     },
     {
@@ -96,7 +101,7 @@
       "type": {
         "Base": "String"
       },
-      "arity": "required",
+      "arity": "optional",
       "isUnique": false
     },
     {
@@ -132,6 +137,116 @@
         }
       },
       "arity": "list",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "name": "plan",
+      "type": {
+        "Relation": {
+          "to": "Plan",
+          "to_fields": [
+            "id"
+          ],
+          "name": "PlanToUser",
+          "on_delete": "None"
+        }
+      },
+      "arity": "optional",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "id",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": true,
+      "id": {
+        "strategy": "Auto",
+        "sequence": null
+      },
+      "default": {
+        "Expression": [
+          "cuid",
+          "String",
+          []
+        ]
+      }
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "createdAt",
+      "type": {
+        "Base": "DateTime"
+      },
+      "arity": "required",
+      "isUnique": false,
+      "default": {
+        "Expression": [
+          "now",
+          "DateTime",
+          []
+        ]
+      }
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "updatedAt",
+      "type": {
+        "Base": "DateTime"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "name",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "optional",
+      "isUnique": true
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "level",
+      "type": {
+        "Base": "Int"
+      },
+      "arity": "required",
+      "isUnique": true
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "subscribers",
+      "type": {
+        "Relation": {
+          "to": "User",
+          "to_fields": [],
+          "name": "PlanToUser",
+          "on_delete": "None"
+        }
+      },
+      "arity": "list",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Plan",
+      "name": "siteLimit",
+      "type": {
+        "Base": "Int"
+      },
+      "arity": "optional",
       "isUnique": false
     },
     {
@@ -238,6 +353,16 @@
     },
     {
       "stepType": "CreateField",
+      "model": "UserSite",
+      "name": "scanFreq",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "optional",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
       "model": "Site",
       "name": "id",
       "type": {
@@ -312,7 +437,7 @@
     {
       "stepType": "CreateField",
       "model": "Site",
-      "name": "userSite",
+      "name": "userSites",
       "type": {
         "Relation": {
           "to": "UserSite",
@@ -321,7 +446,7 @@
           "on_delete": "None"
         }
       },
-      "arity": "optional",
+      "arity": "list",
       "isUnique": false
     },
     {
@@ -622,7 +747,7 @@
         "Base": "String"
       },
       "arity": "required",
-      "isUnique": false
+      "isUnique": true
     },
     {
       "stepType": "CreateField",
