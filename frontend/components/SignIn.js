@@ -119,6 +119,7 @@ const SignIn = props => {
           </Link>
         </SigninForm>
       </SigninFormContainer>
+      <Error error={error} />
     </PageSection>
   );
 };
