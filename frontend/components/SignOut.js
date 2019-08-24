@@ -1,6 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import { StyledLink } from './Nav';
+import { StyledLink } from './styles/styles';
 import Router from 'next/router';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
@@ -17,9 +17,9 @@ const SignOut = props => {
   const [signOut] = useMutation(SIGNOUT_MUTATION, {
     onCompleted: async () => {
       sessionStorage.clear(); // or localStorage
-      await client.clearStore()
-      await client.resetStore()
-      Router.push('/signin') // redirect user to login page
+      await client.clearStore();
+      await client.resetStore();
+      Router.push('/signin'); // redirect user to login page
     },
   });
 

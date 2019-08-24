@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "devdb": "prisma2 dev",
-    "postinstall": "prisma2 generate"
+    "postinstall": "prisma2 generate",
+    "clean": "rm -rf node_modules && rm -rf ./prisma/migrations || true && rm ./prisma/dev.db || true && npm i",
+    "devdb:up": "prisma2 lift save && prisma2 lift up"
   },
   "dependencies": {
     "apollo-server-express": "^2.8.1",
@@ -39,7 +41,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.2",
     "jest": "^23.6.0",
-    "prisma2": "^2.0.0-preview-3.2"
+    "prisma2": "^2.0.0-preview-6.1"
   },
   "prettier": {
     "singleQuote": true,

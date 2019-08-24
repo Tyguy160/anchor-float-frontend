@@ -9,7 +9,7 @@ import {
   HeroSubtext,
   HeroCTAButton,
   HeroCTAButtonContainer,
-} from './styles/StyledHero';
+} from './styles/styles';
 
 const Hero = () => {
   return (
