@@ -3,10 +3,14 @@ const Query = {
     if (!user) {
       return null;
     }
-    const dbUser = await db.users.findOne({
-      where: { id: user.userId },
-      include: { sites: true, plan: true },
-    });
+    const dbUser = await db.users
+      .findOne({
+        where: { id: user.userId },
+        include: { sites: true, plan: true },
+      })
+      .catch((err) => {
+        throw new Error("We couldn't find your account details");
+      });
     console.log(dbUser);
     return dbUser;
   },

@@ -1,57 +1,68 @@
 const bcrypt = require('bcryptjs');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
+
 const { transport, emailTemplate } = require('../mail');
 const { getUserTokenFromId } = require('../user');
+const {
+  EMAIL_TAKEN,
+  EMAIL_NOT_FOUND,
+  INCORRECT_PASSWORD,
+  INVALID_HOSTNAME,
+  SIGN_IN_REQUIRED,
+  SITE_ALREADY_ADDED,
+  SITE_NOT_FOUND,
+  NO_USER_FOUND,
+} = require('../errors.js');
 
 const Mutation = {
-  // Done
   async signUp(parent, { input }, context) {
     const { email, password } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    try {
-      const user = await context.db.users.create({
+    const user = await context.db.users
+      .create({
         data: {
           email,
           password: hashedPassword,
         },
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error(EMAIL_TAKEN);
       });
 
-      const token = getUserTokenFromId(user.id);
-      context.res.cookie('token', token, {
-        httpOnly: true,
-      });
+    const token = getUserTokenFromId(user.id);
+    context.res.cookie('token', token, {
+      httpOnly: true,
+    });
 
-      return user;
-    } catch (err) {
-      throw new Error('We were unable to create your account. Try another email.');
-    }
+    return user;
   },
 
-  // Done
-  async signIn(parent, { input }, context) {
+  async signIn(parent, { input }, { db, res }) {
     const email = input.email.toLowerCase();
 
-    try {
-      const user = await context.db.users.findOne({
+    const user = await db.users
+      .findOne({
         where: {
           email,
         },
-      });
-      const passValid = await bcrypt.compare(input.password, user.password);
-      if (!passValid) {
-        throw new Error('Incorrect password');
-      }
-      const token = getUserTokenFromId(user.id);
-      context.res.cookie('token', token, {
-        httpOnly: true,
+      })
+      .catch((err) => {
+        throw new Error(EMAIL_NOT_FOUND);
       });
 
-      return { token, user };
-    } catch (err) {
-      throw new Error('Unable to sign in. Check username and password.');
+    const passValid = await bcrypt.compare(input.password, user.password);
+    if (!passValid) {
+      throw new Error(INCORRECT_PASSWORD);
     }
+    const token = getUserTokenFromId(user.id);
+    res.cookie('token', token, {
+      httpOnly: true,
+    });
+
+    return { token, user };
   },
 
   // Create UserSite
@@ -64,7 +75,7 @@ const Mutation = {
     info,
   ) {
     if (!user) {
-      throw new Error('You must be signed in');
+      throw new Error(SIGN_IN_REQUIRED);
     }
 
     // validate hostname
@@ -72,7 +83,7 @@ const Mutation = {
     const validHostname = hostnameValidator.test(hostname);
 
     if (!validHostname) {
-      throw new Error('Not a valid hostname');
+      throw new Error(INVALID_HOSTNAME);
     }
 
     const site = await db.sites.upsert({
@@ -93,7 +104,7 @@ const Mutation = {
     });
 
     if (userSites.length) {
-      throw new Error('That site has already been added to your account');
+      throw new Error(SITE_ALREADY_ADDED);
     } else {
       await db.userSites.create({
         data: {
@@ -117,13 +128,17 @@ const Mutation = {
     info,
   ) {
     if (!user) {
-      throw new Error('You must be signed in');
+      throw new Error(SIGN_IN_REQUIRED);
     }
 
     // Find the Site with the given hostname
-    const site = await db.sites.findOne({
-      where: { hostname },
-    });
+    const site = await db.sites
+      .findOne({
+        where: { hostname },
+      })
+      .catch((err) => {
+        throw new Error(SITE_NOT_FOUND);
+      });
 
     // Find and delete the UserSite with the given ID
     const res = await db.userSites.deleteMany({
@@ -147,38 +162,37 @@ const Mutation = {
 
   async requestReset(parent, { input }, context, info) {
     const { email } = input;
-    try {
-      // Check to see if the user exists
-      const user = await context.db.users.findOne({ where: { email } });
 
-      // Create a reset token and expiry
-      const randomBytesPromisified = promisify(randomBytes);
-      const resetToken = (await randomBytesPromisified(20)).toString('hex');
-      const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+    // Check to see if the user exists
+    const user = await context.db.users.findOne({ where: { email } }).catch((err) => {
+      throw new Error(NO_USER_FOUND);
+    });
 
-      // Update the user with the token and expiry
-      const res = await context.db.users.update({
-        where: { email },
-        data: { resetToken, resetTokenExpiry },
-      });
+    // Create a reset token and expiry
+    const randomBytesPromisified = promisify(randomBytes);
+    const resetToken = (await randomBytesPromisified(20)).toString('hex');
+    const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
 
-      // TODO: Email them the reset token
-      const mailRes = await transport.sendMail({
-        from: 'support@anchorfloat.com',
-        to: user.email,
-        subject: 'Reset Your Password',
-        html: emailTemplate(
-          `Your password reset token is here.
+    // Update the user with the token and expiry
+    const res = await context.db.users.update({
+      where: { email },
+      data: { resetToken, resetTokenExpiry },
+    });
+
+    // TODO: Email them the reset token
+    const mailRes = await transport.sendMail({
+      from: 'support@anchorfloat.com',
+      to: user.email,
+      subject: 'Reset Your Password',
+      html: emailTemplate(
+        `Your password reset token is here.
           \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
             Click here</a> to reset your password.`,
-        ),
-      });
+      ),
+    });
 
-      // Return the message
-      return { message: 'Please check your email for a reset link' };
-    } catch (err) {
-      return { message: 'There was an error. Please try again.' };
-    }
+    // Return the message
+    return { message: 'Please check your email for a reset link' };
   },
 
   async resetPassword(parent, { input }, context, info) {
@@ -198,7 +212,7 @@ const Mutation = {
     });
 
     if (!user) {
-      console.log('this token is either invalid or expired');
+      throw new Error('That token is no longer valid 😦');
     }
 
     // Hash new password
@@ -229,7 +243,7 @@ const Mutation = {
   async updateUserPlan(parent, { input }, { user, db }) {
     const { level } = input;
     if (!user) {
-      throw new Error('You must be signed in');
+      throw new Error(SIGN_IN_REQUIRED);
     }
 
     await db.users.update({
@@ -243,7 +257,7 @@ const Mutation = {
 
   async updateUserPassword(parent, { input }, { user, db }) {
     if (!user) {
-      throw new Error('You must be signed in');
+      throw new Error(SIGN_IN_REQUIRED);
     }
     const { newPassword } = input;
     if (!newPassword) {
