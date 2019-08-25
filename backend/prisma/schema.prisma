@@ -80,13 +80,13 @@ model Link {
 }
 
 model Product {
-  id           String       @default(cuid()) @id @unique
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id           String        @default(cuid()) @id @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   name         String?
-  asin         String       @unique
+  asin         String        @unique
   links        Link[]
-  availability Availability
+  availability Availability?
 }
 
 enum Availability {
