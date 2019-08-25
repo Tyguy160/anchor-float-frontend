@@ -64,9 +64,7 @@ async function parsePageHandler({ Body, MessageId }) {
   }
 
   // Delete existing links before parsing new ones
-  if (existingPage) {
-    await db.mutation.deleteManyLinks({ where: { page: { id: existingPage.id } } }, '{ count }');
-  }
+  await db.links.deleteMany({ where: { page: { id: newOrExistingPage.id } } }, '{ count }');
 
   const { pageTitle, links } = parseMarkup(response.data);
   const parsedLinks = links.map((link) => {
@@ -75,9 +73,9 @@ async function parsePageHandler({ Body, MessageId }) {
   });
   const wordCount = countWords({ markup: response.data });
 
-  await db.mutation.updatePage({
+  await db.pages.update({
     where: {
-      id: page.id,
+      id: newOrExistingPage.id,
     },
     data: {
       wordCount,
