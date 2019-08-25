@@ -1,4 +1,6 @@
+const Sitemapper = require('sitemapper');
 const { getDataFromMessage } = require('./utils');
+const { pageProducer } = require('../producers');
 
 async function parseSitemapHandler({ Body, MessageId }) {
   // Get the sitemap using the URL and queue up pages based on the sitemap
@@ -19,6 +21,7 @@ async function parseSitemapHandler({ Body, MessageId }) {
   const { sites } = await sitemap.fetch(url.href);
   sites.forEach(site => pageUrls.add(site));
 
+  // console.log(pageUrls);
   pageUrls.forEach((url) => {
     console.log(`Adding to page parse queue:\n${url}\n`);
     pageProducer.send(
