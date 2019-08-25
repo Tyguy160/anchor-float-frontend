@@ -23,5 +23,5 @@ parseSitemapConsumer.start();
 console.log('Parse sitemap consumer running...');
 parsePageConsumer.start();
 console.log('Parse page consumer running...');
-// parseShortlinkConsumer.start();
-// console.log('Parse shortlink consumer running...');
+parseShortlinkConsumer.start();
+console.log('Parse shortlink consumer running...');

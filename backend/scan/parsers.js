@@ -54,4 +54,54 @@ function parseMarkup(markupString, options = {}) {
   return { links, pageTitle, wordCount };
 }
 
-module.exports = { parseMarkup };
+// Should handle anything that's a valid value to an href attribtue
+// href refers to the href attribute on the link, origin should include the protocol and host
+function parseHref(href, origin) {
+  const jsHref = /^javascript/;
+  const hashStartHref = /^#/;
+  const noProtocolHref = /^\/\/.*/;
+  const relativeHref = /^\//;
+
+  let url;
+  let isValid;
+
+  try {
+    if (jsHref.test(href) || hashStartHref.test(href)) {
+      isValid = false;
+      return { isValid };
+    }
+    if (noProtocolHref.test(href)) {
+      hrefWithProtocol = `https:${href}`;
+      isValid = true;
+      url = new URL(hrefWithProtocol);
+    } else if (relativeHref.test(href)) {
+      isValid = true;
+      url = new URL(href, origin);
+    } else {
+      isValid = true;
+      url = new URL(href);
+    }
+  } catch (err) {
+    if (err instanceof TypeError) {
+      return { isValid: false };
+    }
+    throw err;
+  }
+  const {
+    hostname, pathname, protocol, hash,
+  } = url;
+  const params = new Map(url.searchParams);
+  return {
+    isValid,
+    hostname,
+    pathname,
+    protocol,
+    hash,
+    params,
+  };
+}
+
+module.exports = {
+  parseMarkup,
+  parseHref,
+};

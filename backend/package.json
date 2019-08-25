@@ -13,7 +13,8 @@
     "clean": "rm -rf node_modules && rm -rf ./prisma/migrations && rm -rf ./prisma/dev.db && npm i",
     "devdb:up": "prisma2 lift save && prisma2 lift up",
     "scanner": "nodemon ./scan/index.js",
-    "sitemap": "node ./scan/cmd.js"
+    "sitemap": "node ./scan/cmd.js",
+    "purge-queue": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-sitemap --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-page --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-shortlink"
   },
   "dependencies": {
     "apollo-server-express": "^2.8.1",

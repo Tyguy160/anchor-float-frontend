@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { db } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
+const { parseMarkup, parseHref } = require('../parsers');
 
 function handleResponseErrors(error) {
   if (error.response) {
@@ -66,12 +67,11 @@ async function parsePageHandler({ Body, MessageId }) {
   // Delete existing links before parsing new ones
   await db.links.deleteMany({ where: { page: { id: newOrExistingPage.id } } }, '{ count }');
 
-  const { pageTitle, links } = parseMarkup(response.data);
+  const { pageTitle, links, wordCount } = parseMarkup(response.data);
   const parsedLinks = links.map((link) => {
     const parsedHref = parseHref(link.href, url.origin);
     return { ...link, parsedHref };
   });
-  const wordCount = countWords({ markup: response.data });
 
   await db.pages.update({
     where: {
@@ -84,10 +84,10 @@ async function parsePageHandler({ Body, MessageId }) {
   });
 
   for (const link of parsedLinks) {
-    await processLink(link);
+    await processLink(link, newOrExistingPage);
   }
 
-  async function processLink(link) {
+  async function processLink(link, page) {
     try {
       const {
         isValid, params, hostname, pathname,
@@ -108,10 +108,10 @@ async function parsePageHandler({ Body, MessageId }) {
           affiliateTagName = params.get('tag');
         }
 
-        const newLink = await db.mutation.createLink({
+        const newLink = await db.links.create({
           data: {
             page: { connect: { id: page.id } },
-            url: link.href,
+            href: link.href,
             affiliateTagged,
             affiliateTagName,
             anchorText: link.text,
@@ -128,17 +128,17 @@ async function parsePageHandler({ Body, MessageId }) {
           });
           if (hasAsin) {
             const asin = captureGroup[1];
-            productProducer.send(
-              [
-                {
-                  id: uuid(),
-                  body: JSON.stringify({ asin, linkId: newLink.id }),
-                },
-              ],
-              (err) => {
-                if (err) console.log(err);
-              },
-            );
+            // productProducer.send(
+            //   [
+            //     {
+            //       id: uuid(),
+            //       body: JSON.stringify({ asin, linkId: newLink.id }),
+            //     },
+            //   ],
+            //   (err) => {
+            //     if (err) console.log(err);
+            //   },
+            // );
           }
         }
       }
