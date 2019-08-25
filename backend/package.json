@@ -12,7 +12,8 @@
     "postinstall": "prisma2 generate",
     "clean": "rm -rf node_modules && rm -rf ./prisma/migrations && rm -rf ./prisma/dev.db && npm i",
     "devdb:up": "prisma2 lift save && prisma2 lift up",
-    "scanner": "nodemon ./scan/index.js"
+    "scanner": "nodemon ./scan/index.js",
+    "sitemap": "node ./scan/cmd.js"
   },
   "dependencies": {
     "apollo-server-express": "^2.8.1",
