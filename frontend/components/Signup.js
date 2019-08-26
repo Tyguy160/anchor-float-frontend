@@ -25,13 +25,14 @@ const SIGNUP_MUTATION = gql`
 `;
 
 const Signup = props => {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [signUp, { error, data }] = useMutation(SIGNUP_MUTATION, {
-    variables: { input: { email, password } },
+    variables: { input: { email, password, firstName, lastName } },
     refetchQueries: ['me'],
   });
 
@@ -57,8 +58,11 @@ const Signup = props => {
   const handleChange = (e, hookType) => {
     const { name, value, type } = e.target;
     switch (hookType) {
-      case 'NAME':
-        setName(value);
+      case 'FIRST_NAME':
+        setFirstName(value);
+        break;
+      case 'LAST_NAME':
+        setLastName(value);
         break;
       case 'EMAIL':
         setEmail(value);
@@ -79,15 +83,27 @@ const Signup = props => {
         {/* <ErrorMessage error={props.error} /> */}
         <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
           <SignupInputContainer>
-            <label htmlFor="name">Name</label>
+            <label htmlFor="firstName">First Name</label>
             <SignupTextInput
-              id="name"
-              name="name"
+              id="firstName"
+              name="firstName"
               type="text"
               placeholder=""
               required
-              value={name}
-              onChange={e => handleChange(e, 'NAME')}
+              value={firstName}
+              onChange={e => handleChange(e, 'FIRST_NAME')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="lastName">Last Name</label>
+            <SignupTextInput
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder=""
+              required
+              value={lastName}
+              onChange={e => handleChange(e, 'LAST_NAME')}
             />
           </SignupInputContainer>
           <SignupInputContainer>

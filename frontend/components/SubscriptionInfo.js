@@ -29,12 +29,12 @@ const SubscriptionInfo = props => {
   return (
     <PageSection>
       <h2>Subscription Information</h2>
-      <SignupFormContainer>
+      {/* <SignupFormContainer>
         <div>
           You have the <b>{sub.name}</b> subscription. You're able to track{' '}
           <b>{sub.siteLimit}</b> with this type of account.
         </div>
-      </SignupFormContainer>
+      </SignupFormContainer> */}
     </PageSection>
   );
 };

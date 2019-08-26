@@ -97,6 +97,26 @@
     {
       "stepType": "CreateField",
       "model": "User",
+      "name": "firstName",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "name": "lastName",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "User",
       "name": "password",
       "type": {
         "Base": "String"
