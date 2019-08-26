@@ -10,7 +10,11 @@
     "lint:fix": "eslint . --fix",
     "devdb": "prisma2 dev",
     "postinstall": "prisma2 generate",
-    "clean": "rm -rf node_modules && rm -rf ./prisma/migrations && rm ./prisma/dev.db && npm i"
+    "clean": "rm -rf node_modules && rm -rf ./prisma/migrations && rm -rf ./prisma/dev.db && npm i",
+    "devdb:up": "prisma2 lift save && prisma2 lift up",
+    "scanner": "nodemon ./scan/index.js",
+    "sitemap": "node ./scan/cmd.js",
+    "purge-queue": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-sitemap --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-page --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-shortlink"
   },
   "dependencies": {
     "apollo-server-express": "^2.8.1",
@@ -20,13 +24,15 @@
     "cookie-parser": "^1.4.4",
     "crypto": "^1.0.1",
     "cuid": "^2.1.6",
-    "dotenv": "6.0.0",
+    "dotenv": "^6.0.0",
     "express": "^4.17.1",
     "graphql": "^14.4.2",
     "jsonwebtoken": "^8.5.1",
     "nodemailer": "^6.3.0",
     "nodemon": "^1.19.1",
     "sitemapper": "^2.2.0",
+    "sqs-consumer": "^5.3.0",
+    "sqs-producer": "^1.6.3",
     "util": "^0.12.1"
   },
   "license": "MIT",
