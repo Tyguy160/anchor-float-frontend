@@ -50,7 +50,7 @@ const DomainSettings = props => {
           </button>
         </div>
       </SignupFormContainer>
-      {/* Update domain, scan freq, API key, minimum review */}
+      {/* Update domain, scan freq, API key, minimum review, mark-as-default domain on dashboard */}
     </PageSection>
   );
 };

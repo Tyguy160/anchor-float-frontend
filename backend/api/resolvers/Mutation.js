@@ -17,13 +17,17 @@ const {
 
 const Mutation = {
   async signUp(parent, { input }, context) {
-    const { email, password } = input;
+    const {
+      email, password, firstName, lastName,
+    } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await context.db.users
       .create({
         data: {
           email,
+          firstName,
+          lastName,
           password: hashedPassword,
         },
       })

@@ -36,6 +36,8 @@ const typeDefs = gql`
 
   type User {
     id: String
+    firstName: String
+    lastName: String
     email: String
     plan: Plan
   }
@@ -54,6 +56,8 @@ const typeDefs = gql`
   input SignUpInput {
     email: String!
     password: String!
+    firstName: String!
+    lastName: String!
   }
 
   type SignUpPayload {
