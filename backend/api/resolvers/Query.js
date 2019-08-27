@@ -1,5 +1,5 @@
 const Query = {
-  async me(parent, args, { user, db }, info) {
+  async me(parent, args, { user, db, res }, info) {
     if (!user) {
       return null;
     }
@@ -9,6 +9,7 @@ const Query = {
         include: { sites: true, plan: true },
       })
       .catch((err) => {
+        res.clearCookie('token');
         throw new Error('There was an issue finding your account details');
       });
     return dbUser;

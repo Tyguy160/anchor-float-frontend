@@ -19,6 +19,7 @@ const typeDefs = gql`
   }
 
   input UpdatePasswordInput {
+    currentPassword: String
     newPassword: String
   }
 

@@ -13,6 +13,7 @@ const {
   SITE_ALREADY_ADDED,
   SITE_NOT_FOUND,
   NO_USER_FOUND,
+  NEW_PASSWORD_REQUIRED,
 } = require('../errors.js');
 
 const Mutation = {
@@ -260,16 +261,36 @@ const Mutation = {
   },
 
   async updateUserPassword(parent, { input }, { user, db }) {
+    const { currentPassword, newPassword } = input;
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
     }
-    const { newPassword } = input;
     if (!newPassword) {
-      throw new Error('You must submit a new password');
+      throw new Error(NEW_PASSWORD_REQUIRED);
     }
+    if (!currentPassword) {
+      throw new Error('Please enter a new password');
+    }
+
+    const dbUser = await db.users
+      .findOne({
+        where: {
+          id: user.userId,
+        },
+      })
+      .catch((err) => {
+        throw new Error(EMAIL_NOT_FOUND);
+      });
+
+    // const hashedCurrentPassword = await bcrypt.hash(currentPassword, 10);
+    const passValid = await bcrypt.compare(currentPassword, dbUser.password);
+    if (!passValid) {
+      throw new Error(INCORRECT_PASSWORD);
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await db.users.update({
-      where: { id: user.userId },
+      where: { id: dbUser.id },
       data: { password: hashedPassword },
     });
 

@@ -12,10 +12,26 @@ import {
   PageSection,
 } from './styles/styles';
 
+const CHANGE_PASSWORD_MUTATION = gql`
+  mutation CHANGE_PASSWORD_MUTATION($input: UpdatePasswordInput!) {
+    updateUserPassword(input: $input) {
+      message
+    }
+  }
+`;
+
 const ChangePassword = props => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+  const [changePassword, { error, data }] = useMutation(
+    CHANGE_PASSWORD_MUTATION,
+    {
+      variables: { input: { currentPassword, newPassword } },
+      refetchQueries: ['me'],
+    }
+  );
 
   const handleChange = (e, hookType) => {
     const { name, value, type } = e.target;
@@ -43,7 +59,8 @@ const ChangePassword = props => {
             e.preventDefault();
             if (newPassword === confirmNewPassword) {
               try {
-                console.log('password changed');
+                changePassword(currentPassword, newPassword);
+                console.log('Password changed');
                 //   const res = await addUserSite(addDomain);
                 setCurrentPassword('');
                 setNewPassword('');
