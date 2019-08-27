@@ -13,8 +13,10 @@ model User {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
   email            String     @unique
-  firstName        String
+  firstName        String?
   lastName         String?
+  password         String?
+  resetToken       String?
   resetTokenExpiry Int?
   sites            UserSite[]
   plan             Plan?
