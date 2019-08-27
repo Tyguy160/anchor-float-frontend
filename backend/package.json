@@ -14,6 +14,7 @@
     "devdb:up": "prisma2 lift save && prisma2 lift up",
     "scanner": "nodemon ./scan/index.js",
     "sitemap": "node ./scan/cmd.js",
+    "seed": "node ./prisma/seed.js",
     "purge-queue": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-sitemap --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-page --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-shortlink"
   },
   "dependencies": {

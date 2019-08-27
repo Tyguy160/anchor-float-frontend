@@ -14,9 +14,7 @@ model User {
   updatedAt        DateTime   @updatedAt
   email            String     @unique
   firstName        String
-  lastName         String
-  password         String?
-  resetToken       String?
+  lastName         String?
   resetTokenExpiry Int?
   sites            UserSite[]
   plan             Plan?
