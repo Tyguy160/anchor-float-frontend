@@ -19,13 +19,14 @@ const SignOut = props => {
       sessionStorage.clear(); // or localStorage
       await client.clearStore();
       await client.resetStore();
-      Router.push('/signin'); // redirect user to login page
     },
+    refetchQueries: ['me'],
   });
 
   const handleSignOutClick = async e => {
     e.preventDefault();
     await signOut();
+    Router.push('/signin'); // redirect user to login page
   };
 
   return <StyledLink onClick={handleSignOutClick}>Sign Out</StyledLink>;

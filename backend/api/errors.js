@@ -7,7 +7,7 @@ const SITE_ALREADY_ADDED = 'That site has already been added to your account';
 const SITE_NOT_FOUND = "We couldn't find that site";
 const NO_USER_FOUND = 'We could find a user with that email';
 const SIGN_IN_REQUIRED = 'You must be signed in';
-const NO_ACCOUNT_INFO = 'There was an issue finding your account details';
+const NEW_PASSWORD_REQUIRED = 'Please enter a new password';
 
 module.exports = {
   EMAIL_TAKEN,
@@ -19,5 +19,5 @@ module.exports = {
   SITE_NOT_FOUND,
   NO_USER_FOUND,
   SIGN_IN_REQUIRED,
-  NO_ACCOUNT_INFO,
+  NEW_PASSWORD_REQUIRED,
 };
