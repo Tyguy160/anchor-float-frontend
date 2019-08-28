@@ -1,11 +1,10 @@
 FROM node:alpine
 
-RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 USER node
-WORKDIR /home/node/app
+WORKDIR /home/node
 
-COPY . .
+COPY --chown=node:node . .
 
 RUN npm install
 
-CMD [ "node", "./index.js" ]
+CMD [ "node", "./scan/index.js" ]

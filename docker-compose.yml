@@ -2,15 +2,20 @@ version: '3.7'
 services:
   api:
     build: 
-      context: ./backend/api
+      context: ./backend
+      dockerfile: ./api/Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - /app/node_modules
+      - /home/node/node_modules
       - .:/app
   scan:
     build:
-      context: ./backend/scan
+      context: ./backend
+      dockerfile: ./scan/Dockerfile
+    volumes:
+      - /home/node/node_modules
+      - .:/app
   database:
     image: 'postgres:alpine'
     restart: always
