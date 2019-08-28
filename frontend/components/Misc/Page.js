@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Meta from './Meta';
-import Header from './Header';
+import Header from '../Nav/Header';
 
 class Page extends Component {
   render() {

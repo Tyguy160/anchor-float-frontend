@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import gql from 'graphql-tag';
-import Error from './ErrorMessage';
+import Error from '../Misc/ErrorMessage';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
-import { USERSITES_QUERY } from './resolvers/resolvers';
-import { PageSection } from './styles/styles';
+import { USERSITES_QUERY } from '../resolvers/resolvers';
+import { PageSection } from '../styles/styles';
 
 const StyledAddDomainButton = styled.button`
   margin: 10px;

@@ -10,7 +10,7 @@ import {
   SignupTextInput,
   ContinueButton,
   PageSection,
-} from './styles/styles';
+} from '../styles/styles';
 
 const CHANGE_PASSWORD_MUTATION = gql`
   mutation CHANGE_PASSWORD_MUTATION($input: UpdatePasswordInput!) {
@@ -60,8 +60,6 @@ const ChangePassword = props => {
             if (newPassword === confirmNewPassword) {
               try {
                 changePassword(currentPassword, newPassword);
-                console.log('Password changed');
-                //   const res = await addUserSite(addDomain);
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmNewPassword('');

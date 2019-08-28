@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
-import Error from './ErrorMessage';
+import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 
 import {
@@ -13,7 +13,7 @@ import {
   SignupTextInput,
   ContinueButton,
   PageSection,
-} from './styles/styles';
+} from '../styles/styles';
 
 const SIGNUP_MUTATION = gql`
   mutation SIGNUP_MUTATION($input: SignUpInput!) {
@@ -45,7 +45,6 @@ const Signup = props => {
       const res = await signUp();
 
       if (res) {
-        console.log('Created account');
         Router.push({
           pathname: '/dashboard',
         });

@@ -6,7 +6,7 @@ import {
   USERSITES_QUERY,
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
-} from './resolvers/resolvers';
+} from '../resolvers/resolvers';
 import {
   PageSection,
   SignupFormContainer,
@@ -14,7 +14,7 @@ import {
   SignupInputContainer,
   SignupTextInput,
   ContinueButton,
-} from './styles/styles';
+} from '../styles/styles';
 
 const DomainSettings = props => {
   const [domain, setDomain] = useState('');
@@ -102,7 +102,6 @@ const DomainSettings = props => {
                   e.preventDefault();
                   try {
                     const res = await deleteUserSite();
-                    console.log('deleted a site');
                   } catch (err) {
                     console.log({ err });
                   }

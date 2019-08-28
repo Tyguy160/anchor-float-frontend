@@ -1,6 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import { StyledLink } from './styles/styles';
+import { StyledLink } from '../styles/styles';
 import Router from 'next/router';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 

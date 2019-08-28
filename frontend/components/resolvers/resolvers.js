@@ -9,7 +9,6 @@ const GET_CURRENT_USER = gql`
         siteLimit
         name
       }
-      # subscriptionLevel
     }
   }
 `;

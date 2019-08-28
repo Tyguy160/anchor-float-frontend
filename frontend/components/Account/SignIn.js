@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import Error from './ErrorMessage';
+import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import styled from 'styled-components';
-import { CURRENT_USER_QUERY } from './User';
+import { CURRENT_USER_QUERY } from '../resolvers/resolvers';
 import Link from 'next/link';
 
 import {
@@ -15,7 +15,7 @@ import {
   ContinueButton,
   PageSection,
   CenteredHeading,
-} from './styles/styles';
+} from '../styles/styles';
 
 const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($input: SignInInput!) {

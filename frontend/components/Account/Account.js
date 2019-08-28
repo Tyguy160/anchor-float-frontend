@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import ChangePassword from './ChangePassword';
 import SubscriptionInfo from './SubscriptionInfo';
-import DomainList from './DomainList';
+import AddDomain from './AddDomain';
 import DomainSettings from './DomainSettings';
-import { PageSection } from './styles/styles';
+import { PageSection } from '../styles/styles';
 
 const Account = props => {
   return (
@@ -14,7 +14,7 @@ const Account = props => {
       <ChangePassword />
 
       {/* A list of the current domains and a tool to add a new domain */}
-      <DomainList />
+      <AddDomain />
 
       {/* Settings for each domain, selected by a dropdown */}
       <DomainSettings />

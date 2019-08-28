@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import Error from '../Misc/ErrorMessage';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {
   GET_CURRENT_USER,
   USERSITES_QUERY,
   ADD_USERSITE_MUTATION,
-} from './resolvers/resolvers';
+} from '../resolvers/resolvers';
 
 import {
   SignupForm,
@@ -14,9 +15,9 @@ import {
   SignupTextInput,
   ContinueButton,
   PageSection,
-} from './styles/styles';
+} from '../styles/styles';
 
-const DomainList = props => {
+const AddDomain = props => {
   const [domain, setDomain] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [scanFreq, setScanFreq] = useState('7');
@@ -78,7 +79,7 @@ const DomainList = props => {
   return (
     <PageSection>
       <h2>Add A Domain</h2>
-      {/* {userSites.userSites ? (
+      {userSites.userSites ? (
         <p>
           Your <b>{user.me.plan.name}</b> subscription lets you add{' '}
           <b>
@@ -88,24 +89,26 @@ const DomainList = props => {
           . You have{' '}
           <b>
             {user.me.plan.siteLimit - userSites.userSites.length}{' '}
-            {user.me.plan.siteLimit > 1 ? ' domains ' : 'domain '}
+            {user.me.plan.siteLimit - userSites.userSites.length === 1
+              ? ' domain '
+              : 'domains '}
           </b>{' '}
           remaining.
         </p>
       ) : (
         ''
-      )} */}
+      )}
       <SignupFormContainer>
         <SignupForm
           id="addDomainForm"
           method="post"
           onSubmit={async e => {
             e.preventDefault();
-            // if (userSites.userSites.length >= user.me.plan.siteLimit) {
-            //   throw Error(
-            //     `You've used up all of your domains. Try deleting an existing one or upgrading to a larger subscription.`
-            //   );
-            // }
+            if (userSites.userSites.length >= user.me.plan.siteLimit) {
+              throw Error(
+                `You've used up all of your domains. Try deleting an existing one or upgrading to a larger subscription.`
+              );
+            }
             try {
               const res = await addUserSite();
               setDomain('');
@@ -181,4 +184,4 @@ const DomainList = props => {
   );
 };
 
-export default DomainList;
+export default AddDomain;
