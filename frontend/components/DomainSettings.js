@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 
 import {
   USERSITES_QUERY,
+  UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
 } from './resolvers/resolvers';
 import {
@@ -17,36 +18,73 @@ import {
 
 const DomainSettings = props => {
   const [domain, setDomain] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [scanFreq, setScanFreq] = useState('7');
+  const [minimumReview, setMinimumReview] = useState('3');
   const { data: userSites } = useQuery(USERSITES_QUERY);
 
   const [deleteUserSite] = useMutation(DELETE_USERSITE_MUTATION, {
     variables: { input: { hostname: domain } },
     refetchQueries: ['userSites'],
   });
+
+  const [updateUserSite] = useMutation(UPDATE_USERSITE_MUTATION, {
+    variables: {
+      input: {
+        hostname: domain,
+        associatesApiKey: apiKey,
+        scanFreq,
+        minimumReview,
+      },
+    },
+    refetchQueries: ['userSites'],
+  });
+
+  const handleChange = (e, hookType) => {
+    const { name, value, type } = e.target;
+    switch (hookType) {
+      case 'NEW_PASSWORD':
+        setPassword(value);
+        break;
+      case 'CONFIRM_NEW_PASSWORD':
+        setConfirmPassword(value);
+        break;
+      case 'DOMAIN':
+        setDomain(value);
+        break;
+      case 'API_KEY':
+        setApiKey(value);
+        break;
+      case 'SCAN_FREQ':
+        setScanFreq(value);
+        break;
+      case 'MIN_REVIEW':
+        setMinimumReview(value);
+        break;
+    }
+  };
+
   return (
     <PageSection>
       <h2>Domain Settings</h2>
       <SignupFormContainer>
         <SignupForm
-          id="urlForm"
+          id="domainSettingsForm"
           onSubmit={async e => {
             e.preventDefault();
-            if (newPassword === confirmNewPassword) {
-              try {
-                changePassword(currentPassword, newPassword);
-                console.log('Password changed');
-              } catch (err) {
-                console.log({ err });
-              }
-            } else {
-              console.log("Your new passwords don't match 🤷‍");
-            }
+            updateUserSite(domain, apiKey, scanFreq, minimumReview);
           }}>
           <SignupInputContainer>
             <select
               defaultValue=""
-              onClick={e => {
-                setDomain(e.target.value);
+              onChange={e => {
+                const selectedSite = userSites.userSites.find(
+                  userSite => userSite.hostname === e.target.value
+                );
+                setDomain(selectedSite.hostname);
+                setApiKey(selectedSite.associatesApiKey);
+                setScanFreq(selectedSite.scanFreq);
+                setMinimumReview(selectedSite.minimumReview);
               }}>
               {userSites.userSites &&
                 userSites.userSites.map(site => (
@@ -74,45 +112,33 @@ const DomainSettings = props => {
             </div>
           </SignupInputContainer>
           <SignupInputContainer>
-            <label htmlFor="">API Key</label>
+            <label htmlFor="domain">Domain name</label>
             <SignupTextInput
-              id=""
-              name=""
-              type=""
+              id="domainInput"
+              name="domain"
+              type="text"
               placeholder=""
               required
-              value={'rewtr33'}
-              // onChange={e => handleChange(e, 'CURRENT_PASSWORD')}
+              value={domain}
+              disabled
             />
           </SignupInputContainer>
           <SignupInputContainer>
-            <label htmlFor="">Domain name</label>
+            <label htmlFor="apiKey">API Key</label>
             <SignupTextInput
-              id=""
-              name=""
-              type=""
+              id="apiKeyInput"
+              name="apiKey"
+              type="text"
               placeholder=""
               required
-              value={'triplebarcoffee.com'}
-              // onChange={e => handleChange(e, 'CURRENT_PASSWORD')}
+              value={apiKey}
+              onChange={e => handleChange(e, 'API_KEY')}
             />
           </SignupInputContainer>
           <SignupInputContainer>
-            <label htmlFor="">Minimum review</label>
-            <SignupTextInput
-              id="scanFreqInput"
-              name="scanFreq"
-              type="range"
-              min="1"
-              max="5"
-              step="0.5"
-              required
-              value={3.5}
-              onChange={e => handleChange(e, 'SCAN_FREQ')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="">Scan frequency</label>
+            <label htmlFor="scanFreq">
+              Scan Frequency: every <b>{scanFreq}</b> days
+            </label>
             <SignupTextInput
               id="scanFreqInput"
               name="scanFreq"
@@ -120,11 +146,27 @@ const DomainSettings = props => {
               min="1"
               max="14"
               required
-              value={0}
+              value={scanFreq}
               onChange={e => handleChange(e, 'SCAN_FREQ')}
             />
           </SignupInputContainer>
           <SignupInputContainer>
+            <label htmlFor="minimumReview">
+              Minimum Review: <b>{minimumReview}</b> stars
+            </label>
+            <SignupTextInput
+              id="minimumReviewInput"
+              name="minimumReview"
+              type="range"
+              min="0"
+              max="5"
+              step="0.5"
+              required
+              value={minimumReview}
+              onChange={e => handleChange(e, 'MIN_REVIEW')}
+            />
+          </SignupInputContainer>
+          {/* <SignupInputContainer>
             <label htmlFor="">Default domain on dashboard?</label>
             <SignupTextInput
               id="scanFreqInput"
@@ -134,8 +176,12 @@ const DomainSettings = props => {
               value={0}
               onChange={e => handleChange(e, 'SCAN_FREQ')}
             />
-          </SignupInputContainer>
-          <ContinueButton type="submit" value="Save" form="urlForm" />
+          </SignupInputContainer> */}
+          <ContinueButton
+            type="submit"
+            value="Save"
+            form="domainSettingsForm"
+          />
         </SignupForm>
       </SignupFormContainer>
       {/* Update domain, scan freq, API key, minimum review, mark-as-default domain on dashboard */}

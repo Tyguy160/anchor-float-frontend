@@ -20,6 +20,7 @@ const DomainList = props => {
   const [domain, setDomain] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [scanFreq, setScanFreq] = useState('7');
+  const [minimumReview, setMinimumReview] = useState('3');
   const { loading: domainsLoading, data: userSites } = useQuery(
     USERSITES_QUERY
   );
@@ -27,7 +28,7 @@ const DomainList = props => {
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
-    variables: { input: { hostname: domain, apiKey, scanFreq } },
+    variables: { input: { hostname: domain, apiKey, scanFreq, minimumReview } },
     refetchQueries: ['userSites'],
   });
 
@@ -48,6 +49,9 @@ const DomainList = props => {
         break;
       case 'SCAN_FREQ':
         setScanFreq(value);
+        break;
+      case 'MIN_REVIEW':
+        setMinimumReview(value);
         break;
     }
   };
@@ -148,6 +152,22 @@ const DomainList = props => {
               required
               value={scanFreq}
               onChange={e => handleChange(e, 'SCAN_FREQ')}
+            />
+          </SignupInputContainer>
+          <SignupInputContainer>
+            <label htmlFor="minimumReview">
+              Minimum Review: <b>{minimumReview}</b> stars
+            </label>
+            <SignupTextInput
+              id="minimumReviewInput"
+              name="minimumReview"
+              type="range"
+              min="0"
+              max="5"
+              step="0.5"
+              required
+              value={minimumReview}
+              onChange={e => handleChange(e, 'MIN_REVIEW')}
             />
           </SignupInputContainer>
           <ContinueButton

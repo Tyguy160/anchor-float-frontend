@@ -41,6 +41,7 @@ model UserSite {
   user             User
   site             Site
   scanFreq         String?
+  minimumReview    String?
 }
 
 model Site {
