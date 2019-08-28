@@ -18,7 +18,9 @@ const USERSITES_QUERY = gql`
   query userSites {
     userSites {
       hostname
+      associatesApiKey
       scanFreq
+      minimumReview
     }
   }
 `;
@@ -26,6 +28,16 @@ const USERSITES_QUERY = gql`
 const ADD_USERSITE_MUTATION = gql`
   mutation ADD_USERSITE_MUTATION($input: AddUserSiteInput!) {
     addUserSite(input: $input) {
+      UserSite {
+        hostname
+      }
+    }
+  }
+`;
+
+const UPDATE_USERSITE_MUTATION = gql`
+  mutation UPDATE_USERSITE_MUTATION($input: UpdateUserSiteInput!) {
+    updateUserSite(input: $input) {
       UserSite {
         hostname
       }
@@ -45,5 +57,6 @@ export {
   GET_CURRENT_USER,
   USERSITES_QUERY,
   ADD_USERSITE_MUTATION,
+  UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
 };

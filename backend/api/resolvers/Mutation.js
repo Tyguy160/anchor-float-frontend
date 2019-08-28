@@ -74,7 +74,9 @@ const Mutation = {
   async addUserSite(
     parent,
     {
-      input: { hostname, apiKey, scanFreq },
+      input: {
+        hostname, apiKey, scanFreq, minimumReview,
+      },
     },
     { user, db },
     info,
@@ -117,7 +119,52 @@ const Mutation = {
           user: { connect: { id: user.userId } },
           associatesApiKey: apiKey,
           scanFreq,
+          minimumReview,
         },
+      });
+    }
+
+    return { domain: { hostname } };
+  },
+
+  // Update UserSite
+  async updateUserSite(
+    parent,
+    {
+      input: {
+        hostname, associatesApiKey, scanFreq, minimumReview,
+      },
+    },
+    { user, db },
+    info,
+  ) {
+    if (!user) {
+      throw new Error(SIGN_IN_REQUIRED);
+    }
+
+    const userSites = await db.userSites.findMany({
+      where: {
+        user: {
+          id: user.userId,
+        },
+        site: {
+          hostname,
+        },
+      },
+    });
+
+    if (userSites.length) {
+      userSites.map(async (userSite) => {
+        await db.userSites.update({
+          where: {
+            id: userSite.id,
+          },
+          data: {
+            associatesApiKey,
+            scanFreq,
+            minimumReview,
+          },
+        });
       });
     }
 

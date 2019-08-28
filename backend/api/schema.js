@@ -11,6 +11,7 @@ const typeDefs = gql`
     signIn(input: SignInInput!): SignInPayload
     signOut: SuccessMessage
     addUserSite(input: AddUserSiteInput!): AddUserSitePayload
+    updateUserSite(input: UpdateUserSiteInput!): UpdateUserSitePayload
     deleteUserSite(input: DeleteUserSiteInput): SuccessMessage
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
@@ -35,6 +36,17 @@ const typeDefs = gql`
     level: Int
   }
 
+  input UpdateUserSiteInput {
+    hostname: String!
+    associatesApiKey: String!
+    scanFreq: String!
+    minimumReview: String!
+  }
+
+  type UpdateUserSitePayload {
+    UserSite: UserSite
+  }
+
   type User {
     id: String
     firstName: String
@@ -51,7 +63,9 @@ const typeDefs = gql`
 
   type UserSite {
     hostname: String
+    associatesApiKey: String
     scanFreq: String
+    minimumReview: String
   }
 
   input SignUpInput {
@@ -80,6 +94,7 @@ const typeDefs = gql`
     hostname: String!
     apiKey: String!
     scanFreq: String!
+    minimumReview: String!
   }
 
   input DeleteUserSiteInput {
