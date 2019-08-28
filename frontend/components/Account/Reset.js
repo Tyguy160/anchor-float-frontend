@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import ErrorMessage from './ErrorMessage';
+import ErrorMessage from '../Misc/ErrorMessage';
 import Router, { useRouter } from 'next/router';
 
 const Container = styled.div``;
@@ -100,7 +100,6 @@ const Reset = props => {
       const res = await resetPassword();
 
       if (res) {
-        console.log('Reset password');
         Router.push({
           pathname: '/dashboard',
         });

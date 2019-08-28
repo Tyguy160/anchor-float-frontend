@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import Error from './ErrorMessage';
+import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import styled from 'styled-components';
 
@@ -14,7 +14,7 @@ import {
   ContinueButton,
   CenteredHeading,
   PageSection,
-} from './styles/styles';
+} from '../styles/styles';
 
 const REQUEST_RESET_MUTATION = gql`
   mutation REQUEST_RESET_MUTATION($input: RequestResetInput!) {

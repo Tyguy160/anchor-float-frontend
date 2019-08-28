@@ -3,11 +3,11 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import SignOut from './SignOut';
+import SignOut from '../Account/SignOut';
 
-import { GET_CURRENT_USER } from './resolvers/resolvers';
+import { GET_CURRENT_USER } from '../resolvers/resolvers';
 
-import { NavBar, Logo, Links, StyledLink } from './styles/styles';
+import { NavBar, Logo, Links, StyledLink } from '../styles/styles';
 
 const Nav = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
@@ -16,7 +16,7 @@ const Nav = props => {
     return (
       <NavBar>
         <Link href="/" passHref>
-          <Logo>
+          <Logo style={{ cursor: 'pointer' }}>
             <img
               src="/static/logo.png"
               style={{
@@ -24,7 +24,7 @@ const Nav = props => {
                 marginTop: `5px`,
               }}
             />
-            <div>Anchor Float</div>
+            <div style={{ cursor: 'pointer' }}>Anchor Float</div>
           </Logo>
         </Link>
         <Links>

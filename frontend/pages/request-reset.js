@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import RequestReset from '../components/RequestReset';
+import RequestReset from '../components/Account/RequestReset';
 class RequestResetPage extends Component {
   render() {
     return <RequestReset />;
