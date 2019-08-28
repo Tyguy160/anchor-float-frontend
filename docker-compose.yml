@@ -1,11 +1,19 @@
 version: '3.7'
 services:
-  web:
+  api:
     build: 
-      context: .
-      dockerfile: Dockerfile
+      context: ./backend/api
     ports:
       - "3000:3000"
     volumes:
       - /app/node_modules
       - .:/app
+  scan:
+    build:
+      context: ./backend/scan
+  database:
+    image: 'postgres:alpine'
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=associate_engine

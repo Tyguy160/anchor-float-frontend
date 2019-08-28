@@ -1,4 +1,4 @@
-FROM alpine
+FROM node:alpine
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 USER node
@@ -8,4 +8,4 @@ COPY . .
 
 RUN npm install
 
-CMD [ "node", "./api/index.js" ]
+CMD [ "node", "./index.js" ]
