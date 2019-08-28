@@ -11,7 +11,6 @@ import { NavBar, Logo, Links, StyledLink } from '../styles/styles';
 
 const Nav = props => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
-  console.log(data);
   if (loading || !data.me) {
     return (
       <NavBar>

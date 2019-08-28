@@ -27,11 +27,38 @@ class Pricing extends Component {
           <StyledTierContainer>
             <StyledTierHeading>Basic</StyledTierHeading>
             <StyledPrice>
-              $20
+              $0
               <div>per month</div>
             </StyledPrice>
             <StyledTierDetails>
               <li style={{ textAlign: `center` }}>1 site</li>
+              <li>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
+                amet orci urna.
+              </li>
+              <li>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
+                amet orci urna.
+              </li>
+              <li>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
+                amet orci urna.
+              </li>
+            </StyledTierDetails>
+            <StyledPricingCTAButtonContainer>
+              <Link href="/signup" passHref>
+                <StyledPricingCTAButton>Sign Up</StyledPricingCTAButton>
+              </Link>
+            </StyledPricingCTAButtonContainer>
+          </StyledTierContainer>
+          <StyledTierContainer>
+            <StyledTierHeading>Basic</StyledTierHeading>
+            <StyledPrice>
+              $20
+              <div>per month</div>
+            </StyledPrice>
+            <StyledTierDetails>
+              <li style={{ textAlign: `center` }}>3 site</li>
               <li>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
                 amet orci urna.
@@ -58,7 +85,7 @@ class Pricing extends Component {
               <div>per month</div>
             </StyledPrice>
             <StyledTierDetails>
-              <li style={{ textAlign: `center` }}>3 sites</li>
+              <li style={{ textAlign: `center` }}>5 sites</li>
               <li>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
                 amet orci urna.
@@ -81,7 +108,7 @@ class Pricing extends Component {
           <StyledTierContainer>
             <StyledTierHeading>Advanced</StyledTierHeading>
             <StyledPrice>
-              $120
+              $80
               <div>per month</div>
             </StyledPrice>
             <StyledTierDetails>
