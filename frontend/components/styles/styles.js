@@ -101,6 +101,21 @@ const NavBar = styled.div`
   }
 `;
 
+const Footer = styled.div`
+  background: #383838;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  height: 60px;
+  display: grid;
+`;
+
+const FooterText = styled.div`
+  color: #efefef;
+  text-align: center;
+  align-self: center;
+`;
+
 const Logo = styled.div`
   color: #efefef;
   font-size: 2em;
@@ -287,7 +302,7 @@ const PricingContainer = styled.div`
   display: flex;
   justify-content: center;
 
-  @media screen and (max-width: 1050px) {
+  @media screen and (max-width: 1350px) {
     flex-wrap: wrap;
   }
 `;
@@ -297,7 +312,7 @@ const StyledTierContainer = styled.div`
   border-radius: 5px;
   padding: 0 10px 0px 10px;
   box-shadow: 1px 1px 10px 1px #999;
-  max-width: 500px;
+  max-width: 300px;
 `;
 
 const EnterpriseStyledTierContainer = styled(StyledTierContainer)`
@@ -358,6 +373,8 @@ export {
   CenteredHeading,
   ContinueButton,
   NavBar,
+  Footer,
+  FooterText,
   Logo,
   Links,
   StyledLink,
