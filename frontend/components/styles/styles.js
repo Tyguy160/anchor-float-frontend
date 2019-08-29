@@ -103,9 +103,10 @@ const NavBar = styled.div`
 
 const Footer = styled.div`
   background: #383838;
-  position: fixed;
+  position: absolute;
   width: 100%;
-  bottom: 0;
+  /* bottom: 10; */
+  /* align-self: flex-end; */
   height: 60px;
   display: grid;
 `;
