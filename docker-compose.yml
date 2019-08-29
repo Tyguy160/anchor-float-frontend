@@ -5,19 +5,21 @@ services:
       context: ./backend
       dockerfile: ./api/Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     volumes:
-      - /home/node/node_modules
-      - .:/app
+      - ./backend/package.json:/opt/app/package.json
+      - ./backend/api:/opt/app/api
+      - ./backend/prisma:/opt/app/prisma
   scan:
     build:
       context: ./backend
       dockerfile: ./scan/Dockerfile
     volumes:
-      - /home/node/node_modules
-      - .:/app
+      - ./backend/package.json:/opt/app/package.json
+      - ./backend/scan:/opt/app/scan
+      - ./backend/prisma:/opt/app/prisma
   database:
-    image: 'postgres:alpine'
+    image: 'postgres'
     restart: always
     environment:
       - POSTGRES_PASSWORD=postgres

@@ -17,7 +17,7 @@ db.connect().then(() => {
           siteLimit: plan.siteLimit,
         },
       })
-      .catch(e => console.log);
+      .catch(console.err);
   });
   db.plans.findMany().then(plans => console.log(plans));
 });
