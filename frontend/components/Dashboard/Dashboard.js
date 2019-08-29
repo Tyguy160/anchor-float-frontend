@@ -47,7 +47,7 @@ const Dashboard = () => {
   const [siteSelection, setSiteSelection] = useState(null);
 
   return (
-    <div>
+    <PageSection>
       <DashboardContainer>
         <select
           defaultValue=""
@@ -235,7 +235,7 @@ const Dashboard = () => {
         // className="-striped -highlight"
        */}
       </DashboardContainer>
-    </div>
+    </PageSection>
   );
 };
 
