@@ -4,6 +4,7 @@ const typeDefs = gql`
   type Query {
     me: User
     userSites: [UserSite]
+    sitePages(input: SitePagesInput!): SitePagesPayload
   }
 
   type Mutation {
@@ -121,6 +122,34 @@ const typeDefs = gql`
 
   type UserSitesPayload {
     userSites: [UserSite]
+  }
+
+  input SitePagesInput {
+    hostname: String
+  }
+  type SitePagesPayload {
+    site: Site
+  }
+
+  type Site {
+    pages: [Page]
+    hostname: String
+  }
+
+  type Page {
+    url: String!
+    pageTitle: String
+    wordCount: Int
+    links: [Link]
+    site: Site
+  }
+
+  type Link {
+    page: Page
+    href: String
+    affiliateTagged: Boolean
+    affiliateTagName: String
+    anchorText: String
   }
 `;
 

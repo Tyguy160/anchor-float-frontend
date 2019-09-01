@@ -20,6 +20,7 @@ async function parseSitemapHandler({ Body, MessageId }) {
   const sitemap = new Sitemapper();
   const pageUrls = new Set();
   const { sites } = await sitemap.fetch(url.href);
+  console.log(`Sitemap: ${url.href} has ${sites.length} pages`);
   sites.forEach(site => pageUrls.add(site));
 
   // console.log(pageUrls);
