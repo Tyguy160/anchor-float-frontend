@@ -1,4 +1,4 @@
-const { amzApi } = require('../request');
+const { amzApi } = require('../amzApi');
 
 describe('amzApi', () => {
   const amz = amzApi({
