@@ -1,9 +1,4 @@
-const ENDPOINT = 'webservices.amazon.com';
-const REQUEST_URI = '/onca/xml';
-
-function timeNowAsISO() {
-  return `${new Date().toISOString().split('.')[0]}Z`;
-}
+const crypto = require('crypto');
 
 function amzApi({ associateTag, awsAccessKey, secretKey }) {
   if (!awsAccessKey || !secretKey || !associateTag) {
@@ -16,7 +11,6 @@ function amzApi({ associateTag, awsAccessKey, secretKey }) {
     Service: 'AWSECommerceService',
     Operation: 'ItemLookup',
     ResponseGroup: 'Large', // Determines what the response contains
-    IdType: 'ASIN', // Passing a list of ASINs
   };
 
   function getUrl(asins) {
@@ -26,25 +20,26 @@ function amzApi({ associateTag, awsAccessKey, secretKey }) {
 
     const dynamicParams = {
       ItemId: asins.join(','),
-      Timestamp: timeNowAsISO(),
+      Timestamp: `${new Date().toISOString().split('.')[0]}Z`, // Time with ms dropped
     };
     const fullParams = { ...staticParams, ...dynamicParams };
 
-    // Sort params alphabetically
-    // URI escape keys and values (or just values) <- TODO
-    const orderedParams = {};
-    Object.keys(fullParams).sort().forEach((key) => {
-      orderedParams[key] = fullParams[key];
-    });
-    // Join keys and values `Operation=ItemLookup`
-    // Join array of joined key/values with "&" <- this is the canonicalQueryString
-    const canonicalQueryString = '';
-    // Join to create string to sign
-    const stringToSign = `GET\n${ENDPOINT}\n${REQUEST_URI}\n${canonicalQueryString}`;
-    // Sign string to get signature
-    // Create request URL with &Signature= at the end
+    const paramMap = Object.keys(fullParams)
+      .sort() // Amazon require the params to be sorted for signing
+      .map(key => [key, fullParams[key]]);
 
-    return '';
+    const canonicalQueryString = new URLSearchParams(paramMap).toString();
+
+    const ENDPOINT = 'webservices.amazon.com';
+    const REQUEST_URI = '/onca/xml';
+    const stringToSign = `GET\n${ENDPOINT}\n${REQUEST_URI}\n${canonicalQueryString}`;
+
+    const hmac = crypto.createHmac('sha256', secretKey); // Sign string and convert to base64
+    hmac.update(stringToSign);
+    const signature = hmac.digest('base64');
+    const signatureQueryString = new URLSearchParams([['Signature', signature]]).toString();
+
+    return `https://${ENDPOINT}${REQUEST_URI}?${canonicalQueryString}&${signatureQueryString}`;
   }
 
   return {

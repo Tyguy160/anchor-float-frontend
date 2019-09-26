@@ -20,4 +20,20 @@ describe('amzApi', () => {
   test('throws if no asins are passed', () => {
     expect(() => amz.getUrl([])).toThrow();
   });
+
+  test('throws if more than 10 asins are passed', () => {
+    expect(() => amz.getUrl([
+      'abc1',
+      'abc2',
+      'abc3',
+      'abc4',
+      'abc5',
+      'abc6',
+      'abc7',
+      'abc8',
+      'abc9',
+      'abc10',
+      'abc11',
+    ])).toThrow();
+  });
 });
