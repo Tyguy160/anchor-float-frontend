@@ -1,17 +1,6 @@
 const cheerio = require('cheerio');
 
-function countWords({ markup, contentSelector }) {
-  contentSelector = contentSelector || 'body';
-  const $ = cheerio.load(markup);
-  const count = $(contentSelector)
-    .text()
-    .replace(/\n/g, ' ')
-    .split(' ')
-    .filter(word => word != '').length;
-  return count;
-}
-
-async function parseMarkup(markupString, options = {}) {
+function parseMarkup(markupString, options = {}) {
   const { contentSelector } = options;
 
   if (!markupString) {
@@ -43,14 +32,12 @@ async function parseMarkup(markupString, options = {}) {
     .get()
     .join(' ');
 
-  const wordCount = countWords({ markup: markupString, contentSelector });
-
-  // const ALL_WHITESPACE_REGEX = /\s+/g;
-  // const wordCount = str.replace(ALL_WHITESPACE_REGEX, ' ').split(' ').length;
+  const ALL_WHITESPACE_REGEX = /\s+/g;
+  const wordCount = str.replace(ALL_WHITESPACE_REGEX, ' ').split(' ').length;
 
   // Get links that go somewhere
   const LINK_SELECTOR = 'a[href!=""]:not([href^=#])';
-  const links = await $(LINK_SELECTOR, content)
+  const links = $(LINK_SELECTOR, content)
     .map(function mapLinkToObject() {
       const node = $(this);
       return {
@@ -64,7 +51,7 @@ async function parseMarkup(markupString, options = {}) {
       };
     })
     .toArray();
-  console.log(`Links: ${links}`);
+
   return { links, pageTitle, wordCount };
 }
 
