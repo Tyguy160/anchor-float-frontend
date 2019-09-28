@@ -1,7 +1,7 @@
 const { db } = require('./db');
 
 const plansToAdd = [
-  { name: 'Free', level: 0, siteLimit: 1 },
+  { name: 'Free', level: 0, siteLimit: 0 },
   { name: 'Basic', level: 1, siteLimit: 3 },
   { name: 'Standard', level: 2, siteLimit: 5 },
   { name: 'Advanced', level: 3, siteLimit: 10 },
