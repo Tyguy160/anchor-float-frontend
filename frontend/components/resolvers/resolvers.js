@@ -24,6 +24,23 @@ const USERSITES_QUERY = gql`
   }
 `;
 
+const SITEPAGES_QUERY = gql`
+  query SITEPAGES_QUERY($input: SitePagesInput!) {
+    sitePages(input: $input) {
+      site {
+        hostname
+        pages {
+          url
+          wordCount
+          links {
+            href
+          }
+        }
+      }
+    }
+  }
+`;
+
 const ADD_USERSITE_MUTATION = gql`
   mutation ADD_USERSITE_MUTATION($input: AddUserSiteInput!) {
     addUserSite(input: $input) {
@@ -55,6 +72,7 @@ const DELETE_USERSITE_MUTATION = gql`
 export {
   GET_CURRENT_USER,
   USERSITES_QUERY,
+  SITEPAGES_QUERY,
   ADD_USERSITE_MUTATION,
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,

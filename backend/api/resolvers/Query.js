@@ -34,8 +34,22 @@ const Query = {
       scanFreq: userSite.scanFreq,
       minimumReview: userSite.minimumReview,
     }));
-
     return [...sites];
+  },
+  async sitePages(parent, { input }, { db, user }, info) {
+    console.log(input.hostname);
+    const sitePages = await db.sites
+      .findOne({
+        where: {
+          hostname: input.hostname,
+        },
+        include: {
+          pages: true,
+        },
+      })
+      .catch(err => ({ site: {} }));
+    console.log(sitePages.id);
+    return { site: sitePages };
   },
 };
 

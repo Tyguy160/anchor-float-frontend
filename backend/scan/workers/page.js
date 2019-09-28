@@ -31,30 +31,36 @@ async function parsePageHandler({ Body, MessageId }) {
     return;
   }
 
-  const newOrExistingSite = await db.sites.upsert({
-    where: { hostname: url.hostname },
-    create: { hostname: url.hostname },
-    update: {},
-  });
+  const newOrExistingSite = await db.sites.upsert(
+    {
+      where: { hostname: url.hostname },
+      create: { hostname: url.hostname },
+      update: {},
+    },
+    () => console.log('upserted site'),
+  );
 
-  const newOrExistingPage = await db.pages.upsert({
-    where: { url: url.href },
-    create: {
-      url: url.href,
-      site: {
-        connect: {
-          id: newOrExistingSite.id,
+  const newOrExistingPage = await db.pages.upsert(
+    {
+      where: { url: url.href },
+      create: {
+        url: url.href,
+        site: {
+          connect: {
+            id: newOrExistingSite.id,
+          },
+        },
+      },
+      update: {
+        site: {
+          connect: {
+            id: newOrExistingSite.id,
+          },
         },
       },
     },
-    update: {
-      site: {
-        connect: {
-          id: newOrExistingSite.id,
-        },
-      },
-    },
-  });
+    () => console.log('upserted page'),
+  );
 
   const response = await axios.get(url.href).catch(handleResponseErrors);
   console.log(response.status);
@@ -65,9 +71,11 @@ async function parsePageHandler({ Body, MessageId }) {
   }
 
   // Delete existing links before parsing new ones
-  await db.links.deleteMany({ where: { page: { id: newOrExistingPage.id } } }, '{ count }');
+  await db.links.deleteMany({ where: { page: { id: newOrExistingPage.id } } }, '{ count }', () => console.log('deleted links'));
 
-  const { pageTitle, links, wordCount } = parseMarkup(response.data);
+  console.log('getting page data...');
+  const { pageTitle, links, wordCount } = await parseMarkup(response.data);
+  console.log(`Page title: ${pageTitle}, links: ${links}, word count: ${wordCount}`);
   const parsedLinks = links.map((link) => {
     const parsedHref = parseHref(link.href, url.origin);
     return { ...link, parsedHref };

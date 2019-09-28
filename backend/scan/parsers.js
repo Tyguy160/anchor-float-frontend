@@ -24,6 +24,7 @@ function parseMarkup(markupString, options = {}) {
   } else {
     content = $('body').contents();
   }
+
   const str = content
     .map(function getText() {
       return $(this).text();

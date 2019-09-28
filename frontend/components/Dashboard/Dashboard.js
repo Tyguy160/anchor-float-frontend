@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import gql from 'graphql-tag';
 import Error from '../Misc/ErrorMessage';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
-import { USERSITES_QUERY } from '../resolvers/resolvers';
+import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { USERSITES_QUERY, SITEPAGES_QUERY } from '../resolvers/resolvers';
 import { PageSection } from '../styles/styles';
+import { get } from 'http';
 
 const StyledAddDomainButton = styled.button`
   margin: 10px;
@@ -44,19 +45,37 @@ const Dashboard = () => {
     USERSITES_QUERY
   );
 
-  const [siteSelection, setSiteSelection] = useState(null);
+  const [
+    getSitePages,
+    { loading: sitePagesLoading, data: sitePages },
+  ] = useLazyQuery(SITEPAGES_QUERY);
+
+  useEffect(() => {
+    // getSitePages(siteSelection);
+  });
+
+  const [siteSelection, setSiteSelection] = useState('');
 
   return (
     <PageSection>
       <DashboardContainer>
         <select
           defaultValue=""
-          onChange={e => {
+          onChange={async e => {
+            e.persist();
+            console.log(e.target.value);
+            const hostname = e.target.value;
             setSiteSelection(e.target.value);
+            getSitePages({
+              variables: { input: { hostname } },
+            });
           }}>
+          {console.log(sitePages)}
           {userSites.userSites &&
             userSites.userSites.map(site => (
-              <option key={site.hostname}>{site.hostname}</option>
+              <option key={site.hostname} value={site.hostname}>
+                {site.hostname}
+              </option>
             ))}
           <option disabled value="">
             Select a domain
@@ -79,7 +98,11 @@ const Dashboard = () => {
                 <tr>
                   <td>Pages</td>
                   <td>-</td>
-                  <td style={{ fontWeight: `bold` }}>65</td>
+                  <td style={{ fontWeight: `bold` }}>
+                    {sitePages.sitePages
+                      ? sitePages.sitePages.site.pages.length
+                      : '?'}
+                  </td>
                 </tr>
                 <tr>
                   <td>Amazon products</td>
@@ -133,7 +156,13 @@ const Dashboard = () => {
                 <tr>
                   <td>Site word count</td>
                   <td />
-                  <td style={{ fontWeight: `bold` }}>93730</td>
+                  <td style={{ fontWeight: `bold` }}>
+                    {sitePages.sitePages
+                      ? sitePages.sitePages.site.pages
+                          .map(page => page.wordCount)
+                          .reduce((acc, pres) => acc + pres)
+                      : '?'}
+                  </td>
                 </tr>
                 <tr>
                   <td>Word count per page</td>
