@@ -1,5 +1,11 @@
 const crypto = require('crypto');
 
+/**
+ * Generates a request url for use with the Amazon product api
+ *
+ * @param {object} config Config object that requires an associateTag, awsAccessKey, and secretKey
+ * @returns {object}
+ */
 function amzApi({ associateTag, awsAccessKey, secretKey }) {
   if (!awsAccessKey || !secretKey || !associateTag) {
     throw new Error('Must provide associateTag, awsAccessKey, and secretKey');
@@ -45,6 +51,7 @@ function amzApi({ associateTag, awsAccessKey, secretKey }) {
 
   return {
     getUrl,
+    associateTag: staticParams.AssociateTag,
   };
 }
 
