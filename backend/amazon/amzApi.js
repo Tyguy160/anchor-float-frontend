@@ -37,6 +37,7 @@ function amzApi({ associateTag, awsAccessKey, secretKey }) {
     const hmac = crypto.createHmac('sha256', secretKey); // Sign string and convert to base64
     hmac.update(stringToSign);
     const signature = hmac.digest('base64');
+
     const signatureQueryString = new URLSearchParams([['Signature', signature]]).toString();
 
     return `https://${ENDPOINT}${REQUEST_URI}?${canonicalQueryString}&${signatureQueryString}`;
