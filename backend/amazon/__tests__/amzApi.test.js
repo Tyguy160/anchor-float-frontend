@@ -21,6 +21,10 @@ describe('amzApi', () => {
     expect(() => amz.getUrl([])).toThrow();
   });
 
+  test('returns correct associate id', () => {
+    expect(amz.associateTag).toBe('triplebar-20');
+  });
+
   test('throws if more than 10 asins are passed', () => {
     expect(() => amz.getUrl([
       'abc1',
