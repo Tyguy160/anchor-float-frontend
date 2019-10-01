@@ -8,7 +8,7 @@ function makeApiRequest(url) {
 }
 
 function parseRes(body) {
-  return parseString(body); // returns a promise
+  return parseString(body); // returns a promise that resolves to a JS object
 }
 
 function extractDetails(dataObject) {
@@ -27,8 +27,15 @@ function extractDetails(dataObject) {
   return details;
 }
 
+async function requestAndExtract(url) {
+  const resBody = await makeApiRequest(url);
+  const responseObject = await parseRes(resBody);
+  return extractDetails(responseObject);
+}
+
 module.exports = {
   makeApiRequest,
   parseRes,
   extractDetails,
+  requestAndExtract,
 };
