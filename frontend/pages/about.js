@@ -22,6 +22,26 @@ const AboutContent = styled.div`
   line-height: 1.5em; */
 `;
 
+const ProductTypes = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const ProductType = styled.div`
+  max-width: 300px;
+  padding: 0 50px 0 50px;
+`;
+
+const ReportTypes = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const ReportType = styled.div`
+  max-width: 500px;
+  padding: 0 50px 0 50px;
+`;
+
 class About extends Component {
   render() {
     return (
@@ -35,50 +55,65 @@ class About extends Component {
         Amazon affiliate links fall into three main categories: available
         products, third-party products, and unavailable products.
         <AboutHeading>Example Amazon Product Availability</AboutHeading>
-        <AboutHeading>Available Products</AboutHeading>
-        <p>
-          Available products are the Internet marketer’s dream. These are the
-          products that are shipped and sold by Amazon. They also normally offer
-          Prime shipping. We’ve found that these products tend to convert the
-          best for Amazon customers.
-        </p>
-        <AboutHeading>Third-Party Products</AboutHeading>
-        <p>
-          Third-party products are anything that is sold by a third-party
-          company on Amazon. Often the orders are fulfilled by the third-party
-          company. These products tend not to convert as well because they
-          typically lack Prime shipping and have extended delivery windows.
-        </p>
-        <AboutHeading>Unavailable Products</AboutHeading>
-        <p>
-          Unavailable products are products that are no longer sold on Amazon.
-          When people land on these pages from your site, they will seldom
-          convert. This is because there’s no path to ordering that product.
-          Most of the time, this traffic will bounce back to Google and click an
-          available product link on your competition’s site.
-        </p>
+        <ProductTypes>
+          <ProductType>
+            <AboutHeading>Available Products</AboutHeading>
+            <p>
+              Available products are the Internet marketer’s dream. These are
+              the products that are shipped and sold by Amazon. They also
+              normally offer Prime shipping. We’ve found that these products
+              tend to convert the best for Amazon customers.
+            </p>
+          </ProductType>
+          <ProductType>
+            <AboutHeading>Third-Party Products</AboutHeading>
+            <p>
+              Third-party products are anything that is sold by a third-party
+              company on Amazon. Often the orders are fulfilled by the
+              third-party company. These products tend not to convert as well
+              because they typically lack Prime shipping and have extended
+              delivery windows.
+            </p>
+          </ProductType>
+          <ProductType>
+            <AboutHeading>Unavailable Products</AboutHeading>
+            <p>
+              Unavailable products are products that are no longer sold on
+              Amazon. When people land on these pages from your site, they will
+              seldom convert. This is because there’s no path to ordering that
+              product. Most of the time, this traffic will bounce back to Google
+              and click an available product link on your competition’s site.
+            </p>
+          </ProductType>
+        </ProductTypes>
         <AboutHeading>How does Anchor Float help?</AboutHeading>
         <p>
           We parse your site and send you a report summary and a report
           spreadsheet that contain all the information you need to keep your
           Amazon affiliate links healthy.
         </p>
-        <AboutHeading>Report Summary</AboutHeading>
-        <p>
-          We send you a one-page cover sheet outlining important KPIs for your
-          site. The summary highlights the number and percentage of your
-          affiliate links in each category: available, third-party, and
-          unavailable. We also include useful information like word count per
-          page, affiliate link ratio, and total number of links.
-        </p>
-        <AboutHeading>Report Spreadsheet</AboutHeading>
-        <p>
-          In addition to the report summary, we send you an ultra-detailed
-          spreadsheet that tells you exactly what pages your unavailable links
-          are on. This information can help you easily locate and update links.
-          It's also easy to import into Google Sheets or Excel, making it
-          perfect for piping to a VA.
-        </p>
+        <ReportTypes>
+          <ReportType>
+            <AboutHeading>Report Summary</AboutHeading>
+            <p>
+              We send you a one-page cover sheet outlining important KPIs for
+              your site. The summary highlights the number and percentage of
+              your affiliate links in each category: available, third-party, and
+              unavailable. We also include useful information like word count
+              per page, affiliate link ratio, and total number of links.
+            </p>
+          </ReportType>
+          <ReportType>
+            <AboutHeading>Report Spreadsheet</AboutHeading>
+            <p>
+              In addition to the report summary, we send you an ultra-detailed
+              spreadsheet that tells you exactly what pages your unavailable
+              links are on. This information can help you easily locate and
+              update links. It's also easy to import into Google Sheets or
+              Excel, making it perfect for piping to a VA.
+            </p>
+          </ReportType>
+        </ReportTypes>
         <AboutContent>
           <AboutHeading>How It Works</AboutHeading>
           When you purchase an Anchor Float report, we take your sitemap(s) and

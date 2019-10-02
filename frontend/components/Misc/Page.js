@@ -11,9 +11,9 @@ class Page extends Component {
         <Meta />
         <Header />
         {this.props.children}
-        <Footer>
+        {/* <Footer>
           <FooterText>&copy;{new Date().getFullYear()} Anchor Float</FooterText>
-        </Footer>
+        </Footer> */}
       </>
     );
   }
