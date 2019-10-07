@@ -1,4 +1,4 @@
-FROM node
+FROM node:10-buster
 
 WORKDIR /opt/app
 

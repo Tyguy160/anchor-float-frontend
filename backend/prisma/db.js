@@ -1,15 +1,13 @@
-console.log('importing...')
-const Photon = require('@generated/photon');
-console.log('imported!')
-let db
-let triesRemaining = 10;
-while (!db && triesRemaining) {
+const { Photon } = require('@generated/photon');
+
+function getDB() {
   try {
-    db = new Photon();
+    const db = new Photon();
+    return db;
   } catch (e) {
-    console.error('Error connecting to DB. Retrying...');
-    triesRemaining -= 1;
+    console.error(e);
+    console.error('Error creating Photo object');
+    process.exit(1);
   }
 }
-
-module.exports = { db };
+module.exports = { getDB };

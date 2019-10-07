@@ -1,6 +1,6 @@
 const { ApolloServer } = require('apollo-server-express');
 
-const { db } = require('../prisma/db');
+const { getDB } = require('../prisma/db');
 const typeDefs = require('./schema');
 const Mutation = require('./resolvers/Mutation');
 const Query = require('./resolvers/Query');
@@ -12,16 +12,19 @@ const resolvers = { Mutation, Query };
 
 async function createServer() {
   let connected;
+  let db;
   while (!connected) {
     try {
-      await db.connect();
+      db = getDB();
+      await db.connect(); // eslint-disable-line no-await-in-loop
       connected = true;
     } catch (err) {
       console.error(err);
-      console.log('Failed to connect. Retrying...');
-      await sleep(2000);
+      console.error('Failed to connect to DB. Retrying...');
+      await sleep(2000); // eslint-disable-line no-await-in-loop
     }
   }
+
   return new ApolloServer({
     typeDefs,
     resolvers,

@@ -1,9 +1,10 @@
 version: '3.7'
 services:
   api:
-    build: 
+    build:
       context: ./backend
       dockerfile: ./api/Dockerfile
+    restart: unless-stopped
     ports:
       - "4000:4000"
     volumes:
@@ -18,9 +19,3 @@ services:
       - ./backend/package.json:/opt/app/package.json
       - ./backend/scan:/opt/app/scan
       - ./backend/prisma:/opt/app/prisma
-  database:
-    image: 'postgres'
-    restart: always
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=associate_engine

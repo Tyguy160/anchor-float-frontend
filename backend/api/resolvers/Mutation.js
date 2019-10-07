@@ -32,9 +32,9 @@ const Mutation = {
           password: hashedPassword,
           plan: {
             connect: {
-              level: 0
-            }
-          }
+              level: 0,
+            },
+          },
         },
       })
       .catch((err) => {
