@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nodemon -e js,graphql -x node api/index.js",
     "dev": "nodemon -e js,graphql -x node --inspect api/index.js",
+    "devscan": "nodemon -e js,graphql -x node --inspect scan/index.js",
     "test": "jest --watchAll",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -50,7 +51,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.2",
     "jest": "^23.6.0",
-    "prisma2": "^2.0.0-preview-7"
+    "prisma2": "^2.0.0-preview013.3"
   },
   "prettier": {
     "singleQuote": true,
