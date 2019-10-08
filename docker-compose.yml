@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 services:
   api:
     build:
@@ -19,3 +19,7 @@ services:
       - ./backend/package.json:/opt/app/package.json
       - ./backend/scan:/opt/app/scan
       - ./backend/prisma:/opt/app/prisma
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
