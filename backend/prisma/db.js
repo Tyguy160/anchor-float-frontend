@@ -6,7 +6,7 @@ function getDB() {
     return db;
   } catch (e) {
     console.error(e);
-    console.error('Error creating Photo object');
+    console.error('Error creating Photon object. Exiting...\n');
     process.exit(1);
   }
 }

@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgres"
-  url      = "postgres://postgres:postgres@db:5432/postgres"
+  url      = "postgres://postgres:postgres@database:5432/postgres"
   default  = true
 }
 

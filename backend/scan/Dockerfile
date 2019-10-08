@@ -2,17 +2,17 @@ FROM node:10-buster
 
 WORKDIR /opt/app
 
+# docker-compose defines the context as ./backend
+COPY ./package.json ./
+
+# Add the schema so that prisma2 generate works
+COPY ./prisma/schema.prisma ./prisma/
+
+RUN npm i && npm run postinstall
+
 COPY . .
-
-RUN rm -rf node_modules \
-  && npm i -g --unsafe-perm prisma2@latest  \
-  && npm install \
-  && chown -R node /opt/app
-
-RUN prisma2 generate
 
 USER node
 
-ENV HOME_DIR=/opt/app
-
+# Run the app with node
 CMD [ "node", "./scan/index.js" ]

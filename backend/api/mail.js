@@ -1,11 +1,31 @@
 const nodemailer = require('nodemailer');
 
+const {
+  MAIL_HOST,
+  MAIL_PORT,
+  MAIL_USER,
+  MAIL_PASS,
+} = process.env;
+
+
+Object.entries({
+  MAIL_HOST,
+  MAIL_PORT,
+  MAIL_USER,
+  MAIL_PASS,
+}).forEach(([varName, varValue]) => {
+  if (!varValue) { // value is undefined
+    console.error(`\nMissing required environment variable: ${varName}\n`); // eslint-disable-line no-console
+    process.exit(1);
+  }
+});
+
 const transport = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: process.env.MAIL_PORT,
+  host: MAIL_HOST,
+  port: MAIL_PORT,
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
+    user: MAIL_USER,
+    pass: MAIL_PASS,
   },
 });
 
