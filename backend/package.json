@@ -16,6 +16,7 @@
     "scanner": "nodemon ./scan/index.js",
     "sitemap": "node ./scan/cmd.js",
     "seed": "node ./prisma/seed.js",
+    "migrateandseed": "npm run devdb:up && npm run seed",
     "purge-parse-sitemap": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-sitemap",
     "purge-parse-page": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-page",
     "purge-parse-shortlink": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-shortlink",
