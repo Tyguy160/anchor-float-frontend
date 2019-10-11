@@ -12,7 +12,7 @@ const SIGNOUT_MUTATION = gql`
   }
 `;
 
-const SignOut = props => {
+const SignOut = () => {
   const client = useApolloClient();
   const [signOut] = useMutation(SIGNOUT_MUTATION, {
     onCompleted: async () => {

@@ -3,8 +3,6 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
-import styled from 'styled-components';
-import { CURRENT_USER_QUERY } from '../resolvers/resolvers';
 import Link from 'next/link';
 
 import {
@@ -37,29 +35,15 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
-const RESET_REQUEST_MUTATION = gql`
-  mutation RESET_REQUEST_MUTATION($email: String!) {
-    requestReset(email: $email) {
-      message
-    }
-  }
-`;
-
-const SignIn = props => {
+const SignIn = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  const [signIn, { error, data }] = useMutation(SIGNIN_MUTATION, {
+  const [signIn, { error }] = useMutation(SIGNIN_MUTATION, {
     variables: { input: { email, password } },
     refetchQueries: ['me'],
   });
 
-  const [resetPassword, { error2, data2 }] = useMutation(
-    RESET_REQUEST_MUTATION,
-    {
-      variables: { email },
-    }
-  );
   return (
     <PageSection>
       <CenteredHeading>Sign into your account</CenteredHeading>
@@ -74,17 +58,15 @@ const SignIn = props => {
                 pathname: '/dashboard',
               });
             } catch (err) {
-              console.log({ err });
+              console.log(err);
             }
           }}>
-          {/* <Error error={error} /> */}
           <SigninInputContainer>
             <label htmlFor="email">
               Email
               <SigninTextInput
                 type="email"
                 name="email"
-                // placeholder="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
               />
@@ -103,16 +85,7 @@ const SignIn = props => {
             </label>
           </SigninInputContainer>
           <ContinueButton type="submit" value="Sign In!" />
-          <Link
-            // onClick={e => {
-            //   e.preventDefault();
-            //   console.log(`Attempting reset for ${email}`);
-            //   if (!email) {
-            //     console.log('Sorry, you need to enter an email address above');
-            //   }
-            //   resetPassword(email);
-            // }}
-            href="/request-reset">
+          <Link href="/request-reset">
             <i style={{ textAlign: `center`, cursor: `pointer` }}>
               Forgot password?
             </i>

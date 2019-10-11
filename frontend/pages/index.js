@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import Hero from '../components/Index/Hero';
-
-const PageContainer = styled.div`
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-`;
 
 class Home extends Component {
   componentDidMount() {
