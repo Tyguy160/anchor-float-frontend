@@ -115,7 +115,7 @@ const AddDomain = props => {
               setApiKey('');
               setScanFreq('7');
             } catch (err) {
-              console.log({ err });
+              console.log(err);
             }
           }}>
           <SignupInputContainer>

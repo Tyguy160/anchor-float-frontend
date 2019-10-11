@@ -1,15 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import SignOut from '../Account/SignOut';
 
 import { GET_CURRENT_USER } from '../resolvers/resolvers';
 
 import { NavBar, Logo, Links, StyledLink } from '../styles/styles';
 
-const Nav = props => {
+const Nav = () => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
   if (loading || !data.me) {
     return (
@@ -27,12 +25,6 @@ const Nav = props => {
           </Logo>
         </Link>
         <Links>
-          {/* <Link href="/signup" passHref>
-            <StyledLink>Sign Up</StyledLink>
-          </Link> */}
-          {/* <Link href="/#learn-more" passHref>
-            <StyledLink>Learn More</StyledLink>
-          </Link> */}
           <Link href="/" passHref>
             <StyledLink>Home</StyledLink>
           </Link>
@@ -68,9 +60,6 @@ const Nav = props => {
           <Link href="/dashboard" passHref>
             <StyledLink>Dashboard</StyledLink>
           </Link>
-          {/* <Link href="/domains" passHref>
-            <StyledLink>Domains</StyledLink>
-          </Link> */}
           <Link href="/account" passHref>
             <StyledLink>Account</StyledLink>
           </Link>

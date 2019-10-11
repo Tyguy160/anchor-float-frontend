@@ -23,7 +23,6 @@ async function parseSitemapHandler({ Body, MessageId }) {
   console.log(`Sitemap: ${url.href} has ${sites.length} pages`);
   sites.forEach(site => pageUrls.add(site));
 
-  // console.log(pageUrls);
   pageUrls.forEach((url) => {
     console.log(`Adding to page parse queue:\n${url}\n`);
     pageProducer.send(

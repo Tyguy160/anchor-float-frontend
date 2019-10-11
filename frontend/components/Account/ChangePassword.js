@@ -1,7 +1,7 @@
 // ! NOT WORKING YET
 
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {
   SignupForm,
@@ -20,12 +20,12 @@ const CHANGE_PASSWORD_MUTATION = gql`
   }
 `;
 
-const ChangePassword = props => {
+const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-  const [changePassword, { error, data }] = useMutation(
+  const [changePassword] = useMutation(
     CHANGE_PASSWORD_MUTATION,
     {
       variables: { input: { currentPassword, newPassword } },
@@ -34,7 +34,7 @@ const ChangePassword = props => {
   );
 
   const handleChange = (e, hookType) => {
-    const { name, value, type } = e.target;
+    const { value } = e.target;
     switch (hookType) {
       case 'CURRENT_PASSWORD':
         setCurrentPassword(value);
@@ -52,7 +52,6 @@ const ChangePassword = props => {
     <PageSection>
       <h2>Change Your Password</h2>
       <SignupFormContainer>
-        {/* <ErrorMessage error={props.error} /> */}
         <SignupForm
           id="urlForm"
           onSubmit={async e => {
@@ -64,7 +63,7 @@ const ChangePassword = props => {
                 setNewPassword('');
                 setConfirmNewPassword('');
               } catch (err) {
-                console.log({ err });
+                console.log(err);
               }
             } else {
               console.log("Your new passwords don't match 🤷‍");

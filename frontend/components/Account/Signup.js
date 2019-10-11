@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import Error from '../Misc/ErrorMessage';
@@ -24,7 +23,7 @@ const SIGNUP_MUTATION = gql`
   }
 `;
 
-const Signup = props => {
+const Signup = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -55,7 +54,7 @@ const Signup = props => {
   };
 
   const handleChange = (e, hookType) => {
-    const { name, value, type } = e.target;
+    const { value } = e.target;
     switch (hookType) {
       case 'FIRST_NAME':
         setFirstName(value);
@@ -79,7 +78,6 @@ const Signup = props => {
     <PageSection handleChange={handleChange}>
       <CenteredHeading>Register</CenteredHeading>
       <SignupFormContainer>
-        {/* <ErrorMessage error={props.error} /> */}
         <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
           <SignupInputContainer>
             <label htmlFor="firstName">First Name</label>

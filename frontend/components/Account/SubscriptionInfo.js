@@ -1,22 +1,23 @@
 // ! NOT WORKING YET
-import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
+import React from 'react';
+import { useQuery } from '@apollo/react-hooks';
 import { GET_CURRENT_USER } from '../resolvers/resolvers';
-import { SignupFormContainer, PageSection, SignupForm } from '../styles/styles';
+import { SignupFormContainer, PageSection } from '../styles/styles';
 
-const SubscriptionInfo = props => {
+const SubscriptionInfo = () => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
-  const sub = data.me.plan;
+  const { plan } = data && data.me;
 
   return (
     <PageSection>
       <h2>Subscription Information</h2>
       <SignupFormContainer>
-        <div>
-          You have the <b>{sub.name}</b> subscription. You're able to track{' '}
-          <b>{sub.siteLimit}</b> with this type of account.
-        </div>
+        {plan && !loading &&
+          <div>
+            You have the <b>{plan.name}</b> subscription. You're able to track{' '}
+            <b>{plan.siteLimit}</b> with this type of account.
+          </div>
+        }
       </SignupFormContainer>
     </PageSection>
   );

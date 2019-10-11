@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import Error from '../Misc/ErrorMessage';
-import Router from 'next/router';
-import styled from 'styled-components';
 
 import {
-  Container,
   SigninFormContainer,
   SigninForm,
   SigninInputContainer,
@@ -47,19 +43,17 @@ const RequestReset = props => {
           onSubmit={async e => {
             e.preventDefault();
             try {
-              const res = await requestReset();
+              await requestReset();
             } catch (err) {
-              console.log({ err });
+              console.log(err);
             }
           }}>
-          {/* <Error error={error} /> */}
           <SigninInputContainer>
             <label htmlFor="email">
               Email
               <SigninTextInput
                 type="email"
                 name="email"
-                // placeholder="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 disabled={data}

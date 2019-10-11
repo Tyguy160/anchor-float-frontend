@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import gql from 'graphql-tag';
-import Error from '../Misc/ErrorMessage';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { USERSITES_QUERY, SITEPAGES_QUERY } from '../resolvers/resolvers';
 import { PageSection } from '../styles/styles';
-import { get } from 'http';
-
-const StyledAddDomainButton = styled.button`
-  margin: 10px;
-  width: 30px;
-  height: 30px;
-`;
 
 const DashboardContainer = styled.div`
   /* margin: 20px; */
@@ -47,12 +38,8 @@ const Dashboard = () => {
 
   const [
     getSitePages,
-    { loading: sitePagesLoading, data: sitePages },
+    { data: sitePages },
   ] = useLazyQuery(SITEPAGES_QUERY);
-
-  useEffect(() => {
-    // getSitePages(siteSelection);
-  });
 
   const [siteSelection, setSiteSelection] = useState('');
 
@@ -63,14 +50,12 @@ const Dashboard = () => {
           defaultValue=""
           onChange={async e => {
             e.persist();
-            console.log(e.target.value);
             const hostname = e.target.value;
             setSiteSelection(e.target.value);
             getSitePages({
               variables: { input: { hostname } },
             });
           }}>
-          {console.log(sitePages)}
           {userSites.userSites &&
             userSites.userSites.map(site => (
               <option key={site.hostname} value={site.hostname}>
@@ -205,121 +190,9 @@ const Dashboard = () => {
         ) : (
           <div>Please select a domain to see previous scans</div>
         )}
-        {/*         
-        // getTdProps={(state, rowInfo, column) => {
-        //   return {
-        //     style: {
-        //       color:
-        //         column.id === 'unavailable' && rowInfo.row.unavailable > 0
-        //           ? 'white'
-        //           : 'black',
-        //       backgroundColor:
-        //         column.id === 'unavailable' && rowInfo.row.unavailable > 0
-        //           ? `#d71616`
-        //           : '',
-        //     },
-        //   };
-        // }}
-        // columns={[
-        //   {
-        //     Header: 'Page',
-        //     columns: [
-        //       {
-        //         Header: 'Page',
-        //         accessor: 'pageTitle',
-        //         Cell: row => (
-        //           <Link
-        //             prefetch
-        //             href={{
-        //               pathname: '/webpage',
-        //               query: { id: row.original.id },
-        //             }}>
-        //             <a>{row.value}</a>
-        //           </Link>
-        //         ),
-        //       },
-
-        //       { Header: 'URL', accessor: 'url' },
-        //       { Header: 'Word Count', accessor: 'wordCount' },
-        //     ],
-        //   },
-        //   {
-        //     Header: 'Links',
-        //     columns: [
-        //       { Header: 'Valid', accessor: 'valid' },
-
-        //       {
-        //         Header: '3rd Party',
-        //         accessor: 'thirdParty',
-        //       },
-        //       {
-        //         Header: 'Unavailable',
-        //         accessor: 'unavailable',
-        //       },
-        //       { Header: 'Total Links', accessor: 'totalLinks' },
-        //     ],
-        //   },
-        // ]}
-        // defaultPageSize={10}
-        // className="-striped -highlight"
-       */}
       </DashboardContainer>
     </PageSection>
   );
 };
-
-// state = {
-//   domain: '', //Domain that you are selecting and querying
-//   showAddDomain: false,
-// };
-
-// saveToState = e => {
-//   this.setState({ [e.target.name]: e.target.value });
-// };
-
-// toggleAddDomain = () => {
-//   this.setState({
-//     showAddDomain: !this.state.showAddDomain,
-//   });
-//   console.log('Toggled addDomain window');
-// };
-
-// hideAddDomain = () => {
-//   this.setState({
-//     showAddDomain: false,
-//   });
-//   console.log('Closed the addDomain window');
-// };
-//   {/* //   <Query */}
-//   {/* //     query={CURRENT_USER_QUERY} */}
-//   {/* //     onCompleted={() => console.log('Completed the query')}> */}
-//   {/* //     {({ data, error, loading }) => ( */}
-//   {/* //       <> */}
-//   {/* //         <Error error={error} /> */}
-//   {/* <label htmlFor="domains" onChange={this.saveToState}> */}
-//     {/* <select name="domain" id="domain"> */}
-//       {/* //             {loading ? ( */}
-//       {/* <option>Loading...</option> */}
-//       {/* // ) : data.me.domains.length ? ( // data.me.domains.map(domain => ( */}
-//       {/* <option key={domain.id}>{domain.hostname}</option> */}
-//       {/* // )) // ) : ( // <option name="">No domains</option> */}
-//       {/* // )} */}
-//     {/* </select> */}
-//   {/* </label> */}
-//   {/*
-// //         <StyledAddDomainButton
-// //           disabled={this.state.showAddDomain}
-// //           onClick={this.toggleAddDomain}>
-// //           +
-// //         </StyledAddDomainButton>
-// //         <AddDomain
-// //           showAddDomain={this.state.showAddDomain}
-// //           toggleAddDomain={this.toggleAddDomain}
-// //           hideAddDomain={this.hideAddDomain}
-// //         />
-// //         <DomainDataDisplay data={data} domain={this.state.domain} />
-// //       </>
-// //     )}
-// //   </Query>*/}
 
 export default Dashboard;

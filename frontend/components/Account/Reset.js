@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import ErrorMessage from '../Misc/ErrorMessage';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 
 const Container = styled.div``;
 
@@ -110,7 +110,7 @@ const Reset = props => {
   };
 
   const handleChange = (e, hookType) => {
-    const { name, value, type } = e.target;
+    const { value } = e.target;
     switch (hookType) {
       case 'PASSWORD':
         setPassword(value);

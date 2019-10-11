@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 
 import {
   USERSITES_QUERY,
@@ -16,7 +15,7 @@ import {
   ContinueButton,
 } from '../styles/styles';
 
-const DomainSettings = props => {
+const DomainSettings = () => {
   const [domain, setDomain] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [scanFreq, setScanFreq] = useState('7');
@@ -42,7 +41,7 @@ const DomainSettings = props => {
   });
 
   const handleChange = (e, hookType) => {
-    const { name, value, type } = e.target;
+    const { value } = e.target;
     switch (hookType) {
       case 'NEW_PASSWORD':
         setPassword(value);
@@ -104,7 +103,7 @@ const DomainSettings = props => {
                     const res = await deleteUserSite();
                     setSelectedDomain('select');
                   } catch (err) {
-                    console.log({ err });
+                    console.log(err);
                   }
                 }}>
                 delete

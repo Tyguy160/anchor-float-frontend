@@ -1,5 +1,5 @@
 const Query = {
-  async me(parent, args, { user, db, res }, info) {
+  async me(parent, args, { user, db, res }) {
     if (!user) {
       return null;
     }
@@ -8,14 +8,14 @@ const Query = {
         where: { id: user.userId },
         include: { sites: true, plan: true },
       })
-      .catch((err) => {
+      .catch(() => {
         res.clearCookie('token');
         throw new Error('There was an issue finding your account details');
       });
     return dbUser;
   },
 
-  async userSites(parent, args, { user, db }, info) {
+  async userSites(parent, args, { user, db }) {
     if (!user) {
       throw new Error('You must be signed in');
     }
@@ -36,8 +36,7 @@ const Query = {
     }));
     return [...sites];
   },
-  async sitePages(parent, { input }, { db, user }, info) {
-    console.log(input.hostname);
+  async sitePages(parent, { input }, { db }) {
     const sitePages = await db.sites
       .findOne({
         where: {
@@ -47,8 +46,7 @@ const Query = {
           pages: true,
         },
       })
-      .catch(err => ({ site: {} }));
-    console.log(sitePages.id);
+      .catch(console.log);
     return { site: sitePages };
   },
 };
