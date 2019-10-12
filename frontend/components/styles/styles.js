@@ -5,7 +5,7 @@ const StyledButton = styled.button`
   box-shadow: 0px 0px 1px 1px hsl(43, 74%, 46%);
   font-size: 1em;
   background-color: hsl(43, 74%, 49%);
-  border-radius: 5px;
+  border-radius: 2px;
   height: 2.5em;
   border-color: none;
   border: none;
@@ -35,17 +35,7 @@ const SignupForm = styled.form`
 `;
 
 const ContinueButton = styled(StyledButton)`
-  height: 45px;
-  /* border-radius: 4px; */
-  /* background-color: #ccc; */
-  /* border: none; */
   justify-self: center;
-  width: 100px;
-  font-size: 1em;
-  outline: none;
-  :active {
-    background-color: #bbb;
-  }
 `;
 
 const SignupInputContainer = styled.div`
@@ -251,18 +241,18 @@ const CTAButtonContainer = styled.div`
   }
 `;
 
-const CTAButton = styled.div`
-  display: grid;
-  align-items: center;
-  padding: 10px 20px 10px 20px;
+const CTAButton = styled(StyledButton)`
+  /* display: grid; */
+  /* align-items: center; */
+  /* padding: 10px 20px 10px 20px; */
   /* /* box-shadow: 0px 1px 1px 1px #c4941c;  */
-  height: 30px;
-  cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
-  background-color: goldenrod;
-  border-radius: 2px;
-  border: none;
-  color: white;
+  /* height: 30px; */
+  /* cursor: pointer; */
+  /* font-family: 'Quicksand', sans-serif; */
+  /* background-color: goldenrod; */
+  /* border-radius: 2px; */
+  /* border: none; */
+  /* color: white; */
 `;
 
 const HeroCTAButtonContainer = styled(CTAButtonContainer)`
@@ -277,11 +267,11 @@ const HeroCTAButtonContainer = styled(CTAButtonContainer)`
 `;
 
 const HeroCTAButton = styled(StyledButton)`
-  justify-content: center;
-  min-width: 120px;
+  /* justify-content: center; */
+  min-width: 150px;
   min-height: 30px;
   font-size: 1.2em;
-  border-radius: 5px;
+  border-radius: 3px;
 
   @media screen and (max-width: 850px) {
     margin: 10px 50px 10px 50px;
@@ -383,7 +373,7 @@ const StyledPricingCTAButton = styled(CTAButton)`
   margin: 20px;
   /* align-self: center; */
   justify-content: center;
-  min-width: 20%;
+  /* min-width: 20%; */
   max-width: 60%;
 `;
 

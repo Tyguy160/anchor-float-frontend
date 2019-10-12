@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
+import Router from 'next/router';
 
 import {
   PricingContainer,
@@ -14,6 +13,7 @@ import {
   CTAButton,
   CTAButtonContainer,
   StyledHeading,
+  StyledButton,
   PageSection,
   CenteredHeading,
 } from '../components/styles/styles';
@@ -24,33 +24,6 @@ class Pricing extends Component {
       <PageSection id="pricing">
         <CenteredHeading>Pricing</CenteredHeading>
         <PricingContainer>
-          <StyledTierContainer>
-            <StyledTierHeading>Basic</StyledTierHeading>
-            <StyledPrice>
-              $0
-              <div>per month</div>
-            </StyledPrice>
-            <StyledTierDetails>
-              <li style={{ textAlign: `center` }}>1 site</li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-            </StyledTierDetails>
-            <StyledPricingCTAButtonContainer>
-              <Link href="/signup" passHref>
-                <StyledPricingCTAButton>Sign Up</StyledPricingCTAButton>
-              </Link>
-            </StyledPricingCTAButtonContainer>
-          </StyledTierContainer>
           <StyledTierContainer>
             <StyledTierHeading>Basic</StyledTierHeading>
             <StyledPrice>
@@ -72,11 +45,6 @@ class Pricing extends Component {
                 amet orci urna.
               </li>
             </StyledTierDetails>
-            <StyledPricingCTAButtonContainer>
-              <Link href="/signup" passHref>
-                <StyledPricingCTAButton>Sign Up</StyledPricingCTAButton>
-              </Link>
-            </StyledPricingCTAButtonContainer>
           </StyledTierContainer>
           <StyledTierContainer>
             <StyledTierHeading>Standard</StyledTierHeading>
@@ -99,11 +67,6 @@ class Pricing extends Component {
                 amet orci urna.
               </li>
             </StyledTierDetails>
-            <StyledPricingCTAButtonContainer>
-              <Link href="/signup" passHref>
-                <StyledPricingCTAButton>Sign Up</StyledPricingCTAButton>
-              </Link>
-            </StyledPricingCTAButtonContainer>
           </StyledTierContainer>
           <StyledTierContainer>
             <StyledTierHeading>Advanced</StyledTierHeading>
@@ -126,11 +89,6 @@ class Pricing extends Component {
                 amet orci urna.
               </li>
             </StyledTierDetails>
-            <StyledPricingCTAButtonContainer>
-              <Link href="/signup" passHref>
-                <StyledPricingCTAButton>Sign Up</StyledPricingCTAButton>
-              </Link>
-            </StyledPricingCTAButtonContainer>
           </StyledTierContainer>
           {/* <EnterpriseStyledTierContainer>
             <StyledTierHeading>Enterprise</StyledTierHeading>
@@ -142,6 +100,10 @@ class Pricing extends Component {
             </StyledPricingCTAButtonContainer>
           </EnterpriseStyledTierContainer> */}
         </PricingContainer>
+
+        <StyledPricingCTAButton onClick={() => Router.push('/signup')}>
+          Sign Up
+        </StyledPricingCTAButton>
       </PageSection>
     );
   }

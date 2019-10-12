@@ -84,7 +84,9 @@ const SignIn = () => {
               />
             </label>
           </SigninInputContainer>
-          <ContinueButton type="submit" value="Sign In!" />
+          <ContinueButton type="submit" value="Sign In!">
+            Sign In!
+          </ContinueButton>
           <Link href="/request-reset">
             <i style={{ textAlign: `center`, cursor: `pointer` }}>
               Forgot password?
