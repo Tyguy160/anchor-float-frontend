@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
+const stripe = require('stripe')('sk_test_b0MPemUYvtnsaU6aaHzyMKUA');
 
 const { transport, emailTemplate } = require('../mail');
 const { getUserTokenFromId } = require('../user');
@@ -347,6 +348,47 @@ const Mutation = {
     });
 
     return { message: 'Updated password' };
+  },
+
+  async createStripeSession(parent, { input }, { user, db }) {
+    if (!user) {
+      throw new Error(SIGN_IN_REQUIRED);
+    }
+
+    const dbUser = await db.users
+      .findOne({
+        where: {
+          id: user.userId,
+        },
+      })
+      .catch((err) => {
+        throw new Error(EMAIL_NOT_FOUND);
+      });
+
+    const { stripePlanId } = input;
+
+    let stripeSession;
+    try {
+      stripeSession = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        subscription_data: {
+          items: [
+            {
+              plan: stripePlanId,
+            },
+          ],
+        },
+        success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url: 'http://localhost:3000/cancel',
+        client_reference_id: user.userId,
+        customer_email: dbUser.email,
+      });
+    } catch (err) {
+      console.log(err);
+      throw new Error('There was an error creating a checkout session');
+    }
+
+    return { stripeSessionId: stripeSession.id };
   },
 };
 

@@ -6,7 +6,7 @@ const GET_CURRENT_USER = gql`
       id
       plan {
         level
-        siteLimit
+        creditsPerMonth
         name
       }
     }

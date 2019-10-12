@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import {
   PricingContainer,
@@ -18,22 +20,35 @@ import {
   ContinueButton,
 } from '../styles/styles';
 
+const CREATE_STRIPE_SESSION_MUTATION = gql`
+  mutation CREATE_STRIPE_SESSION_MUTATION($input: CreateStripeSessionInput!) {
+    createStripeSession(input: $input) {
+      stripeSessionId
+    }
+  }
+`;
+
 const Plans = () => {
   const [selectedPlan, setSelectedPlan] = useState('plan_FyidUQxlYdDu28');
+
+  const [createStripeSession, { error, data }] = useMutation(
+    CREATE_STRIPE_SESSION_MUTATION,
+    {
+      variables: { input: { stripePlanId: selectedPlan } },
+    }
+  );
 
   const handlePlanSelect = e => {
     console.log(e.currentTarget.id);
     setSelectedPlan(e.currentTarget.id);
   };
 
-  const handlePlanContinue = e => {
-    console.log(`You picked ${selectedPlan}`);
+  const handlePlanContinue = async e => {
+    let res = await createStripeSession();
     var stripe = Stripe('pk_test_mqMxPm3hGXqDIiwIVvAME4Af');
     stripe
       .redirectToCheckout({
-        items: [{ plan: selectedPlan, quantity: 1 }],
-        successUrl: 'http://localhost.com:3000/success',
-        cancelUrl: 'http://localhost.com:3000/canceled',
+        sessionId: res.data.createStripeSession.stripeSessionId,
       })
       .then(function(result) {
         if (result.error) {
@@ -45,6 +60,7 @@ const Plans = () => {
   return (
     <PageSection id="pricing">
       <CenteredHeading>Plans</CenteredHeading>
+      <p>Select a plan below and click Continue.</p>
       <PricingContainer>
         <StyledTierButton id="plan_FyidUQxlYdDu28" onClick={handlePlanSelect}>
           <StyledTierHeading>Basic</StyledTierHeading>
@@ -53,7 +69,7 @@ const Plans = () => {
             <div>per month</div>
           </StyledPrice>
           <StyledTierDetails>
-            <li style={{ textAlign: `center` }}>1 site</li>
+            <li style={{ textAlign: `center` }}>3 credits monthly</li>
             <li>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
               amet orci urna.
@@ -75,7 +91,7 @@ const Plans = () => {
             <div>per month</div>
           </StyledPrice>
           <StyledTierDetails>
-            <li style={{ textAlign: `center` }}>3 site</li>
+            <li style={{ textAlign: `center` }}>5 credits monthly</li>
             <li>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
               amet orci urna.
@@ -97,7 +113,7 @@ const Plans = () => {
             <div>per month</div>
           </StyledPrice>
           <StyledTierDetails>
-            <li style={{ textAlign: `center` }}>5 sites</li>
+            <li style={{ textAlign: `center` }}>10 credits monthly</li>
             <li>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
               amet orci urna.

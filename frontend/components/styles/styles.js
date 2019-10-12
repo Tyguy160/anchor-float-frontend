@@ -215,7 +215,9 @@ const CTAButtonContainer = styled.div`
   padding-bottom: 50px;
 `;
 
-const CTAButton = styled(StyledButton)``;
+const CTAButton = styled(StyledButton)`
+  margin-top: 20px;
+`;
 
 const HeroCTAButtonContainer = styled(CTAButtonContainer)`
   @media screen and (min-width: 851px) {

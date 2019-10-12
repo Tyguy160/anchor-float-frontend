@@ -12,12 +12,12 @@ const SubscriptionInfo = () => {
     <PageSection>
       <h2>Subscription Information</h2>
       <SignupFormContainer>
-        {plan && !loading &&
+        {plan && !loading && (
           <div>
-            You have the <b>{plan.name}</b> subscription. You're able to track{' '}
-            <b>{plan.siteLimit}</b> with this type of account.
+            You have the <b>{plan.name}</b> subscription. You'll receive{' '}
+            <b>{plan.creditsPerMonth}</b> with this plan.
           </div>
-        }
+        )}
       </SignupFormContainer>
     </PageSection>
   );

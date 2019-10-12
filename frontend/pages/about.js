@@ -179,6 +179,9 @@ class About extends Component {
               <ReportTypeImg src="/reportSpreadsheet.png"></ReportTypeImg>
             </ReportType>
           </ReportTypes>
+        </AboutSection>
+        <AboutSection>
+          <AboutH2>Ready to learn about your links?</AboutH2>
           <CTAButtonContainer>
             <CTAButton onClick={() => Router.push('/signup')}>
               Sign Up

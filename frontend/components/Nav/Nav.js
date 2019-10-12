@@ -53,7 +53,7 @@ const Nav = () => {
                 marginTop: `5px`,
               }}
             />
-            <div>Anchor Float</div>
+            <div style={{ cursor: 'pointer' }}>Anchor Float</div>
           </Logo>
         </Link>
         <Links>

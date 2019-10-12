@@ -25,13 +25,10 @@ const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-  const [changePassword] = useMutation(
-    CHANGE_PASSWORD_MUTATION,
-    {
-      variables: { input: { currentPassword, newPassword } },
-      refetchQueries: ['me'],
-    }
-  );
+  const [changePassword] = useMutation(CHANGE_PASSWORD_MUTATION, {
+    variables: { input: { currentPassword, newPassword } },
+    refetchQueries: ['me'],
+  });
 
   const handleChange = (e, hookType) => {
     const { value } = e.target;
@@ -105,8 +102,10 @@ const ChangePassword = () => {
               onChange={e => handleChange(e, 'CONFIRM_NEW_PASSWORD')}
             />
           </SignupInputContainer>
+          <ContinueButton type="submit" value="Reset" form="urlForm">
+            Reset
+          </ContinueButton>
         </SignupForm>
-        <ContinueButton type="submit" value="Reset" form="urlForm" />
       </SignupFormContainer>
     </PageSection>
   );

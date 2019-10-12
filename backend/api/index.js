@@ -5,6 +5,7 @@ dotenv.config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const stripe = require('stripe')('sk_test_b0MPemUYvtnsaU6aaHzyMKUA');
 
 const createApolloServer = require('./createServer');
 
@@ -23,6 +24,11 @@ app.use(bodyParser.json());
 app.post('/stripe-checkout', (req, res) => {
   if (req.body.type === 'checkout.session.completed') {
     console.log(req.body);
+    const sessionId = req.body.data.object.id;
+    stripe.checkout.sessions.retrieve(sessionId, (err, session) => {
+      console.log(session.display_items[0].plan);
+      console.log(err);
+    });
   }
   res.send('OK');
 });

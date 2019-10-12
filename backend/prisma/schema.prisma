@@ -23,13 +23,13 @@ model User {
 }
 
 model Plan {
-  id          String   @default(cuid()) @id @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String?  @unique
-  level       Int      @unique
-  subscribers User[]
-  siteLimit   Int?
+  id              String   @default(cuid()) @id @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  name            String?  @unique
+  level           Int      @unique
+  subscribers     User[]
+  creditsPerMonth Int?
 }
 
 model UserSite {
