@@ -8,6 +8,7 @@ const Meta = () => {
       <link rel="shortcut icon" href="/static/favicon.png" />
       <link rel="stylesheet" type="text/css" href="/static/nprogress.css" />
       <title>Associate Engine</title>
+      <script src="https://js.stripe.com/v3/"></script>
     </Head>
   );
 };
