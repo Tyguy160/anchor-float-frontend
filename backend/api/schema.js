@@ -69,6 +69,7 @@ const typeDefs = gql`
     name: String
     level: Int
     creditsPerMonth: Int
+    stripePlanId: String
   }
 
   type UserSite {

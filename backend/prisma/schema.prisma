@@ -30,6 +30,7 @@ model Plan {
   level           Int      @unique
   subscribers     User[]
   creditsPerMonth Int?
+  stripePlanId    String?
 }
 
 model UserSite {
