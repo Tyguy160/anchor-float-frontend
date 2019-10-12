@@ -15,7 +15,7 @@ const Nav = () => {
         <Link href="/" passHref>
           <Logo style={{ cursor: 'pointer' }}>
             <img
-              src="/static/logo.png"
+              src="/logo.png"
               style={{
                 maxHeight: `30px`,
                 marginTop: `5px`,
@@ -47,7 +47,7 @@ const Nav = () => {
         <Link href="/" passHref>
           <Logo>
             <img
-              src="/static/logo.png"
+              src="/logo.png"
               style={{
                 maxHeight: `30px`,
                 marginTop: `5px`,

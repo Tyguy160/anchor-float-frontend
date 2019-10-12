@@ -143,7 +143,7 @@ const StyledLink = styled.a`
 const HeroContainer = styled.div`
   color: white;
 
-  background-image: url('../../static/water.svg');
+  background-image: url('/water.svg');
   background-repeat: repeat-x;
   background-position: bottom 0 left 50%;
   background-origin: border-box;

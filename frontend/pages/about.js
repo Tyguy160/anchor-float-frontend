@@ -101,7 +101,7 @@ class About extends Component {
           <AboutH2>Example Amazon Product Availability</AboutH2>
           <ProductTypes>
             <ProductType>
-              <ProductTypeImg src="../static/availableProduct.png"></ProductTypeImg>
+              <ProductTypeImg src="/availableProduct.png"></ProductTypeImg>
               <ProductTypeDescription>
                 <h3>Available Products</h3>
                 <p>
@@ -113,7 +113,7 @@ class About extends Component {
               </ProductTypeDescription>
             </ProductType>
             <ProductType>
-              <ProductTypeImg src="../public/static/thirdPartyProduct.png"></ProductTypeImg>
+              <ProductTypeImg src="/thirdPartyProduct.png"></ProductTypeImg>
               <ProductTypeDescription>
                 <h3>Third-Party Products</h3>
                 <p>
