@@ -23,7 +23,6 @@ const SignupFormContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   max-width: 1050px;
-  /* grid-template-rows: 1fr auto; */
   border-radius: 5px;
 `;
 
@@ -58,39 +57,13 @@ const SignupTextInput = styled.input`
   margin-right: 5px;
 `;
 
-const SigninFormContainer = styled(SignupFormContainer)`
-  /* background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  display: grid;
-  grid-template-rows: 1fr auto; */
-`;
+const SigninFormContainer = styled(SignupFormContainer)``;
 
-const SigninForm = styled(SignupForm)`
-  /* display: grid;
-  padding: 20px 0px 20px 0px;
-  grid-gap: 15px;
-  justify-content: center; */
-`;
+const SigninForm = styled(SignupForm)``;
 
-const SigninInputContainer = styled(SignupInputContainer)`
-  /* display: flex;
-  justify-self: flex-end;
-  flex-wrap: wrap;
-  label {
-    align-self: center; */
-  }
-`;
+const SigninInputContainer = styled(SignupInputContainer)``;
 
-const SigninTextInput = styled(SignupTextInput)`
-  /* border-radius: 4px;
-  border: 1px solid #dedede;
-  height: 2em;
-  font-family: 'Assistant', sans-serif;
-  font-size: 1em;
-  outline: none;
-  margin-left: 10px;
-  margin-right: 10px; */
-`;
+const SigninTextInput = styled(SignupTextInput)``;
 
 const NavBar = styled.div`
   background: #383838;
@@ -239,21 +212,10 @@ const CTAButtonContainer = styled.div`
     display: flex;
     justify-content: center;
   }
+  padding-bottom: 50px;
 `;
 
-const CTAButton = styled(StyledButton)`
-  /* display: grid; */
-  /* align-items: center; */
-  /* padding: 10px 20px 10px 20px; */
-  /* /* box-shadow: 0px 1px 1px 1px #c4941c;  */
-  /* height: 30px; */
-  /* cursor: pointer; */
-  /* font-family: 'Quicksand', sans-serif; */
-  /* background-color: goldenrod; */
-  /* border-radius: 2px; */
-  /* border: none; */
-  /* color: white; */
-`;
+const CTAButton = styled(StyledButton)``;
 
 const HeroCTAButtonContainer = styled(CTAButtonContainer)`
   @media screen and (min-width: 851px) {
@@ -366,7 +328,6 @@ const StyledTierDetails = styled.ul`
   > li {
     padding-top: 10px;
   }
-  border-bottom: 1px solid #ccc;
 `;
 
 const StyledPricingCTAButton = styled(CTAButton)`
