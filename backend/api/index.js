@@ -4,11 +4,13 @@ dotenv.config();
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 const createApolloServer = require('./createServer');
 
 let httpServer = {
-  close: (onCloseCallback) => { // mock close function in case server is never created
+  close: (onCloseCallback) => {
+    // mock close function in case server is never created
     console.info('No server to close. Exiting...'); // eslint-disable-line no-console
     onCloseCallback();
   },
@@ -16,6 +18,14 @@ let httpServer = {
 
 const app = express();
 app.use(cookieParser());
+app.use(bodyParser.json());
+
+app.post('/stripe-checkout', (req, res) => {
+  if (req.body.type === 'checkout.session.completed') {
+    console.log(req.body);
+  }
+  res.send('OK');
+});
 
 createApolloServer().then((server) => {
   server.applyMiddleware({
@@ -36,13 +46,16 @@ createApolloServer().then((server) => {
   httpServer = app.listen(
     { port: process.env.BACKEND_PORT },
     // eslint-disable-next-line no-console
-    () => console.info(`🚀 Server ready: http://localhost:${process.env.BACKEND_PORT}${server.graphqlPath}`),
+    () => console.info(
+      `🚀 Server ready: http://localhost:${process.env.BACKEND_PORT}${server.graphqlPath}`,
+    ),
   );
 });
 
 // shut down server
 function shutdown() {
-  httpServer.close((err) => { // Shut down the express server (if it exists)
+  httpServer.close((err) => {
+    // Shut down the express server (if it exists)
     if (err) {
       console.error(err); // eslint-disable-line no-console
       process.exitCode = 1;
@@ -54,13 +67,19 @@ function shutdown() {
 // quit on ctrl-c when running docker in terminal
 process.on('SIGINT', () => {
   // eslint-disable-next-line no-console
-  console.info('\n\nGot SIGINT (aka ctrl-c in docker). Graceful shutdown started at', new Date().toISOString());
+  console.info(
+    '\n\nGot SIGINT (aka ctrl-c in docker). Graceful shutdown started at',
+    new Date().toISOString(),
+  );
   shutdown();
 });
 
 // quit properly on docker stop
 process.on('SIGTERM', () => {
   // eslint-disable-next-line no-console
-  console.info('\n\nGot SIGTERM (docker container stop). Graceful shutdown started at', new Date().toISOString());
+  console.info(
+    '\n\nGot SIGTERM (docker container stop). Graceful shutdown started at',
+    new Date().toISOString(),
+  );
   shutdown();
 });

@@ -1,5 +1,21 @@
 import styled from 'styled-components';
 
+const StyledButton = styled.button`
+  padding: 10px 20px 10px 20px;
+  box-shadow: 0px 0px 1px 1px hsl(43, 74%, 46%);
+  font-size: 1em;
+  background-color: hsl(43, 74%, 49%);
+  border-radius: 5px;
+  height: 2.5em;
+  border-color: none;
+  border: none;
+  color: white;
+  outline: none;
+  :active {
+    background-color: hsl(43, 74%, 46%);
+  }
+`;
+
 const SignupFormContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
@@ -18,11 +34,11 @@ const SignupForm = styled.form`
   justify-content: center;
 `;
 
-const ContinueButton = styled.input`
+const ContinueButton = styled(StyledButton)`
   height: 45px;
-  border-radius: 4px;
-  background-color: #ccc;
-  border: none;
+  /* border-radius: 4px; */
+  /* background-color: #ccc; */
+  /* border: none; */
   justify-self: center;
   width: 100px;
   font-size: 1em;
@@ -260,7 +276,7 @@ const HeroCTAButtonContainer = styled(CTAButtonContainer)`
   flex-wrap: wrap;
 `;
 
-const HeroCTAButton = styled(CTAButton)`
+const HeroCTAButton = styled(StyledButton)`
   justify-content: center;
   min-width: 120px;
   min-height: 30px;
@@ -305,6 +321,18 @@ const PricingContainer = styled.div`
   @media screen and (max-width: 1350px) {
     flex-wrap: wrap;
   }
+`;
+
+const StyledTierButton = styled.button`
+  margin: 20px;
+  border-radius: 5px;
+  padding: 0 10px 0px 10px;
+  box-shadow: 1px 1px 10px 1px #999;
+  max-width: 300px;
+  background-color: white;
+  border-color: white;
+  border: inherit;
+  font: inherit;
 `;
 
 const StyledTierContainer = styled.div`
@@ -388,6 +416,7 @@ export {
   CTAButtonContainer,
   PricingContainer,
   StyledTierContainer,
+  StyledTierButton,
   StyledTierHeading,
   EnterpriseStyledTierContainer,
   StyledPrice,
@@ -396,4 +425,5 @@ export {
   StyledPricingCTAButtonContainer,
   StyledHeading,
   PageSection,
+  StyledButton,
 };

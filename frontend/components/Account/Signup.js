@@ -45,7 +45,7 @@ const Signup = () => {
 
       if (res) {
         Router.push({
-          pathname: '/dashboard',
+          pathname: '/plans',
         });
       }
     } else {
@@ -139,7 +139,9 @@ const Signup = () => {
               onChange={e => handleChange(e, 'CONFIRM_PASSWORD')}
             />
           </SignupInputContainer>
-          <ContinueButton type="submit" value="Continue" form="urlForm" />
+          <ContinueButton type="submit" form="urlForm">
+            Continue
+          </ContinueButton>
         </SignupForm>
       </SignupFormContainer>
       <Error error={error} />
