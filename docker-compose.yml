@@ -10,6 +10,7 @@ services:
     ports:
       - "4000:4000" # Enable access to graphql server from host machine
     volumes:
+      -  /opt/app/node_modules # Use node_modules inside the container
       - ./backend/package.json:/opt/app/package.json
       - ./backend/api:/opt/app/api # Mount local `api` source code
       - ./backend/prisma:/opt/app/prisma
@@ -22,6 +23,7 @@ services:
       - database
     restart: unless-stopped
     volumes:
+      -  /opt/app/node_modules # Use node_modules inside the container
       - ./backend/package.json:/opt/app/package.json
       - ./backend/scan:/opt/app/scan # Mount local `scan` source code
       - ./backend/prisma:/opt/app/prisma
@@ -40,6 +42,7 @@ services:
     ports:
       - "3000:3000" # Expose web app on port 3000
     volumes:
+      -  /opt/app/node_modules # Use node_modules inside the container
       - ./frontend/package.json:/opt/app/package.json
       - ./frontend:/opt/app
     command: npm run dev # Defined in package.json
