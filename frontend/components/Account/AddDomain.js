@@ -79,25 +79,6 @@ const AddDomain = props => {
   return (
     <PageSection>
       <h2>Add A Domain</h2>
-      {/* {userSites.userSites ? (
-        <p>
-          Your <b>{user.me.plan.name}</b> subscription lets you add{' '}
-          <b>
-            {user.me.plan.siteLimit}{' '}
-            {user.me.plan.siteLimit > 1 ? ' domains ' : 'domain '}
-          </b>
-          . You have{' '}
-          <b>
-            {user.me.plan.siteLimit - userSites.userSites.length}{' '}
-            {user.me.plan.siteLimit - userSites.userSites.length === 1
-              ? ' domain '
-              : 'domains '}
-          </b>{' '}
-          remaining.
-        </p>
-      ) : (
-        ''
-      )} */}
       <SignupFormContainer>
         <SignupForm
           id="addDomainForm"

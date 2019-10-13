@@ -373,8 +373,6 @@ const Mutation = {
         customer_email: dbUser.email,
       };
 
-    console.log(customerInfo);
-
     const { stripePlanId } = input;
     let stripeSession;
     try {

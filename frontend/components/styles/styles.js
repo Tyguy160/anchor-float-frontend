@@ -17,13 +17,17 @@ const StyledButton = styled.button`
 `;
 
 const SignupFormContainer = styled.div`
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 1050px;
-  border-radius: 5px;
+background-color: white;
+border: 1px solid rgba(0, 0, 0, 0.125);
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+max-width: 1050px;
+border-radius: 5px;
+`;
+
+const PlanInfoContainer = styled(SignupFormContainer)`
+  padding: 20px;
 `;
 
 const SignupForm = styled.form`
@@ -348,6 +352,7 @@ export {
   SigninInputContainer,
   SigninTextInput,
   SignupForm,
+  PlanInfoContainer,
   SignupFormContainer,
   SignupInputContainer,
   SignupTextInput,
