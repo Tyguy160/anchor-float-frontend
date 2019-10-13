@@ -5,9 +5,10 @@ dotenv.config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')('sk_test_b0MPemUYvtnsaU6aaHzyMKUA');
 
-const createApolloServer = require('./createServer');
+const { handleWebhook } = require('./webhook/handleWebhook');
+
+const { createServer } = require('./createServer');
 
 let httpServer = {
   close: (onCloseCallback) => {
@@ -21,19 +22,9 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.post('/stripe-checkout', (req, res) => {
-  if (req.body.type === 'checkout.session.completed') {
-    console.log(req.body);
-    const sessionId = req.body.data.object.id;
-    stripe.checkout.sessions.retrieve(sessionId, (err, session) => {
-      console.log(session.display_items[0].plan);
-      console.log(err);
-    });
-  }
-  res.send('OK');
-});
+app.post('/stripe-checkout', handleWebhook);
 
-createApolloServer().then((server) => {
+createServer().then((server) => {
   server.applyMiddleware({
     app,
     path: '/graphql',

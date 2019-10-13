@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+
+import {
+  GET_CURRENT_USER,
+  CREATE_STRIPE_SESSION_MUTATION,
+} from '../resolvers/resolvers';
 
 import {
   PricingContainer,
@@ -20,15 +25,8 @@ import {
   ContinueButton,
 } from '../styles/styles';
 
-const CREATE_STRIPE_SESSION_MUTATION = gql`
-  mutation CREATE_STRIPE_SESSION_MUTATION($input: CreateStripeSessionInput!) {
-    createStripeSession(input: $input) {
-      stripeSessionId
-    }
-  }
-`;
-
 const Plans = () => {
+  const currentUser = useQuery(GET_CURRENT_USER);
   const [selectedPlan, setSelectedPlan] = useState('plan_FyidUQxlYdDu28');
 
   const [createStripeSession, { error, data }] = useMutation(
@@ -133,7 +131,11 @@ const Plans = () => {
         type="submit"
         value="Continue"
         onClick={handlePlanContinue}>
-        Continue
+        {!currentUser.loading && currentUser.data.me
+          ? currentUser.data.me.plan.level == 0
+            ? `Continue`
+            : `Update`
+          : 'Continue'}
       </ContinueButton>
     </PageSection>
   );

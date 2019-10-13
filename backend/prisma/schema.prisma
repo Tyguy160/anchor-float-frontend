@@ -9,17 +9,20 @@ generator photon {
 }
 
 model User {
-  id               String     @default(cuid()) @id @unique
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  email            String     @unique
-  firstName        String?
-  lastName         String?
-  password         String?
-  resetToken       String?
-  resetTokenExpiry Int?
-  sites            UserSite[]
-  plan             Plan?
+  id                   String     @default(cuid()) @id @unique
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  email                String     @unique
+  firstName            String?
+  lastName             String?
+  password             String?
+  resetToken           String?
+  resetTokenExpiry     Int?
+  sites                UserSite[]
+  plan                 Plan
+  stripeSubscriptionId String?
+  stripeCustomerId     String?
+  creditsRemaining     Int        @default(0)
 }
 
 model Plan {
@@ -29,8 +32,8 @@ model Plan {
   name            String?  @unique
   level           Int      @unique
   subscribers     User[]
-  creditsPerMonth Int?
-  stripePlanId    String?
+  creditsPerMonth Int      @default(0)
+  stripePlanId    String?  @unique
 }
 
 model UserSite {

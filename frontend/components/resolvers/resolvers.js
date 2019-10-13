@@ -69,6 +69,14 @@ const DELETE_USERSITE_MUTATION = gql`
   }
 `;
 
+const CREATE_STRIPE_SESSION_MUTATION = gql`
+  mutation CREATE_STRIPE_SESSION_MUTATION($input: CreateStripeSessionInput!) {
+    createStripeSession(input: $input) {
+      stripeSessionId
+    }
+  }
+`;
+
 export {
   GET_CURRENT_USER,
   USERSITES_QUERY,
@@ -76,4 +84,5 @@ export {
   ADD_USERSITE_MUTATION,
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
+  CREATE_STRIPE_SESSION_MUTATION,
 };
