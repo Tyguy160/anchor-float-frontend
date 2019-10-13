@@ -142,11 +142,15 @@ const Dashboard = () => {
                   <td>Site word count</td>
                   <td />
                   <td style={{ fontWeight: `bold` }}>
-                    {sitePages.sitePages
+                    {
+                      sitePages.sitePages &&
+                      sitePages.sitePages.site &&
+                      sitePages.sitePages.site.pages
                       ? sitePages.sitePages.site.pages
                           .map(page => page.wordCount)
-                          .reduce((acc, pres) => acc + pres)
-                      : '?'}
+                          .reduce((acc, pres) => acc + pres, 0)
+                      : '?'
+                    }
                   </td>
                 </tr>
                 <tr>
