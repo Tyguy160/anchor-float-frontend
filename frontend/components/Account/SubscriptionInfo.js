@@ -15,7 +15,7 @@ const SubscriptionInfo = () => {
         {plan && !loading && (
           <div>
             You have the <b>{plan.name}</b> subscription. You'll receive{' '}
-            <b>{plan.creditsPerMonth}</b> with this plan.
+            <b>{plan.creditsPerMonth}</b> credits per month with this plan.
           </div>
         )}
       </SignupFormContainer>

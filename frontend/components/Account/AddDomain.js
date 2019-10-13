@@ -104,11 +104,6 @@ const AddDomain = props => {
           method="post"
           onSubmit={async e => {
             e.preventDefault();
-            if (userSites.userSites.length >= user.me.plan.creditsPerMonth) {
-              throw Error(
-                `You've used up all of your domains. Try deleting an existing one or upgrading to a larger subscription.`
-              );
-            }
             try {
               const res = await addUserSite();
               setDomain('');
