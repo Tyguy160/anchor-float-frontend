@@ -365,8 +365,17 @@ const Mutation = {
         throw new Error(EMAIL_NOT_FOUND);
       });
 
-    const { stripePlanId } = input;
+    const customerInfo = dbUser.stripeCustomerId
+      ? {
+        customer: dbUser.stripeCustomerId,
+      }
+      : {
+        customer_email: dbUser.email,
+      };
 
+    console.log(customerInfo);
+
+    const { stripePlanId } = input;
     let stripeSession;
     try {
       stripeSession = await stripe.checkout.sessions.create({
@@ -381,7 +390,7 @@ const Mutation = {
         success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: 'http://localhost:3000/cancel',
         client_reference_id: user.userId,
-        customer_email: dbUser.email,
+        ...customerInfo,
       });
     } catch (err) {
       console.log(err);

@@ -7,9 +7,7 @@ const handleWebhook = async (req, res) => {
   if (req.body.type === 'checkout.session.completed') {
     const db = await getDBConnection();
     const stripeSession = req.body.data.object;
-    const sessionId = stripeSession.id;
-    const stripeSubscriptionId = stripeSession.subscription;
-    const stripeCustomerId = stripeSession.customer.id;
+    const { id: sessionId, subscription } = stripeSession;
 
     stripe.checkout.sessions.retrieve(sessionId, async (err, session) => {
       const { id: stripePlanId } = session.display_items[0].plan;
@@ -28,8 +26,8 @@ const handleWebhook = async (req, res) => {
         where: { id: session.client_reference_id },
         data: {
           plan: { connect: { stripePlanId } },
-          stripeSubscriptionId,
-          stripeCustomerId,
+          stripeCustomerId: session.customer,
+          stripeSubscriptionId: subscription,
           creditsRemaining: updatedCreditsRemaining,
         },
       });
