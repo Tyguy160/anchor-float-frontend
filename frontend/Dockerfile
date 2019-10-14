@@ -9,6 +9,4 @@ RUN npm i
 
 COPY . .
 
-USER node
-
 CMD [ "npm", "run", "dev" ]

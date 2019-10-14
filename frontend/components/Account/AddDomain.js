@@ -79,36 +79,12 @@ const AddDomain = props => {
   return (
     <PageSection>
       <h2>Add A Domain</h2>
-      {userSites.userSites ? (
-        <p>
-          Your <b>{user.me.plan.name}</b> subscription lets you add{' '}
-          <b>
-            {user.me.plan.siteLimit}{' '}
-            {user.me.plan.siteLimit > 1 ? ' domains ' : 'domain '}
-          </b>
-          . You have{' '}
-          <b>
-            {user.me.plan.siteLimit - userSites.userSites.length}{' '}
-            {user.me.plan.siteLimit - userSites.userSites.length === 1
-              ? ' domain '
-              : 'domains '}
-          </b>{' '}
-          remaining.
-        </p>
-      ) : (
-        ''
-      )}
       <SignupFormContainer>
         <SignupForm
           id="addDomainForm"
           method="post"
           onSubmit={async e => {
             e.preventDefault();
-            if (userSites.userSites.length >= user.me.plan.siteLimit) {
-              throw Error(
-                `You've used up all of your domains. Try deleting an existing one or upgrading to a larger subscription.`
-              );
-            }
             try {
               const res = await addUserSite();
               setDomain('');
@@ -173,11 +149,9 @@ const AddDomain = props => {
               onChange={e => handleChange(e, 'MIN_REVIEW')}
             />
           </SignupInputContainer>
-          <ContinueButton
-            type="submit"
-            value="Add domain"
-            form="addDomainForm"
-          />
+          <ContinueButton type="submit" value="Add domain" form="addDomainForm">
+            Add domain
+          </ContinueButton>
         </SignupForm>
       </SignupFormContainer>
     </PageSection>

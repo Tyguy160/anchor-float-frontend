@@ -1,14 +1,33 @@
 import styled from 'styled-components';
 
+const StyledButton = styled.button`
+  padding: 10px 20px 10px 20px;
+  box-shadow: 0px 0px 1px 1px hsl(43, 74%, 46%);
+  font-size: 1em;
+  background-color: hsl(43, 74%, 49%);
+  border-radius: 2px;
+  height: 2.5em;
+  border-color: none;
+  border: none;
+  color: white;
+  outline: none;
+  :active {
+    background-color: hsl(43, 74%, 46%);
+  }
+`;
+
 const SignupFormContainer = styled.div`
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 1050px;
-  /* grid-template-rows: 1fr auto; */
-  border-radius: 5px;
+background-color: white;
+border: 1px solid rgba(0, 0, 0, 0.125);
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+max-width: 1050px;
+border-radius: 5px;
+`;
+
+const PlanInfoContainer = styled(SignupFormContainer)`
+  padding: 20px;
 `;
 
 const SignupForm = styled.form`
@@ -18,18 +37,8 @@ const SignupForm = styled.form`
   justify-content: center;
 `;
 
-const ContinueButton = styled.input`
-  height: 45px;
-  border-radius: 4px;
-  background-color: #ccc;
-  border: none;
+const ContinueButton = styled(StyledButton)`
   justify-self: center;
-  width: 100px;
-  font-size: 1em;
-  outline: none;
-  :active {
-    background-color: #bbb;
-  }
 `;
 
 const SignupInputContainer = styled.div`
@@ -52,39 +61,13 @@ const SignupTextInput = styled.input`
   margin-right: 5px;
 `;
 
-const SigninFormContainer = styled(SignupFormContainer)`
-  /* background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  display: grid;
-  grid-template-rows: 1fr auto; */
-`;
+const SigninFormContainer = styled(SignupFormContainer)``;
 
-const SigninForm = styled(SignupForm)`
-  /* display: grid;
-  padding: 20px 0px 20px 0px;
-  grid-gap: 15px;
-  justify-content: center; */
-`;
+const SigninForm = styled(SignupForm)``;
 
-const SigninInputContainer = styled(SignupInputContainer)`
-  /* display: flex;
-  justify-self: flex-end;
-  flex-wrap: wrap;
-  label {
-    align-self: center; */
-  }
-`;
+const SigninInputContainer = styled(SignupInputContainer)``;
 
-const SigninTextInput = styled(SignupTextInput)`
-  /* border-radius: 4px;
-  border: 1px solid #dedede;
-  height: 2em;
-  font-family: 'Assistant', sans-serif;
-  font-size: 1em;
-  outline: none;
-  margin-left: 10px;
-  margin-right: 10px; */
-`;
+const SigninTextInput = styled(SignupTextInput)``;
 
 const NavBar = styled.div`
   background: #383838;
@@ -164,7 +147,7 @@ const StyledLink = styled.a`
 const HeroContainer = styled.div`
   color: white;
 
-  background-image: url('../../static/water.svg');
+  background-image: url('/water.svg');
   background-repeat: repeat-x;
   background-position: bottom 0 left 50%;
   background-origin: border-box;
@@ -233,20 +216,11 @@ const CTAButtonContainer = styled.div`
     display: flex;
     justify-content: center;
   }
+  padding-bottom: 50px;
 `;
 
-const CTAButton = styled.div`
-  display: grid;
-  align-items: center;
-  padding: 10px 20px 10px 20px;
-  /* /* box-shadow: 0px 1px 1px 1px #c4941c;  */
-  height: 30px;
-  cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
-  background-color: goldenrod;
-  border-radius: 2px;
-  border: none;
-  color: white;
+const CTAButton = styled(StyledButton)`
+  margin-top: 20px;
 `;
 
 const HeroCTAButtonContainer = styled(CTAButtonContainer)`
@@ -260,12 +234,12 @@ const HeroCTAButtonContainer = styled(CTAButtonContainer)`
   flex-wrap: wrap;
 `;
 
-const HeroCTAButton = styled(CTAButton)`
-  justify-content: center;
-  min-width: 120px;
+const HeroCTAButton = styled(StyledButton)`
+  /* justify-content: center; */
+  min-width: 150px;
   min-height: 30px;
   font-size: 1.2em;
-  border-radius: 5px;
+  border-radius: 3px;
 
   @media screen and (max-width: 850px) {
     margin: 10px 50px 10px 50px;
@@ -305,6 +279,18 @@ const PricingContainer = styled.div`
   @media screen and (max-width: 1350px) {
     flex-wrap: wrap;
   }
+`;
+
+const StyledTierButton = styled.button`
+  margin: 20px;
+  border-radius: 5px;
+  padding: 0 10px 0px 10px;
+  box-shadow: 1px 1px 10px 1px #999;
+  max-width: 300px;
+  background-color: white;
+  border-color: white;
+  border: inherit;
+  font: inherit;
 `;
 
 const StyledTierContainer = styled.div`
@@ -348,14 +334,13 @@ const StyledTierDetails = styled.ul`
   > li {
     padding-top: 10px;
   }
-  border-bottom: 1px solid #ccc;
 `;
 
 const StyledPricingCTAButton = styled(CTAButton)`
   margin: 20px;
   /* align-self: center; */
   justify-content: center;
-  min-width: 20%;
+  /* min-width: 20%; */
   max-width: 60%;
 `;
 
@@ -367,6 +352,7 @@ export {
   SigninInputContainer,
   SigninTextInput,
   SignupForm,
+  PlanInfoContainer,
   SignupFormContainer,
   SignupInputContainer,
   SignupTextInput,
@@ -388,6 +374,7 @@ export {
   CTAButtonContainer,
   PricingContainer,
   StyledTierContainer,
+  StyledTierButton,
   StyledTierHeading,
   EnterpriseStyledTierContainer,
   StyledPrice,
@@ -396,4 +383,5 @@ export {
   StyledPricingCTAButtonContainer,
   StyledHeading,
   PageSection,
+  StyledButton,
 };

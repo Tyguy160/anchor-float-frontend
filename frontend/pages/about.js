@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Router from 'next/router';
 import {
   PageSection,
+  CTAButton,
+  CTAButtonContainer,
   CenteredHeading,
   HeroHeadline,
   HeroSubtext,
@@ -98,7 +101,7 @@ class About extends Component {
           <AboutH2>Example Amazon Product Availability</AboutH2>
           <ProductTypes>
             <ProductType>
-              <ProductTypeImg src="../static/availableProduct.png"></ProductTypeImg>
+              <ProductTypeImg src="/availableProduct.png"></ProductTypeImg>
               <ProductTypeDescription>
                 <h3>Available Products</h3>
                 <p>
@@ -110,7 +113,7 @@ class About extends Component {
               </ProductTypeDescription>
             </ProductType>
             <ProductType>
-              <ProductTypeImg src="../static/thirdPartyProduct.png"></ProductTypeImg>
+              <ProductTypeImg src="/thirdPartyProduct.png"></ProductTypeImg>
               <ProductTypeDescription>
                 <h3>Third-Party Products</h3>
                 <p>
@@ -123,7 +126,7 @@ class About extends Component {
               </ProductTypeDescription>
             </ProductType>
             <ProductType>
-              <ProductTypeImg src="../static/unavailableProduct.png"></ProductTypeImg>
+              <ProductTypeImg src="/unavailableProduct.png"></ProductTypeImg>
               <ProductTypeDescription>
                 <h3>Unavailable Products</h3>
                 <p>
@@ -160,7 +163,7 @@ class About extends Component {
                   ratio, and total number of links.
                 </p>
               </ReportTypeDescription>
-              <ReportTypeImg src="../static/reportSummary.png"></ReportTypeImg>
+              <ReportTypeImg src="/reportSummary.png"></ReportTypeImg>
             </ReportType>
             <ReportType>
               <ReportTypeDescription>
@@ -173,9 +176,17 @@ class About extends Component {
                   Google Sheets or Excel, making it perfect for piping to a VA.
                 </p>
               </ReportTypeDescription>
-              <ReportTypeImg src="../static/reportSpreadsheet.png"></ReportTypeImg>
+              <ReportTypeImg src="/reportSpreadsheet.png"></ReportTypeImg>
             </ReportType>
           </ReportTypes>
+        </AboutSection>
+        <AboutSection>
+          <AboutH2>Ready to learn about your links?</AboutH2>
+          <CTAButtonContainer>
+            <CTAButton onClick={() => Router.push('/signup')}>
+              Sign Up
+            </CTAButton>
+          </CTAButtonContainer>
         </AboutSection>
         {/* <AboutContent>
           <AboutHeading>How It Works</AboutHeading>
