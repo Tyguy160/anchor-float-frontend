@@ -37,15 +37,14 @@ model Plan {
 }
 
 model UserSite {
-  id               String    @default(cuid()) @id @unique
-  createdAt        DateTime? @default(now())
-  updatedAt        DateTime? @updatedAt
+  id               String   @default(cuid()) @id @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
   associatesApiKey String?
   contentSelector  String?
   user             User
   site             Site
-  scanFreq         String?
-  minimumReview    String?
+  minimumReview    Float?
 }
 
 model Site {

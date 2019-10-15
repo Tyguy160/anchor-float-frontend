@@ -4,6 +4,7 @@ const GET_CURRENT_USER = gql`
   query me {
     me {
       id
+      creditsRemaining
       plan {
         level
         creditsPerMonth
@@ -18,7 +19,6 @@ const USERSITES_QUERY = gql`
     userSites {
       hostname
       associatesApiKey
-      scanFreq
       minimumReview
     }
   }

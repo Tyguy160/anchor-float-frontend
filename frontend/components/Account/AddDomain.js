@@ -20,8 +20,7 @@ import {
 const AddDomain = props => {
   const [domain, setDomain] = useState('');
   const [apiKey, setApiKey] = useState('');
-  const [scanFreq, setScanFreq] = useState('7');
-  const [minimumReview, setMinimumReview] = useState('3');
+  const [minimumReview, setMinimumReview] = useState(3);
   const { loading: domainsLoading, data: userSites } = useQuery(
     USERSITES_QUERY
   );
@@ -29,7 +28,7 @@ const AddDomain = props => {
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
-    variables: { input: { hostname: domain, apiKey, scanFreq, minimumReview } },
+    variables: { input: { hostname: domain, apiKey, minimumReview } },
     refetchQueries: ['userSites'],
   });
 
@@ -48,11 +47,8 @@ const AddDomain = props => {
       case 'API_KEY':
         setApiKey(value);
         break;
-      case 'SCAN_FREQ':
-        setScanFreq(value);
-        break;
       case 'MIN_REVIEW':
-        setMinimumReview(value);
+        setMinimumReview(parseFloat(value));
         break;
     }
   };
@@ -89,7 +85,6 @@ const AddDomain = props => {
               const res = await addUserSite();
               setDomain('');
               setApiKey('');
-              setScanFreq('7');
             } catch (err) {
               console.log(err);
             }
@@ -116,21 +111,6 @@ const AddDomain = props => {
               required
               value={apiKey}
               onChange={e => handleChange(e, 'API_KEY')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="scanFreq">
-              Scan Frequency: every <b>{scanFreq}</b> days
-            </label>
-            <SignupTextInput
-              id="scanFreqInput"
-              name="scanFreq"
-              type="range"
-              min="1"
-              max="14"
-              required
-              value={scanFreq}
-              onChange={e => handleChange(e, 'SCAN_FREQ')}
             />
           </SignupInputContainer>
           <SignupInputContainer>

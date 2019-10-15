@@ -49,8 +49,7 @@ const typeDefs = gql`
   input UpdateUserSiteInput {
     hostname: String!
     associatesApiKey: String!
-    scanFreq: String!
-    minimumReview: String!
+    minimumReview: Float!
   }
 
   type UpdateUserSitePayload {
@@ -63,6 +62,7 @@ const typeDefs = gql`
     lastName: String
     email: String
     plan: Plan
+    creditsRemaining: Int
   }
 
   type Plan {
@@ -75,8 +75,7 @@ const typeDefs = gql`
   type UserSite {
     hostname: String
     associatesApiKey: String
-    scanFreq: String
-    minimumReview: String
+    minimumReview: Float
   }
 
   input SignUpInput {
@@ -104,8 +103,7 @@ const typeDefs = gql`
   input AddUserSiteInput {
     hostname: String!
     apiKey: String!
-    scanFreq: String!
-    minimumReview: String!
+    minimumReview: Float!
   }
 
   input DeleteUserSiteInput {

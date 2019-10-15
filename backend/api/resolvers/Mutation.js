@@ -80,9 +80,7 @@ const Mutation = {
   async addUserSite(
     parent,
     {
-      input: {
-        hostname, apiKey, scanFreq, minimumReview,
-      },
+      input: { hostname, apiKey, minimumReview },
     },
     { user, db },
     info,
@@ -124,7 +122,6 @@ const Mutation = {
           site: { connect: { id: site.id } },
           user: { connect: { id: user.userId } },
           associatesApiKey: apiKey,
-          scanFreq,
           minimumReview,
         },
       });
@@ -137,9 +134,7 @@ const Mutation = {
   async updateUserSite(
     parent,
     {
-      input: {
-        hostname, associatesApiKey, scanFreq, minimumReview,
-      },
+      input: { hostname, associatesApiKey, minimumReview },
     },
     { user, db },
     info,
@@ -167,7 +162,6 @@ const Mutation = {
           },
           data: {
             associatesApiKey,
-            scanFreq,
             minimumReview,
           },
         });
