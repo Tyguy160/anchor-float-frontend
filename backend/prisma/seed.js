@@ -5,7 +5,7 @@ const plansToAdd = [
     name: 'Free',
     level: 0,
     creditsPerMonth: 0,
-    stripePlanId: '',
+    stripePlanId: 'free',
   },
   {
     name: 'Basic',

@@ -18,8 +18,7 @@ import {
 const DomainSettings = () => {
   const [domain, setDomain] = useState('');
   const [apiKey, setApiKey] = useState('');
-  const [scanFreq, setScanFreq] = useState('7');
-  const [minimumReview, setMinimumReview] = useState('3');
+  const [minimumReview, setMinimumReview] = useState(3);
   const [selectedDomain, setSelectedDomain] = useState('select');
   const { data: userSites } = useQuery(USERSITES_QUERY);
 
@@ -33,7 +32,6 @@ const DomainSettings = () => {
       input: {
         hostname: domain,
         associatesApiKey: apiKey,
-        scanFreq,
         minimumReview,
       },
     },
@@ -55,11 +53,8 @@ const DomainSettings = () => {
       case 'API_KEY':
         setApiKey(value);
         break;
-      case 'SCAN_FREQ':
-        setScanFreq(value);
-        break;
       case 'MIN_REVIEW':
-        setMinimumReview(value);
+        setMinimumReview(parseFloat(value));
         break;
     }
   };
@@ -72,7 +67,7 @@ const DomainSettings = () => {
           id="domainSettingsForm"
           onSubmit={async e => {
             e.preventDefault();
-            updateUserSite(domain, apiKey, scanFreq, minimumReview);
+            updateUserSite(domain, apiKey, minimumReview);
           }}>
           <SignupInputContainer>
             <select
@@ -84,7 +79,6 @@ const DomainSettings = () => {
                 setDomain(selectedSite.hostname);
                 setSelectedDomain(selectedSite.hostname);
                 setApiKey(selectedSite.associatesApiKey);
-                setScanFreq(selectedSite.scanFreq);
                 setMinimumReview(selectedSite.minimumReview);
               }}>
               {userSites.userSites &&
@@ -137,21 +131,6 @@ const DomainSettings = () => {
                 />
               </SignupInputContainer>
               <SignupInputContainer>
-                <label htmlFor="scanFreq">
-                  Scan Frequency: every <b>{scanFreq}</b> days
-                </label>
-                <SignupTextInput
-                  id="scanFreqInput"
-                  name="scanFreq"
-                  type="range"
-                  min="1"
-                  max="14"
-                  required
-                  value={scanFreq}
-                  onChange={e => handleChange(e, 'SCAN_FREQ')}
-                />
-              </SignupInputContainer>
-              <SignupInputContainer>
                 <label htmlFor="minimumReview">
                   Minimum Review: <b>{minimumReview}</b> stars
                 </label>
@@ -170,8 +149,9 @@ const DomainSettings = () => {
               <ContinueButton
                 type="submit"
                 value="Save"
-                form="domainSettingsForm"
-              />
+                form="domainSettingsForm">
+                Update Site
+              </ContinueButton>
             </>
           ) : (
             <p>Please select a domain to see the settings</p>

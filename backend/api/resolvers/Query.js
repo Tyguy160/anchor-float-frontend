@@ -12,6 +12,7 @@ const Query = {
         res.clearCookie('token');
         throw new Error('There was an issue finding your account details');
       });
+    console.log(dbUser);
     return dbUser;
   },
 
@@ -24,14 +25,12 @@ const Query = {
       select: {
         site: true,
         associatesApiKey: true,
-        scanFreq: true,
         minimumReview: true,
       },
     });
     const sites = userSites.map(userSite => ({
       hostname: userSite.site.hostname,
       associatesApiKey: userSite.associatesApiKey,
-      scanFreq: userSite.scanFreq,
       minimumReview: userSite.minimumReview,
     }));
     return [...sites];
