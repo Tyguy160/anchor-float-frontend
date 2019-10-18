@@ -61,6 +61,7 @@ const Mutation = {
         },
       })
       .catch((err) => {
+        console.log('got the email not found error');
         throw new Error(EMAIL_NOT_FOUND);
       });
 
@@ -317,6 +318,10 @@ const Mutation = {
     }
     if (!currentPassword) {
       throw new Error('Please enter a new password');
+    }
+
+    if (newPassword === currentPassword) {
+      throw new Error('Your new password is the same as your old one.');
     }
 
     const dbUser = await db.users
