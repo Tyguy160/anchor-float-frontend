@@ -30,7 +30,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [signUp, { error, data }] = useMutation(SIGNUP_MUTATION, {
+  const [signUp, { loading, error, data }] = useMutation(SIGNUP_MUTATION, {
     variables: { input: { email, password, firstName, lastName } },
     refetchQueries: ['me'],
   });
@@ -44,9 +44,9 @@ const Signup = () => {
       const res = await signUp();
 
       if (res) {
-        Router.push({
-          pathname: '/plans',
-        });
+        // Router.push({
+        //   pathname: '/plans',
+        // });
       }
     } else {
       console.log("Didn't work 🤷‍");
@@ -88,6 +88,8 @@ const Signup = () => {
               placeholder=""
               required
               value={firstName}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'FIRST_NAME')}
             />
           </SignupInputContainer>
@@ -100,6 +102,8 @@ const Signup = () => {
               placeholder=""
               required
               value={lastName}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'LAST_NAME')}
             />
           </SignupInputContainer>
@@ -112,6 +116,8 @@ const Signup = () => {
               placeholder=""
               required
               value={email}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'EMAIL')}
             />
           </SignupInputContainer>
@@ -124,6 +130,8 @@ const Signup = () => {
               placeholder=""
               required
               value={password}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'PASSWORD')}
             />
           </SignupInputContainer>
@@ -136,6 +144,8 @@ const Signup = () => {
               placeholder=""
               required
               value={confirmPassword}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'CONFIRM_PASSWORD')}
             />
           </SignupInputContainer>

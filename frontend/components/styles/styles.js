@@ -14,16 +14,17 @@ const StyledButton = styled.button`
   :active {
     background-color: hsl(43, 74%, 46%);
   }
+  cursor: pointer;
 `;
 
 const SignupFormContainer = styled.div`
-background-color: white;
-border: 1px solid rgba(0, 0, 0, 0.125);
-display: flex;
-flex-wrap: wrap;
-justify-content: center;
-max-width: 1050px;
-border-radius: 5px;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1050px;
+  border-radius: 5px;
 `;
 
 const PlanInfoContainer = styled(SignupFormContainer)`

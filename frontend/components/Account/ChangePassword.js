@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import Error from '../Misc/ErrorMessage';
 import {
   SignupForm,
   SignupFormContainer,
@@ -25,10 +26,13 @@ const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-  const [changePassword] = useMutation(CHANGE_PASSWORD_MUTATION, {
-    variables: { input: { currentPassword, newPassword } },
-    refetchQueries: ['me'],
-  });
+  const [changePassword, { loading, error }] = useMutation(
+    CHANGE_PASSWORD_MUTATION,
+    {
+      variables: { input: { currentPassword, newPassword } },
+      refetchQueries: ['me'],
+    }
+  );
 
   const handleChange = (e, hookType) => {
     const { value } = e.target;
@@ -54,16 +58,12 @@ const ChangePassword = () => {
           onSubmit={async e => {
             e.preventDefault();
             if (newPassword === confirmNewPassword) {
-              try {
-                changePassword(currentPassword, newPassword);
-                setCurrentPassword('');
-                setNewPassword('');
-                setConfirmNewPassword('');
-              } catch (err) {
-                console.log(err);
-              }
+              changePassword(currentPassword, newPassword);
+              setCurrentPassword('');
+              setNewPassword('');
+              setConfirmNewPassword('');
             } else {
-              console.log("Your new passwords don't match 🤷‍");
+              throw new Error("Your new passwords don't match.");
             }
           }}>
           <SignupInputContainer>
@@ -75,6 +75,8 @@ const ChangePassword = () => {
               placeholder=""
               required
               value={currentPassword}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'CURRENT_PASSWORD')}
             />
           </SignupInputContainer>
@@ -87,6 +89,8 @@ const ChangePassword = () => {
               placeholder=""
               required
               value={newPassword}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'NEW_PASSWORD')}
             />
           </SignupInputContainer>
@@ -99,6 +103,8 @@ const ChangePassword = () => {
               placeholder=""
               required
               value={confirmNewPassword}
+              disabled={loading}
+              aria-busy={loading}
               onChange={e => handleChange(e, 'CONFIRM_NEW_PASSWORD')}
             />
           </SignupInputContainer>
@@ -107,6 +113,7 @@ const ChangePassword = () => {
           </ContinueButton>
         </SignupForm>
       </SignupFormContainer>
+      <Error error={error} />
     </PageSection>
   );
 };

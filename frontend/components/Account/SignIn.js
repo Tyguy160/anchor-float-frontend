@@ -40,8 +40,8 @@ const SignIn = () => {
   const [email, setEmail] = useState('');
 
   const [signIn, { error }] = useMutation(SIGNIN_MUTATION, {
-    variables: { input: { email, password } },
     refetchQueries: ['me'],
+    variables: { input: { email, password } },
   });
 
   return (
