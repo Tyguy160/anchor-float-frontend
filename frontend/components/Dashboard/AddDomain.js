@@ -15,15 +15,14 @@ import {
   SignupTextInput,
   ContinueButton,
   PageSection,
+  ComponentContainer,
+  CenteredH2,
 } from '../styles/styles';
 
 const AddDomain = props => {
   const [domain, setDomain] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [minimumReview, setMinimumReview] = useState(3);
-  const { loading: domainsLoading, data: userSites } = useQuery(
-    USERSITES_QUERY
-  );
 
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
@@ -53,29 +52,10 @@ const AddDomain = props => {
     }
   };
 
-  const getSubscription = sub => {
-    switch (sub) {
-      case '0':
-        return { type: 'free', sites: 1 };
-        break;
-      case '1':
-        return { type: 'Basic', sites: 3 };
-        break;
-      case '2':
-        return { type: 'Standard', sites: 5 };
-        break;
-      case '3':
-        return { type: 'Advanced', sites: 10 };
-        break;
-    }
-  };
-
-  const sub = user.me && getSubscription(user.me.subscriptionLevel);
-
   return (
     <PageSection>
-      <h2>Add A Domain</h2>
-      <SignupFormContainer>
+      <ComponentContainer>
+        <CenteredH2>Add A Domain</CenteredH2>
         <SignupForm
           id="addDomainForm"
           method="post"
@@ -133,7 +113,7 @@ const AddDomain = props => {
             Add domain
           </ContinueButton>
         </SignupForm>
-      </SignupFormContainer>
+      </ComponentContainer>
     </PageSection>
   );
 };

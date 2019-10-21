@@ -13,24 +13,32 @@ import {
   SignupInputContainer,
   SignupTextInput,
   ContinueButton,
+  DeleteButton,
+  ComponentContainer,
+  CenteredH2,
 } from '../styles/styles';
 
-const DomainSettings = () => {
-  const [domain, setDomain] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [minimumReview, setMinimumReview] = useState(3);
-  const [selectedDomain, setSelectedDomain] = useState('select');
-  const { data: userSites } = useQuery(USERSITES_QUERY);
+const DomainSettings = props => {
+  const [apiKey, setApiKey] = useState();
+  const [minimumReview, setMinimumReview] = useState(
+    props.selectedUserSite ? props.selectedUserSite.minimumReview : ''
+  );
 
   const [deleteUserSite] = useMutation(DELETE_USERSITE_MUTATION, {
-    variables: { input: { hostname: domain } },
+    variables: {
+      input: {
+        hostname: props.selectedUserSite
+          ? props.selectedUserSite.hostname
+          : null,
+      },
+    },
     refetchQueries: ['userSites'],
   });
 
   const [updateUserSite] = useMutation(UPDATE_USERSITE_MUTATION, {
     variables: {
       input: {
-        hostname: domain,
+        hostname: props.selectedDomain ? props.selectedDomain.value : null,
         associatesApiKey: apiKey,
         minimumReview,
       },
@@ -61,50 +69,19 @@ const DomainSettings = () => {
 
   return (
     <PageSection>
-      <h2>Domain Settings</h2>
-      <SignupFormContainer>
+      <ComponentContainer>
+        <CenteredH2>Domain Settings</CenteredH2>
         <SignupForm
           id="domainSettingsForm"
           onSubmit={async e => {
             e.preventDefault();
-            updateUserSite(domain, apiKey, minimumReview);
+            updateUserSite(
+              props.selectedUserSite.hostname,
+              props.selectedUserSite.associatesApiKey,
+              minimumReview
+            );
           }}>
-          <SignupInputContainer>
-            <select
-              value={selectedDomain}
-              onChange={e => {
-                const selectedSite = userSites.userSites.find(
-                  userSite => userSite.hostname === e.target.value
-                );
-                setDomain(selectedSite.hostname);
-                setSelectedDomain(selectedSite.hostname);
-                setApiKey(selectedSite.associatesApiKey);
-                setMinimumReview(selectedSite.minimumReview);
-              }}>
-              {userSites.userSites &&
-                userSites.userSites.map(site => (
-                  <option key={site.hostname}>{site.hostname}</option>
-                ))}
-              <option disabled default value="select">
-                Select a domain
-              </option>
-            </select>
-            <div>
-              <button
-                onClick={async e => {
-                  e.preventDefault();
-                  try {
-                    const res = await deleteUserSite();
-                    setSelectedDomain('select');
-                  } catch (err) {
-                    console.log(err);
-                  }
-                }}>
-                delete
-              </button>
-            </div>
-          </SignupInputContainer>
-          {selectedDomain != 'select' ? (
+          {props.selectedUserSite ? (
             <>
               <SignupInputContainer>
                 <label htmlFor="domain">Domain name</label>
@@ -114,7 +91,7 @@ const DomainSettings = () => {
                   type="text"
                   placeholder=""
                   required
-                  value={domain}
+                  value={props.selectedUserSite.hostname}
                   disabled
                 />
               </SignupInputContainer>
@@ -126,7 +103,11 @@ const DomainSettings = () => {
                   type="text"
                   placeholder=""
                   required
-                  value={apiKey}
+                  defaultValue={
+                    props.selectedUserSite
+                      ? props.selectedUserSite.associatesApiKey
+                      : ''
+                  }
                   onChange={e => handleChange(e, 'API_KEY')}
                 />
               </SignupInputContainer>
@@ -152,12 +133,25 @@ const DomainSettings = () => {
                 form="domainSettingsForm">
                 Update Site
               </ContinueButton>
+              <DeleteButton
+                onClick={async e => {
+                  e.preventDefault();
+                  try {
+                    const res = await deleteUserSite();
+                    props.setSelectedDomain(null);
+                  } catch (err) {
+                    console.log(err);
+                  }
+                }}>
+                Delete Site
+              </DeleteButton>
             </>
           ) : (
             <p>Please select a domain to see the settings</p>
           )}
         </SignupForm>
-      </SignupFormContainer>
+        {/* </SignupFormContainer> */}
+      </ComponentContainer>
     </PageSection>
   );
 };

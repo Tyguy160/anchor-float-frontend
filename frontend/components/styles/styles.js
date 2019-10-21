@@ -10,11 +10,26 @@ const StyledButton = styled.button`
   border-color: none;
   border: none;
   color: white;
+  max-width: 200px;
+  margin: 10px;
+  justify-self: center;
   outline: none;
   :active {
     background-color: hsl(43, 74%, 46%);
   }
+  :disabled {
+    background-color: hsl(43, 4%, 79%);
+    box-shadow: 0px 0px 1px 1px hsl(43, 4%, 79%);
+    cursor: not-allowed;
+  }
   cursor: pointer;
+`;
+
+const StyledDropdown = styled.div`
+  padding: 20px;
+  /* margin: 20px; */
+  min-width: 90%;
+  justify-self: center;
 `;
 
 const SignupFormContainer = styled.div`
@@ -40,6 +55,15 @@ const SignupForm = styled.form`
 
 const ContinueButton = styled(StyledButton)`
   justify-self: center;
+`;
+
+const DeleteButton = styled(StyledButton)`
+  justify-self: center;
+  box-shadow: 0px 0px 1px 1px hsl(3, 74%, 46%);
+  background-color: hsl(3, 74%, 49%);
+  :active {
+    background-color: hsl(3, 74%, 46%);
+  }
 `;
 
 const SignupInputContainer = styled.div`
@@ -253,15 +277,28 @@ const HeroCTAButton = styled(StyledButton)`
 
 const PageSection = styled.div`
   display: grid;
-  align-items: center;
   justify-items: center;
-  grid-template-columns: 1fr;
+`;
+
+const ComponentContainer = styled.div`
+  width: 90%;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+
+  margin-top: 20px;
+  display: grid;
+  max-width: 750px;
+  border-radius: 5px;
 `;
 
 const CenteredHeading = styled.h2`
   justify-self: center;
   font-size: 2em;
   padding-top: 20px;
+`;
+
+const CenteredH2 = styled.h2`
+  justify-self: center;
 `;
 
 const StyledHeading = styled(CenteredHeading)`
@@ -384,5 +421,9 @@ export {
   StyledPricingCTAButtonContainer,
   StyledHeading,
   PageSection,
+  ComponentContainer,
   StyledButton,
+  DeleteButton,
+  StyledDropdown,
+  CenteredH2,
 };
