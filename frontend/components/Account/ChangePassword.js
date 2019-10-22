@@ -50,9 +50,9 @@ const ChangePassword = () => {
   };
 
   return (
-    <PageSection>
+    <>
       <h2>Change Your Password</h2>
-      <SignupFormContainer>
+      <>
         <SignupForm
           id="urlForm"
           onSubmit={async e => {
@@ -112,9 +112,9 @@ const ChangePassword = () => {
             Reset
           </ContinueButton>
         </SignupForm>
-      </SignupFormContainer>
+      </>
       <Error error={error} />
-    </PageSection>
+    </>
   );
 };
 

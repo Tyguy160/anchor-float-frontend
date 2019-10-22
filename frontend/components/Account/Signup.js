@@ -44,9 +44,9 @@ const Signup = () => {
       const res = await signUp();
 
       if (res) {
-        // Router.push({
-        //   pathname: '/plans',
-        // });
+        Router.push({
+          pathname: '/plans',
+        });
       }
     } else {
       console.log("Didn't work 🤷‍");

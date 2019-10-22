@@ -1,17 +1,35 @@
 import React from 'react';
 import ChangePassword from './ChangePassword';
 import SubscriptionInfo from './SubscriptionInfo';
-import AddDomain from './AddDomain';
-import DomainSettings from './DomainSettings';
+import AccountDetails from './AccountDetails';
+import { PageSection } from '../styles/styles';
+
+import styled from 'styled-components';
+
+const AccountContainer = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  margin: 20px;
+`;
+
+const SubscriptionInfoContainer = styled.div`
+  flex: 1 100%;
+`;
+
+const AccountDetailsContainer = styled.div`
+  flex: 1 100%;
+`;
 
 const Account = () => {
   return (
-    <div>
-      <SubscriptionInfo />
-      <ChangePassword />
-      <AddDomain />
-      <DomainSettings />
-    </div>
+    <AccountContainer>
+      <SubscriptionInfoContainer>
+        <SubscriptionInfo />
+      </SubscriptionInfoContainer>
+      <AccountDetailsContainer>
+        <AccountDetails />
+      </AccountDetailsContainer>
+    </AccountContainer>
   );
 };
 
