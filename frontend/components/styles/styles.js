@@ -285,6 +285,7 @@ const ComponentContainer = styled.div`
   display: grid;
   margin: 10px;
   border-radius: 5px;
+  height: inherit;
 `;
 
 const CenteredHeading = styled.h2`

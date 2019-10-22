@@ -68,7 +68,6 @@ const DomainSettings = props => {
   };
 
   return (
-    // <PageSection>
     <ComponentContainer>
       <CenteredH2>Domain Settings</CenteredH2>
       <SignupForm
@@ -160,9 +159,7 @@ const DomainSettings = props => {
           </p>
         )}
       </SignupForm>
-      {/* </SignupFormContainer> */}
     </ComponentContainer>
-    // </PageSection>
   );
 };
 export default DomainSettings;

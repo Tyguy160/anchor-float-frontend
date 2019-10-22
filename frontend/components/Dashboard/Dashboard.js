@@ -11,21 +11,18 @@ import DomainSelection from './DomainSelection';
 const DashboardContainer = styled.div`
   display: flex;
   flex-flow: row wrap;
-  /* justify-content: space-evenly; */
   margin: 20px;
 `;
 
 const DomainSettingsContainer = styled.div`
   flex: 1;
   order: 2;
-  /* margin-left: 10px; */
 `;
 
 const DomainDataContainer = styled.div`
   flex: 2;
   order: 1;
   min-width: 60%;
-  /* margin-right: 10px; */
 `;
 
 const StyledTable = styled.table`

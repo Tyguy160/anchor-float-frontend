@@ -15,7 +15,6 @@ import {
 
 const DomainSelection = props => {
   return (
-    // <PageSection>
     <ComponentContainer>
       <StyledDropdown>
         <Select
@@ -46,7 +45,6 @@ const DomainSelection = props => {
         Run report
       </StyledButton>
     </ComponentContainer>
-    // </PageSection>
   );
 };
 
