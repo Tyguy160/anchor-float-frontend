@@ -11,18 +11,27 @@ import styled from 'styled-components';
 
 const DataContainer = styled.div`
   min-height: 350px;
+  display: grid;
 `;
 
 const DomainData = () => {
   return (
-    <PageSection>
-      <ComponentContainer>
-        <CenteredH2>Reports and Data</CenteredH2>
-        <DataContainer>
-          <div>Dashboard data goes here</div>
-        </DataContainer>
-      </ComponentContainer>
-    </PageSection>
+    <ComponentContainer>
+      <CenteredH2>Reports and Data</CenteredH2>
+      <DataContainer>
+        <p
+          style={{
+            justifySelf: `center`,
+            alignSelf: `center`,
+            paddingBottom: `50px`,
+            paddingLeft: `10px`,
+            paddingRight: `10px`,
+            textAlign: `center`,
+          }}>
+          When you run a report, it will available for download here!
+        </p>
+      </DataContainer>
+    </ComponentContainer>
   );
 };
 

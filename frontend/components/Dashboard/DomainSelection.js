@@ -15,38 +15,38 @@ import {
 
 const DomainSelection = props => {
   return (
-    <PageSection>
-      <ComponentContainer>
-        <StyledDropdown>
-          <Select
-            value={props.selectedDomain}
-            onChange={selectedOption => {
-              // Finds the selected site from the list of user sites
-              const selectedSite = props.userSites.userSites.find(
-                userSite => userSite.hostname === selectedOption.value
-              );
+    // <PageSection>
+    <ComponentContainer>
+      <StyledDropdown>
+        <Select
+          value={props.selectedDomain}
+          onChange={selectedOption => {
+            // Finds the selected site from the list of user sites
+            const selectedSite = props.userSites.userSites.find(
+              userSite => userSite.hostname === selectedOption.value
+            );
 
-              //   // Sets the domain information in state
-              //   props.setDomain(selectedSite.hostname);
-              props.setSelectedUserSite(selectedSite);
+            //   // Sets the domain information in state
+            //   props.setDomain(selectedSite.hostname);
+            props.setSelectedUserSite(selectedSite);
 
-              // Sets the domain option in the dropdown
-              props.setSelectedDomain(selectedOption);
-            }}
-            options={
-              props.userSites.userSites &&
-              props.userSites.userSites.map(site => ({
-                value: site.hostname,
-                label: site.hostname,
-              }))
-            }
-          />
-        </StyledDropdown>
-        <StyledButton disabled={props.selectedDomain ? false : true}>
-          Run report
-        </StyledButton>
-      </ComponentContainer>
-    </PageSection>
+            // Sets the domain option in the dropdown
+            props.setSelectedDomain(selectedOption);
+          }}
+          options={
+            props.userSites.userSites &&
+            props.userSites.userSites.map(site => ({
+              value: site.hostname,
+              label: site.hostname,
+            }))
+          }
+        />
+      </StyledDropdown>
+      <StyledButton disabled={props.selectedDomain ? false : true}>
+        Run report
+      </StyledButton>
+    </ComponentContainer>
+    // </PageSection>
   );
 };
 

@@ -53,68 +53,68 @@ const AddDomain = props => {
   };
 
   return (
-    <PageSection>
-      <ComponentContainer>
-        <CenteredH2>Add A Domain</CenteredH2>
-        <SignupForm
-          id="addDomainForm"
-          method="post"
-          onSubmit={async e => {
-            e.preventDefault();
-            try {
-              const res = await addUserSite();
-              setDomain('');
-              setApiKey('');
-            } catch (err) {
-              console.log(err);
-            }
-          }}>
-          <SignupInputContainer>
-            <label htmlFor="domain">Domain</label>
-            <SignupTextInput
-              id="domainInput"
-              name="domain"
-              type="text"
-              placeholder=""
-              required
-              value={domain}
-              onChange={e => handleChange(e, 'DOMAIN')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="apiKey">Amazon API Key</label>
-            <SignupTextInput
-              id="apiKeyInput"
-              name="apiKey"
-              type="text"
-              placeholder=""
-              required
-              value={apiKey}
-              onChange={e => handleChange(e, 'API_KEY')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="minimumReview">
-              Minimum Review: <b>{minimumReview}</b> stars
-            </label>
-            <SignupTextInput
-              id="minimumReviewInput"
-              name="minimumReview"
-              type="range"
-              min="0"
-              max="5"
-              step="0.5"
-              required
-              value={minimumReview}
-              onChange={e => handleChange(e, 'MIN_REVIEW')}
-            />
-          </SignupInputContainer>
-          <ContinueButton type="submit" value="Add domain" form="addDomainForm">
-            Add domain
-          </ContinueButton>
-        </SignupForm>
-      </ComponentContainer>
-    </PageSection>
+    // <PageSection>
+    <ComponentContainer>
+      <CenteredH2>Add A Domain</CenteredH2>
+      <SignupForm
+        id="addDomainForm"
+        method="post"
+        onSubmit={async e => {
+          e.preventDefault();
+          try {
+            const res = await addUserSite();
+            setDomain('');
+            setApiKey('');
+          } catch (err) {
+            console.log(err);
+          }
+        }}>
+        <SignupInputContainer>
+          <label htmlFor="domain">Domain</label>
+          <SignupTextInput
+            id="domainInput"
+            name="domain"
+            type="text"
+            placeholder=""
+            required
+            value={domain}
+            onChange={e => handleChange(e, 'DOMAIN')}
+          />
+        </SignupInputContainer>
+        <SignupInputContainer>
+          <label htmlFor="apiKey">Amazon API Key</label>
+          <SignupTextInput
+            id="apiKeyInput"
+            name="apiKey"
+            type="text"
+            placeholder=""
+            required
+            value={apiKey}
+            onChange={e => handleChange(e, 'API_KEY')}
+          />
+        </SignupInputContainer>
+        <SignupInputContainer>
+          <label htmlFor="minimumReview">
+            Minimum Review: <b>{minimumReview}</b> stars
+          </label>
+          <SignupTextInput
+            id="minimumReviewInput"
+            name="minimumReview"
+            type="range"
+            min="0"
+            max="5"
+            step="0.5"
+            required
+            value={minimumReview}
+            onChange={e => handleChange(e, 'MIN_REVIEW')}
+          />
+        </SignupInputContainer>
+        <ContinueButton type="submit" value="Add domain" form="addDomainForm">
+          Add domain
+        </ContinueButton>
+      </SignupForm>
+    </ComponentContainer>
+    // </PageSection>
   );
 };
 

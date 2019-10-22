@@ -68,91 +68,101 @@ const DomainSettings = props => {
   };
 
   return (
-    <PageSection>
-      <ComponentContainer>
-        <CenteredH2>Domain Settings</CenteredH2>
-        <SignupForm
-          id="domainSettingsForm"
-          onSubmit={async e => {
-            e.preventDefault();
-            updateUserSite(
-              props.selectedUserSite.hostname,
-              props.selectedUserSite.associatesApiKey,
-              minimumReview
-            );
-          }}>
-          {props.selectedUserSite ? (
-            <>
-              <SignupInputContainer>
-                <label htmlFor="domain">Domain name</label>
-                <SignupTextInput
-                  id="domainInput"
-                  name="domain"
-                  type="text"
-                  placeholder=""
-                  required
-                  value={props.selectedUserSite.hostname}
-                  disabled
-                />
-              </SignupInputContainer>
-              <SignupInputContainer>
-                <label htmlFor="apiKey">API Key</label>
-                <SignupTextInput
-                  id="apiKeyInput"
-                  name="apiKey"
-                  type="text"
-                  placeholder=""
-                  required
-                  defaultValue={
-                    props.selectedUserSite
-                      ? props.selectedUserSite.associatesApiKey
-                      : ''
-                  }
-                  onChange={e => handleChange(e, 'API_KEY')}
-                />
-              </SignupInputContainer>
-              <SignupInputContainer>
-                <label htmlFor="minimumReview">
-                  Minimum Review: <b>{minimumReview}</b> stars
-                </label>
-                <SignupTextInput
-                  id="minimumReviewInput"
-                  name="minimumReview"
-                  type="range"
-                  min="0"
-                  max="5"
-                  step="0.5"
-                  required
-                  value={minimumReview}
-                  onChange={e => handleChange(e, 'MIN_REVIEW')}
-                />
-              </SignupInputContainer>
-              <ContinueButton
-                type="submit"
-                value="Save"
-                form="domainSettingsForm">
-                Update Site
-              </ContinueButton>
-              <DeleteButton
-                onClick={async e => {
-                  e.preventDefault();
-                  try {
-                    const res = await deleteUserSite();
-                    props.setSelectedDomain(null);
-                  } catch (err) {
-                    console.log(err);
-                  }
-                }}>
-                Delete Site
-              </DeleteButton>
-            </>
-          ) : (
-            <p>Please select a domain to see the settings</p>
-          )}
-        </SignupForm>
-        {/* </SignupFormContainer> */}
-      </ComponentContainer>
-    </PageSection>
+    // <PageSection>
+    <ComponentContainer>
+      <CenteredH2>Domain Settings</CenteredH2>
+      <SignupForm
+        id="domainSettingsForm"
+        onSubmit={async e => {
+          e.preventDefault();
+          updateUserSite(
+            props.selectedUserSite.hostname,
+            props.selectedUserSite.associatesApiKey,
+            minimumReview
+          );
+        }}>
+        {props.selectedUserSite ? (
+          <>
+            <SignupInputContainer>
+              <label htmlFor="domain">Domain name</label>
+              <SignupTextInput
+                id="domainInput"
+                name="domain"
+                type="text"
+                placeholder=""
+                required
+                value={props.selectedUserSite.hostname}
+                disabled
+              />
+            </SignupInputContainer>
+            <SignupInputContainer>
+              <label htmlFor="apiKey">API Key</label>
+              <SignupTextInput
+                id="apiKeyInput"
+                name="apiKey"
+                type="text"
+                placeholder=""
+                required
+                defaultValue={
+                  props.selectedUserSite
+                    ? props.selectedUserSite.associatesApiKey
+                    : ''
+                }
+                onChange={e => handleChange(e, 'API_KEY')}
+              />
+            </SignupInputContainer>
+            <SignupInputContainer>
+              <label htmlFor="minimumReview">
+                Minimum Review: <b>{minimumReview}</b> stars
+              </label>
+              <SignupTextInput
+                id="minimumReviewInput"
+                name="minimumReview"
+                type="range"
+                min="0"
+                max="5"
+                step="0.5"
+                required
+                value={minimumReview}
+                onChange={e => handleChange(e, 'MIN_REVIEW')}
+              />
+            </SignupInputContainer>
+            <ContinueButton
+              type="submit"
+              value="Save"
+              form="domainSettingsForm">
+              Update Site
+            </ContinueButton>
+            <DeleteButton
+              onClick={async e => {
+                e.preventDefault();
+                try {
+                  const res = await deleteUserSite();
+                  props.setSelectedDomain(null);
+                } catch (err) {
+                  console.log(err);
+                }
+              }}>
+              Delete Site
+            </DeleteButton>
+          </>
+        ) : (
+          <p
+            style={{
+              justifySelf: `center`,
+              alignSelf: `center`,
+              paddingBottom: `40px`,
+              paddingLeft: `10px`,
+              paddingRight: `10px`,
+              textAlign: `center`,
+            }}>
+            Please select a domain to see the settings
+          </p>
+        )}
+      </SignupForm>
+      {/* </SignupFormContainer> */}
+    </ComponentContainer>
+    // </PageSection>
   );
 };
 export default DomainSettings;

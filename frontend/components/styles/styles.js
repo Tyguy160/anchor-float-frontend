@@ -11,7 +11,6 @@ const StyledButton = styled.button`
   border: none;
   color: white;
   max-width: 200px;
-  margin: 10px;
   justify-self: center;
   outline: none;
   :active {
@@ -26,10 +25,10 @@ const StyledButton = styled.button`
 `;
 
 const StyledDropdown = styled.div`
-  padding: 20px;
-  /* margin: 20px; */
-  min-width: 90%;
+  padding-bottom: 20px;
+  max-width: 750px;
   justify-self: center;
+  width: 90%;
 `;
 
 const SignupFormContainer = styled.div`
@@ -260,7 +259,6 @@ const HeroCTAButtonContainer = styled(CTAButtonContainer)`
 `;
 
 const HeroCTAButton = styled(StyledButton)`
-  /* justify-content: center; */
   min-width: 150px;
   min-height: 30px;
   font-size: 1.2em;
@@ -281,13 +279,11 @@ const PageSection = styled.div`
 `;
 
 const ComponentContainer = styled.div`
-  width: 90%;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
-
-  margin-top: 20px;
+  padding: 20px 0px 20px 0px;
   display: grid;
-  max-width: 750px;
+  margin: 10px;
   border-radius: 5px;
 `;
 
@@ -339,9 +335,7 @@ const StyledTierContainer = styled.div`
   max-width: 300px;
 `;
 
-const EnterpriseStyledTierContainer = styled(StyledTierContainer)`
-  /* max-width: 500px; */
-`;
+const EnterpriseStyledTierContainer = styled(StyledTierContainer)``;
 
 const StyledTierHeading = styled.h3`
   font-size: 1.5em;
@@ -376,9 +370,7 @@ const StyledTierDetails = styled.ul`
 
 const StyledPricingCTAButton = styled(CTAButton)`
   margin: 20px;
-  /* align-self: center; */
   justify-content: center;
-  /* min-width: 20%; */
   max-width: 60%;
 `;
 
