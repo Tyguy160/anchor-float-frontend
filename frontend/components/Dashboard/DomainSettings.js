@@ -19,10 +19,9 @@ import {
 } from '../styles/styles';
 
 const DomainSettings = props => {
-  const [apiKey, setApiKey] = useState();
-  const [minimumReview, setMinimumReview] = useState(
-    props.selectedUserSite ? props.selectedUserSite.minimumReview : ''
-  );
+  const [hostname, setHostname] = useState('');
+  const [associatesApiKey, setAssociatesApiKey] = useState('');
+  const [minimumReview, setMinimumReview] = useState();
 
   const [deleteUserSite] = useMutation(DELETE_USERSITE_MUTATION, {
     variables: {
@@ -38,8 +37,10 @@ const DomainSettings = props => {
   const [updateUserSite] = useMutation(UPDATE_USERSITE_MUTATION, {
     variables: {
       input: {
-        hostname: props.selectedDomain ? props.selectedDomain.value : null,
-        associatesApiKey: apiKey,
+        hostname: props.selectedUserSite
+          ? props.selectedUserSite.hostname
+          : null,
+        associatesApiKey,
         minimumReview,
       },
     },
@@ -59,7 +60,7 @@ const DomainSettings = props => {
         setDomain(value);
         break;
       case 'API_KEY':
-        setApiKey(value);
+        setAssociatesApiKey(value);
         break;
       case 'MIN_REVIEW':
         setMinimumReview(parseFloat(value));
@@ -74,11 +75,8 @@ const DomainSettings = props => {
         id="domainSettingsForm"
         onSubmit={async e => {
           e.preventDefault();
-          updateUserSite(
-            props.selectedUserSite.hostname,
-            props.selectedUserSite.associatesApiKey,
-            minimumReview
-          );
+          await updateUserSite();
+          props.setSelectedUserSite();
         }}>
         {props.selectedUserSite ? (
           <>
@@ -88,7 +86,6 @@ const DomainSettings = props => {
                 id="domainInput"
                 name="domain"
                 type="text"
-                placeholder=""
                 required
                 value={props.selectedUserSite.hostname}
                 disabled
@@ -100,31 +97,31 @@ const DomainSettings = props => {
                 id="apiKeyInput"
                 name="apiKey"
                 type="text"
-                placeholder=""
+                // placeholder={props.selectedUserSite.associatesApiKey}
                 required
-                defaultValue={
-                  props.selectedUserSite
-                    ? props.selectedUserSite.associatesApiKey
-                    : ''
-                }
+                value={associatesApiKey}
+                placeholder={props.selectedUserSite.associatesApiKey}
                 onChange={e => handleChange(e, 'API_KEY')}
               />
             </SignupInputContainer>
             <SignupInputContainer>
-              <label htmlFor="minimumReview">
-                Minimum Review: <b>{minimumReview}</b> stars
-              </label>
+              <label htmlFor="minimumReview">Minimum Review:</label>
+
               <SignupTextInput
                 id="minimumReviewInput"
                 name="minimumReview"
-                type="range"
-                min="0"
-                max="5"
-                step="0.5"
+                type="number"
                 required
+                placeholder={props.selectedUserSite.minimumReview}
                 value={minimumReview}
                 onChange={e => handleChange(e, 'MIN_REVIEW')}
               />
+              <p style={{ fontSize: `0.8em` }}>
+                <i>
+                  Current minimum review:{' '}
+                  <b>{props.selectedUserSite.minimumReview} </b>stars
+                </i>
+              </p>
             </SignupInputContainer>
             <ContinueButton
               type="submit"
@@ -137,7 +134,7 @@ const DomainSettings = props => {
                 e.preventDefault();
                 try {
                   const res = await deleteUserSite();
-                  props.setSelectedDomain(null);
+                  props.setSelectedUserSite(null);
                 } catch (err) {
                   console.log(err);
                 }

@@ -83,6 +83,10 @@ const SignupTextInput = styled.input`
   outline: none;
   margin-left: 5px;
   margin-right: 5px;
+
+  :disabled {
+    background-color: rgb(235, 235, 228);
+  }
 `;
 
 const SigninFormContainer = styled(SignupFormContainer)``;
