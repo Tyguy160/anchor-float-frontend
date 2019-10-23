@@ -5,6 +5,7 @@ const typeDefs = gql`
     me: User
     userSites: [UserSite]
     sitePages(input: SitePagesInput!): SitePagesPayload
+    siteReports(input: SiteReportsInput): SiteReportsPayload
   }
 
   type Mutation {
@@ -135,8 +136,17 @@ const typeDefs = gql`
   input SitePagesInput {
     hostname: String
   }
+
   type SitePagesPayload {
     site: Site
+  }
+
+  input SiteReportsInput {
+    hostname: String
+  }
+
+  type SiteReportsPayload {
+    reports: [Report]
   }
 
   type Site {
@@ -158,6 +168,12 @@ const typeDefs = gql`
     affiliateTagged: Boolean
     affiliateTagName: String
     anchorText: String
+  }
+
+  type Report {
+    hostname: String
+    reportDate: String
+    reportUrl: String
   }
 `;
 
