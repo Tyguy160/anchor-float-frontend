@@ -10,10 +10,11 @@ import {
   DeleteButton,
 } from '../styles/styles';
 
+import ChangePassword from './ChangePassword';
 import PlanComponent from './PlanComponent';
 
 const SubscriptionInfoContainer = styled.div`
-  max-width: 1200px;
+  /* max-width: 1200px; */
   width: auto;
   justify-self: center;
   display: flex;
@@ -23,18 +24,26 @@ const SubscriptionInfoContainer = styled.div`
 
 const SubscriptionDetailsContainer = styled(ComponentContainer)`
   flex: 1 auto;
+  max-width: 300px;
+  min-width: 250px;
+  padding: 20px;
 `;
 
-const SubscriptionButtonContainer = styled(ComponentContainer)`
-  flex: 1 20%;
-  display: flex;
-  flex-wrap: wrap;
-  /* padding: 20px; */
+const ChangePasswordContainer = styled(ComponentContainer)`
+  flex: 1 auto;
+`;
+
+const ButtonContainer = styled(ComponentContainer)`
+  border: none;
+  display: grid;
+  grid-gap: 20px;
   justify-content: center;
+  align-content: center;
 `;
 
 const SubscriptionInfo = () => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
+  console.log(data.me);
   const plan = data && data.me && data.me.plan;
   const creditsRemaining = data && data.me && data.me.creditsRemaining;
 
@@ -72,11 +81,16 @@ const SubscriptionInfo = () => {
             <p>
               You have <b>{creditsRemaining} credits</b> remaining.
             </p>
+            <ButtonContainer>
+              <StyledButton style={{ width: `100%` }}>Change Plan</StyledButton>
+              <DeleteButton style={{ width: `100%` }}>
+                Cancel Subscription
+              </DeleteButton>
+            </ButtonContainer>
           </SubscriptionDetailsContainer>
-          <SubscriptionButtonContainer>
-            <StyledButton>Change Plan</StyledButton>
-            <DeleteButton>Cancel Subscription</DeleteButton>
-          </SubscriptionButtonContainer>
+          <ChangePasswordContainer>
+            <ChangePassword></ChangePassword>
+          </ChangePasswordContainer>
         </SubscriptionInfoContainer>
       )}
     </ComponentContainer>
