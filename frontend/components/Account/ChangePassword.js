@@ -11,6 +11,7 @@ import {
   SignupTextInput,
   ContinueButton,
   PageSection,
+  CenteredH2,
 } from '../styles/styles';
 
 const CHANGE_PASSWORD_MUTATION = gql`
@@ -51,7 +52,7 @@ const ChangePassword = () => {
 
   return (
     <>
-      <h2>Change Your Password</h2>
+      <CenteredH2>Change Your Password</CenteredH2>
       <>
         <SignupForm
           id="urlForm"
