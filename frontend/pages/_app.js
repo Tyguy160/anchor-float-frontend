@@ -4,6 +4,16 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import withData from '../lib/withData';
 import { createGlobalStyle } from 'styled-components';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { css } from 'glamor';
+
+toast.configure({
+  className: css({
+    borderRadius: '5px',
+  }),
+});
+
 const GlobalStyle = createGlobalStyle`
   html, body {
     @import url(https://fonts.googleapis.com/css?family=Assistant);

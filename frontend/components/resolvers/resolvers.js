@@ -9,6 +9,7 @@ const GET_CURRENT_USER = gql`
         level
         creditsPerMonth
         name
+        stripePlanId
       }
     }
   }

@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_CURRENT_USER } from '../resolvers/resolvers';
+import Link from 'next/link';
 import {
   ComponentContainer,
   CenteredH2,
@@ -43,7 +44,6 @@ const ButtonContainer = styled(ComponentContainer)`
 
 const SubscriptionInfo = () => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
-  console.log(data.me);
   const plan = data && data.me && data.me.plan;
   const creditsRemaining = data && data.me && data.me.creditsRemaining;
 
@@ -68,7 +68,12 @@ const SubscriptionInfo = () => {
       {!loading && (
         <SubscriptionInfoContainer>
           <ComponentContainer style={{ border: `none` }}>
-            <PlanComponent style={{ flex: `1 100%` }}></PlanComponent>
+            <PlanComponent
+              style={{ flex: `1 100%` }}
+              planId={plan.stripePlanId}
+              planTitle={plan.name}
+              planPrice={plan.stripePlanId == 'free' ? '$0' : 'More than $0'}
+              planCredits={plan.creditsPerMonth}></PlanComponent>
           </ComponentContainer>
           <SubscriptionDetailsContainer>
             <p>
@@ -82,7 +87,11 @@ const SubscriptionInfo = () => {
               You have <b>{creditsRemaining} credits</b> remaining.
             </p>
             <ButtonContainer>
-              <StyledButton style={{ width: `100%` }}>Change Plan</StyledButton>
+              <Link href="/plans" passHref>
+                <StyledButton style={{ width: `100%` }}>
+                  Change Plan
+                </StyledButton>
+              </Link>
               <DeleteButton style={{ width: `100%` }}>
                 Cancel Subscription
               </DeleteButton>
