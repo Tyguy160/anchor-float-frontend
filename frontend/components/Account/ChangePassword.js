@@ -11,6 +11,7 @@ import {
   SignupTextInput,
   ContinueButton,
   PageSection,
+  CenteredH2,
 } from '../styles/styles';
 
 const CHANGE_PASSWORD_MUTATION = gql`
@@ -50,9 +51,9 @@ const ChangePassword = () => {
   };
 
   return (
-    <PageSection>
-      <h2>Change Your Password</h2>
-      <SignupFormContainer>
+    <>
+      <CenteredH2>Change Your Password</CenteredH2>
+      <>
         <SignupForm
           id="urlForm"
           onSubmit={async e => {
@@ -112,9 +113,9 @@ const ChangePassword = () => {
             Reset
           </ContinueButton>
         </SignupForm>
-      </SignupFormContainer>
+      </>
       <Error error={error} />
-    </PageSection>
+    </>
   );
 };
 

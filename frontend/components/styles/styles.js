@@ -10,11 +10,25 @@ const StyledButton = styled.button`
   border-color: none;
   border: none;
   color: white;
+  max-width: 200px;
+  justify-self: center;
   outline: none;
   :active {
     background-color: hsl(43, 74%, 46%);
   }
+  :disabled {
+    background-color: hsl(43, 4%, 79%);
+    box-shadow: 0px 0px 1px 1px hsl(43, 4%, 79%);
+    cursor: not-allowed;
+  }
   cursor: pointer;
+`;
+
+const StyledDropdown = styled.div`
+  padding-bottom: 20px;
+  max-width: 750px;
+  justify-self: center;
+  width: 90%;
 `;
 
 const SignupFormContainer = styled.div`
@@ -42,6 +56,15 @@ const ContinueButton = styled(StyledButton)`
   justify-self: center;
 `;
 
+const DeleteButton = styled(StyledButton)`
+  justify-self: center;
+  box-shadow: 0px 0px 1px 1px hsl(3, 74%, 46%);
+  background-color: hsl(3, 74%, 49%);
+  :active {
+    background-color: hsl(3, 74%, 46%);
+  }
+`;
+
 const SignupInputContainer = styled.div`
   display: flex;
   justify-self: flex-end;
@@ -60,6 +83,10 @@ const SignupTextInput = styled.input`
   outline: none;
   margin-left: 5px;
   margin-right: 5px;
+
+  :disabled {
+    background-color: rgb(235, 235, 228);
+  }
 `;
 
 const SigninFormContainer = styled(SignupFormContainer)``;
@@ -236,7 +263,6 @@ const HeroCTAButtonContainer = styled(CTAButtonContainer)`
 `;
 
 const HeroCTAButton = styled(StyledButton)`
-  /* justify-content: center; */
   min-width: 150px;
   min-height: 30px;
   font-size: 1.2em;
@@ -253,15 +279,27 @@ const HeroCTAButton = styled(StyledButton)`
 
 const PageSection = styled.div`
   display: grid;
-  align-items: center;
   justify-items: center;
-  grid-template-columns: 1fr;
+`;
+
+const ComponentContainer = styled.div`
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 20px 0px 20px 0px;
+  display: grid;
+  margin: 10px;
+  border-radius: 5px;
+  height: inherit;
 `;
 
 const CenteredHeading = styled.h2`
   justify-self: center;
   font-size: 2em;
   padding-top: 20px;
+`;
+
+const CenteredH2 = styled.h2`
+  justify-self: center;
 `;
 
 const StyledHeading = styled(CenteredHeading)`
@@ -302,9 +340,7 @@ const StyledTierContainer = styled.div`
   max-width: 300px;
 `;
 
-const EnterpriseStyledTierContainer = styled(StyledTierContainer)`
-  /* max-width: 500px; */
-`;
+const EnterpriseStyledTierContainer = styled(StyledTierContainer)``;
 
 const StyledTierHeading = styled.h3`
   font-size: 1.5em;
@@ -339,9 +375,7 @@ const StyledTierDetails = styled.ul`
 
 const StyledPricingCTAButton = styled(CTAButton)`
   margin: 20px;
-  /* align-self: center; */
   justify-content: center;
-  /* min-width: 20%; */
   max-width: 60%;
 `;
 
@@ -384,5 +418,9 @@ export {
   StyledPricingCTAButtonContainer,
   StyledHeading,
   PageSection,
+  ComponentContainer,
   StyledButton,
+  DeleteButton,
+  StyledDropdown,
+  CenteredH2,
 };

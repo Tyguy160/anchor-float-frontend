@@ -27,7 +27,7 @@ const Mutation = {
     const user = await context.db.users
       .create({
         data: {
-          email,
+          email: email.toLowerCase(),
           firstName,
           lastName,
           password: hashedPassword,
