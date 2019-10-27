@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-
+import toast from '../Misc/Toasts';
 import {
   USERSITES_QUERY,
   UPDATE_USERSITE_MUTATION,
@@ -76,6 +76,7 @@ const DomainSettings = props => {
         onSubmit={async e => {
           e.preventDefault();
           await updateUserSite();
+          toasts.successMessage('Domain has been added.');
           props.setSelectedUserSite();
         }}>
         {props.selectedUserSite ? (
@@ -135,6 +136,7 @@ const DomainSettings = props => {
                 try {
                   const res = await deleteUserSite();
                   props.setSelectedUserSite(null);
+                  toast.successMessage('Domain has been deleted.');
                 } catch (err) {
                   console.log(err);
                 }

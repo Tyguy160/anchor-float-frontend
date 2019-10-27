@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import Link from 'next/link';
-
+import toasts from '../Misc/Toasts';
 import {
   SigninFormContainer,
   SigninForm,
@@ -31,6 +31,7 @@ const GET_CURRENT_USER = gql`
   query me {
     me {
       id
+      firstName
     }
   }
 `;
@@ -54,10 +55,12 @@ const SignIn = () => {
             e.preventDefault();
             try {
               const res = await signIn();
+              toasts.successMessage(`Welcome back!`);
               Router.push({
                 pathname: '/dashboard',
               });
             } catch (err) {
+              toasts.errorMessage('Something went wrong...');
               console.log(err);
             }
           }}>

@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
-
+import toasts from '../Misc/Toasts';
 import {
   SignupForm,
   CenteredHeading,
@@ -44,12 +44,16 @@ const Signup = () => {
       const res = await signUp();
 
       if (res) {
+        toasts.successMessage('Account created');
         Router.push({
           pathname: '/plans',
         });
+      } else {
+        toasts.errorMessage('Something went wrong...');
       }
     } else {
       console.log("Didn't work 🤷‍");
+      toasts.errorMessage(`Your passwords don't match.`);
     }
   };
 

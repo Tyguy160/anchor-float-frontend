@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import Error from '../Misc/ErrorMessage';
+import toasts from '../Misc/Toasts';
 import {
   SignupForm,
   SignupFormContainer,
@@ -65,6 +66,7 @@ const ChangePassword = () => {
               setConfirmNewPassword('');
             } else {
               throw new Error("Your new passwords don't match.");
+              // toasts.errorMessage(err.message);
             }
           }}>
           <SignupInputContainer>

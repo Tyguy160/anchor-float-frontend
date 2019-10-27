@@ -1,7 +1,9 @@
 const axios = require('axios');
-const { db } = require('../../prisma/db');
+const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { parseMarkup, parseHref } = require('../parsers');
+
+const db = getDB();
 
 function handleResponseErrors(error) {
   if (error.response) {
@@ -40,27 +42,29 @@ async function parsePageHandler({ Body, MessageId }) {
     () => console.log('upserted site'),
   );
 
-  const newOrExistingPage = await db.pages.upsert(
-    {
-      where: { url: url.href },
-      create: {
-        url: url.href,
-        site: {
-          connect: {
-            id: newOrExistingSite.id,
+  const newOrExistingPage = await db.pages
+    .upsert(
+      {
+        where: { url: url.href },
+        create: {
+          url: url.href,
+          site: {
+            connect: {
+              id: newOrExistingSite.id,
+            },
+          },
+        },
+        update: {
+          site: {
+            connect: {
+              id: newOrExistingSite.id,
+            },
           },
         },
       },
-      update: {
-        site: {
-          connect: {
-            id: newOrExistingSite.id,
-          },
-        },
-      },
-    },
-    () => console.log('upserted page'),
-  );
+      () => console.log('upserted page'),
+    )
+    .catch(console.log);
 
   const response = await axios.get(url.href).catch(handleResponseErrors);
   console.log(response.status);

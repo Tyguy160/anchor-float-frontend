@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Error from '../Misc/ErrorMessage';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import toasts from '../Misc/Toasts';
+
 import {
   GET_CURRENT_USER,
   USERSITES_QUERY,
@@ -65,8 +67,12 @@ const AddDomain = props => {
             const res = await addUserSite();
             setDomain('');
             setApiKey('');
+            toasts.successMessage('Domain has been added.');
           } catch (err) {
             console.log(err);
+            toasts.errorMessage(
+              'This domain has already been added to your site.'
+            );
           }
         }}>
         <SignupInputContainer>
