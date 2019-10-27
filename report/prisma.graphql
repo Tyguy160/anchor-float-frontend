@@ -1,0 +1,1988 @@
+type AggregateDomain {
+  count: Int!
+}
+
+type AggregateLink {
+  count: Int!
+}
+
+type AggregatePage {
+  count: Int!
+}
+
+type AggregateProduct {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type AggregateUserDomainPreferences {
+  count: Int!
+}
+
+enum Availability {
+  AMAZON
+  THIRDPARTY
+  UNAVAILABLE
+  NOTFOUND
+}
+
+type BatchPayload {
+  count: Long!
+}
+
+scalar DateTime
+
+type Domain {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  hostname: String!
+  pages(
+    where: PageWhereInput
+    orderBy: PageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Page!]
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User!]
+  preferences(
+    where: UserDomainPreferencesWhereInput
+    orderBy: UserDomainPreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [UserDomainPreferences!]
+}
+
+type DomainConnection {
+  pageInfo: PageInfo!
+  edges: [DomainEdge]!
+  aggregate: AggregateDomain!
+}
+
+input DomainCreateInput {
+  hostname: String!
+  pages: PageCreateManyInput
+  users: UserCreateManyWithoutDomainsInput
+  preferences: UserDomainPreferencesCreateManyWithoutDomainInput
+}
+
+input DomainCreateManyWithoutUsersInput {
+  create: [DomainCreateWithoutUsersInput!]
+  connect: [DomainWhereUniqueInput!]
+}
+
+input DomainCreateOneWithoutPreferencesInput {
+  create: DomainCreateWithoutPreferencesInput
+  connect: DomainWhereUniqueInput
+}
+
+input DomainCreateWithoutPreferencesInput {
+  hostname: String!
+  pages: PageCreateManyInput
+  users: UserCreateManyWithoutDomainsInput
+}
+
+input DomainCreateWithoutUsersInput {
+  hostname: String!
+  pages: PageCreateManyInput
+  preferences: UserDomainPreferencesCreateManyWithoutDomainInput
+}
+
+type DomainEdge {
+  node: Domain!
+  cursor: String!
+}
+
+enum DomainOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  hostname_ASC
+  hostname_DESC
+}
+
+type DomainPreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  hostname: String!
+}
+
+input DomainScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  hostname: String
+  hostname_not: String
+  hostname_in: [String!]
+  hostname_not_in: [String!]
+  hostname_lt: String
+  hostname_lte: String
+  hostname_gt: String
+  hostname_gte: String
+  hostname_contains: String
+  hostname_not_contains: String
+  hostname_starts_with: String
+  hostname_not_starts_with: String
+  hostname_ends_with: String
+  hostname_not_ends_with: String
+  AND: [DomainScalarWhereInput!]
+  OR: [DomainScalarWhereInput!]
+  NOT: [DomainScalarWhereInput!]
+}
+
+type DomainSubscriptionPayload {
+  mutation: MutationType!
+  node: Domain
+  updatedFields: [String!]
+  previousValues: DomainPreviousValues
+}
+
+input DomainSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: DomainWhereInput
+  AND: [DomainSubscriptionWhereInput!]
+  OR: [DomainSubscriptionWhereInput!]
+  NOT: [DomainSubscriptionWhereInput!]
+}
+
+input DomainUpdateInput {
+  hostname: String
+  pages: PageUpdateManyInput
+  users: UserUpdateManyWithoutDomainsInput
+  preferences: UserDomainPreferencesUpdateManyWithoutDomainInput
+}
+
+input DomainUpdateManyDataInput {
+  hostname: String
+}
+
+input DomainUpdateManyMutationInput {
+  hostname: String
+}
+
+input DomainUpdateManyWithoutUsersInput {
+  create: [DomainCreateWithoutUsersInput!]
+  delete: [DomainWhereUniqueInput!]
+  connect: [DomainWhereUniqueInput!]
+  disconnect: [DomainWhereUniqueInput!]
+  update: [DomainUpdateWithWhereUniqueWithoutUsersInput!]
+  upsert: [DomainUpsertWithWhereUniqueWithoutUsersInput!]
+  deleteMany: [DomainScalarWhereInput!]
+  updateMany: [DomainUpdateManyWithWhereNestedInput!]
+}
+
+input DomainUpdateManyWithWhereNestedInput {
+  where: DomainScalarWhereInput!
+  data: DomainUpdateManyDataInput!
+}
+
+input DomainUpdateOneRequiredWithoutPreferencesInput {
+  create: DomainCreateWithoutPreferencesInput
+  update: DomainUpdateWithoutPreferencesDataInput
+  upsert: DomainUpsertWithoutPreferencesInput
+  connect: DomainWhereUniqueInput
+}
+
+input DomainUpdateWithoutPreferencesDataInput {
+  hostname: String
+  pages: PageUpdateManyInput
+  users: UserUpdateManyWithoutDomainsInput
+}
+
+input DomainUpdateWithoutUsersDataInput {
+  hostname: String
+  pages: PageUpdateManyInput
+  preferences: UserDomainPreferencesUpdateManyWithoutDomainInput
+}
+
+input DomainUpdateWithWhereUniqueWithoutUsersInput {
+  where: DomainWhereUniqueInput!
+  data: DomainUpdateWithoutUsersDataInput!
+}
+
+input DomainUpsertWithoutPreferencesInput {
+  update: DomainUpdateWithoutPreferencesDataInput!
+  create: DomainCreateWithoutPreferencesInput!
+}
+
+input DomainUpsertWithWhereUniqueWithoutUsersInput {
+  where: DomainWhereUniqueInput!
+  update: DomainUpdateWithoutUsersDataInput!
+  create: DomainCreateWithoutUsersInput!
+}
+
+input DomainWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  hostname: String
+  hostname_not: String
+  hostname_in: [String!]
+  hostname_not_in: [String!]
+  hostname_lt: String
+  hostname_lte: String
+  hostname_gt: String
+  hostname_gte: String
+  hostname_contains: String
+  hostname_not_contains: String
+  hostname_starts_with: String
+  hostname_not_starts_with: String
+  hostname_ends_with: String
+  hostname_not_ends_with: String
+  pages_every: PageWhereInput
+  pages_some: PageWhereInput
+  pages_none: PageWhereInput
+  users_every: UserWhereInput
+  users_some: UserWhereInput
+  users_none: UserWhereInput
+  preferences_every: UserDomainPreferencesWhereInput
+  preferences_some: UserDomainPreferencesWhereInput
+  preferences_none: UserDomainPreferencesWhereInput
+  AND: [DomainWhereInput!]
+  OR: [DomainWhereInput!]
+  NOT: [DomainWhereInput!]
+}
+
+input DomainWhereUniqueInput {
+  id: ID
+  hostname: String
+}
+
+type Link {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  page: Page!
+  url: String!
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: Product
+  anchorText: String
+}
+
+type LinkConnection {
+  pageInfo: PageInfo!
+  edges: [LinkEdge]!
+  aggregate: AggregateLink!
+}
+
+input LinkCreateInput {
+  page: PageCreateOneWithoutLinksInput!
+  url: String!
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductCreateOneWithoutLinksInput
+  anchorText: String
+}
+
+input LinkCreateManyWithoutPageInput {
+  create: [LinkCreateWithoutPageInput!]
+  connect: [LinkWhereUniqueInput!]
+}
+
+input LinkCreateManyWithoutProductInput {
+  create: [LinkCreateWithoutProductInput!]
+  connect: [LinkWhereUniqueInput!]
+}
+
+input LinkCreateWithoutPageInput {
+  url: String!
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductCreateOneWithoutLinksInput
+  anchorText: String
+}
+
+input LinkCreateWithoutProductInput {
+  page: PageCreateOneWithoutLinksInput!
+  url: String!
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  anchorText: String
+}
+
+type LinkEdge {
+  node: Link!
+  cursor: String!
+}
+
+enum LinkOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  url_ASC
+  url_DESC
+  affiliateTagged_ASC
+  affiliateTagged_DESC
+  affiliateTagName_ASC
+  affiliateTagName_DESC
+  anchorText_ASC
+  anchorText_DESC
+}
+
+type LinkPreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  url: String!
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  anchorText: String
+}
+
+input LinkScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  url: String
+  url_not: String
+  url_in: [String!]
+  url_not_in: [String!]
+  url_lt: String
+  url_lte: String
+  url_gt: String
+  url_gte: String
+  url_contains: String
+  url_not_contains: String
+  url_starts_with: String
+  url_not_starts_with: String
+  url_ends_with: String
+  url_not_ends_with: String
+  affiliateTagged: Boolean
+  affiliateTagged_not: Boolean
+  affiliateTagName: String
+  affiliateTagName_not: String
+  affiliateTagName_in: [String!]
+  affiliateTagName_not_in: [String!]
+  affiliateTagName_lt: String
+  affiliateTagName_lte: String
+  affiliateTagName_gt: String
+  affiliateTagName_gte: String
+  affiliateTagName_contains: String
+  affiliateTagName_not_contains: String
+  affiliateTagName_starts_with: String
+  affiliateTagName_not_starts_with: String
+  affiliateTagName_ends_with: String
+  affiliateTagName_not_ends_with: String
+  anchorText: String
+  anchorText_not: String
+  anchorText_in: [String!]
+  anchorText_not_in: [String!]
+  anchorText_lt: String
+  anchorText_lte: String
+  anchorText_gt: String
+  anchorText_gte: String
+  anchorText_contains: String
+  anchorText_not_contains: String
+  anchorText_starts_with: String
+  anchorText_not_starts_with: String
+  anchorText_ends_with: String
+  anchorText_not_ends_with: String
+  AND: [LinkScalarWhereInput!]
+  OR: [LinkScalarWhereInput!]
+  NOT: [LinkScalarWhereInput!]
+}
+
+type LinkSubscriptionPayload {
+  mutation: MutationType!
+  node: Link
+  updatedFields: [String!]
+  previousValues: LinkPreviousValues
+}
+
+input LinkSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: LinkWhereInput
+  AND: [LinkSubscriptionWhereInput!]
+  OR: [LinkSubscriptionWhereInput!]
+  NOT: [LinkSubscriptionWhereInput!]
+}
+
+input LinkUpdateInput {
+  page: PageUpdateOneRequiredWithoutLinksInput
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductUpdateOneWithoutLinksInput
+  anchorText: String
+}
+
+input LinkUpdateManyDataInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  anchorText: String
+}
+
+input LinkUpdateManyMutationInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  anchorText: String
+}
+
+input LinkUpdateManyWithoutPageInput {
+  create: [LinkCreateWithoutPageInput!]
+  delete: [LinkWhereUniqueInput!]
+  connect: [LinkWhereUniqueInput!]
+  disconnect: [LinkWhereUniqueInput!]
+  update: [LinkUpdateWithWhereUniqueWithoutPageInput!]
+  upsert: [LinkUpsertWithWhereUniqueWithoutPageInput!]
+  deleteMany: [LinkScalarWhereInput!]
+  updateMany: [LinkUpdateManyWithWhereNestedInput!]
+}
+
+input LinkUpdateManyWithoutProductInput {
+  create: [LinkCreateWithoutProductInput!]
+  delete: [LinkWhereUniqueInput!]
+  connect: [LinkWhereUniqueInput!]
+  disconnect: [LinkWhereUniqueInput!]
+  update: [LinkUpdateWithWhereUniqueWithoutProductInput!]
+  upsert: [LinkUpsertWithWhereUniqueWithoutProductInput!]
+  deleteMany: [LinkScalarWhereInput!]
+  updateMany: [LinkUpdateManyWithWhereNestedInput!]
+}
+
+input LinkUpdateManyWithWhereNestedInput {
+  where: LinkScalarWhereInput!
+  data: LinkUpdateManyDataInput!
+}
+
+input LinkUpdateWithoutPageDataInput {
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  product: ProductUpdateOneWithoutLinksInput
+  anchorText: String
+}
+
+input LinkUpdateWithoutProductDataInput {
+  page: PageUpdateOneRequiredWithoutLinksInput
+  url: String
+  affiliateTagged: Boolean
+  affiliateTagName: String
+  anchorText: String
+}
+
+input LinkUpdateWithWhereUniqueWithoutPageInput {
+  where: LinkWhereUniqueInput!
+  data: LinkUpdateWithoutPageDataInput!
+}
+
+input LinkUpdateWithWhereUniqueWithoutProductInput {
+  where: LinkWhereUniqueInput!
+  data: LinkUpdateWithoutProductDataInput!
+}
+
+input LinkUpsertWithWhereUniqueWithoutPageInput {
+  where: LinkWhereUniqueInput!
+  update: LinkUpdateWithoutPageDataInput!
+  create: LinkCreateWithoutPageInput!
+}
+
+input LinkUpsertWithWhereUniqueWithoutProductInput {
+  where: LinkWhereUniqueInput!
+  update: LinkUpdateWithoutProductDataInput!
+  create: LinkCreateWithoutProductInput!
+}
+
+input LinkWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  page: PageWhereInput
+  url: String
+  url_not: String
+  url_in: [String!]
+  url_not_in: [String!]
+  url_lt: String
+  url_lte: String
+  url_gt: String
+  url_gte: String
+  url_contains: String
+  url_not_contains: String
+  url_starts_with: String
+  url_not_starts_with: String
+  url_ends_with: String
+  url_not_ends_with: String
+  affiliateTagged: Boolean
+  affiliateTagged_not: Boolean
+  affiliateTagName: String
+  affiliateTagName_not: String
+  affiliateTagName_in: [String!]
+  affiliateTagName_not_in: [String!]
+  affiliateTagName_lt: String
+  affiliateTagName_lte: String
+  affiliateTagName_gt: String
+  affiliateTagName_gte: String
+  affiliateTagName_contains: String
+  affiliateTagName_not_contains: String
+  affiliateTagName_starts_with: String
+  affiliateTagName_not_starts_with: String
+  affiliateTagName_ends_with: String
+  affiliateTagName_not_ends_with: String
+  product: ProductWhereInput
+  anchorText: String
+  anchorText_not: String
+  anchorText_in: [String!]
+  anchorText_not_in: [String!]
+  anchorText_lt: String
+  anchorText_lte: String
+  anchorText_gt: String
+  anchorText_gte: String
+  anchorText_contains: String
+  anchorText_not_contains: String
+  anchorText_starts_with: String
+  anchorText_not_starts_with: String
+  anchorText_ends_with: String
+  anchorText_not_ends_with: String
+  AND: [LinkWhereInput!]
+  OR: [LinkWhereInput!]
+  NOT: [LinkWhereInput!]
+}
+
+input LinkWhereUniqueInput {
+  id: ID
+}
+
+scalar Long
+
+type Mutation {
+  createDomain(data: DomainCreateInput!): Domain!
+  updateDomain(data: DomainUpdateInput!, where: DomainWhereUniqueInput!): Domain
+  updateManyDomains(
+    data: DomainUpdateManyMutationInput!
+    where: DomainWhereInput
+  ): BatchPayload!
+  upsertDomain(
+    where: DomainWhereUniqueInput!
+    create: DomainCreateInput!
+    update: DomainUpdateInput!
+  ): Domain!
+  deleteDomain(where: DomainWhereUniqueInput!): Domain
+  deleteManyDomains(where: DomainWhereInput): BatchPayload!
+  createLink(data: LinkCreateInput!): Link!
+  updateLink(data: LinkUpdateInput!, where: LinkWhereUniqueInput!): Link
+  updateManyLinks(
+    data: LinkUpdateManyMutationInput!
+    where: LinkWhereInput
+  ): BatchPayload!
+  upsertLink(
+    where: LinkWhereUniqueInput!
+    create: LinkCreateInput!
+    update: LinkUpdateInput!
+  ): Link!
+  deleteLink(where: LinkWhereUniqueInput!): Link
+  deleteManyLinks(where: LinkWhereInput): BatchPayload!
+  createPage(data: PageCreateInput!): Page!
+  updatePage(data: PageUpdateInput!, where: PageWhereUniqueInput!): Page
+  updateManyPages(
+    data: PageUpdateManyMutationInput!
+    where: PageWhereInput
+  ): BatchPayload!
+  upsertPage(
+    where: PageWhereUniqueInput!
+    create: PageCreateInput!
+    update: PageUpdateInput!
+  ): Page!
+  deletePage(where: PageWhereUniqueInput!): Page
+  deleteManyPages(where: PageWhereInput): BatchPayload!
+  createProduct(data: ProductCreateInput!): Product!
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
+  updateManyProducts(
+    data: ProductUpdateManyMutationInput!
+    where: ProductWhereInput
+  ): BatchPayload!
+  upsertProduct(
+    where: ProductWhereUniqueInput!
+    create: ProductCreateInput!
+    update: ProductUpdateInput!
+  ): Product!
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  createUser(data: UserCreateInput!): User!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateManyUsers(
+    data: UserUpdateManyMutationInput!
+    where: UserWhereInput
+  ): BatchPayload!
+  upsertUser(
+    where: UserWhereUniqueInput!
+    create: UserCreateInput!
+    update: UserUpdateInput!
+  ): User!
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createUserDomainPreferences(
+    data: UserDomainPreferencesCreateInput!
+  ): UserDomainPreferences!
+  updateUserDomainPreferences(
+    data: UserDomainPreferencesUpdateInput!
+    where: UserDomainPreferencesWhereUniqueInput!
+  ): UserDomainPreferences
+  updateManyUserDomainPreferenceses(
+    data: UserDomainPreferencesUpdateManyMutationInput!
+    where: UserDomainPreferencesWhereInput
+  ): BatchPayload!
+  upsertUserDomainPreferences(
+    where: UserDomainPreferencesWhereUniqueInput!
+    create: UserDomainPreferencesCreateInput!
+    update: UserDomainPreferencesUpdateInput!
+  ): UserDomainPreferences!
+  deleteUserDomainPreferences(
+    where: UserDomainPreferencesWhereUniqueInput!
+  ): UserDomainPreferences
+  deleteManyUserDomainPreferenceses(
+    where: UserDomainPreferencesWhereInput
+  ): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+interface Node {
+  id: ID!
+}
+
+type Page {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  url: String!
+  pageTitle: String
+  wordCount: Int
+  links(
+    where: LinkWhereInput
+    orderBy: LinkOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Link!]
+}
+
+type PageConnection {
+  pageInfo: PageInfo!
+  edges: [PageEdge]!
+  aggregate: AggregatePage!
+}
+
+input PageCreateInput {
+  url: String!
+  pageTitle: String
+  wordCount: Int
+  links: LinkCreateManyWithoutPageInput
+}
+
+input PageCreateManyInput {
+  create: [PageCreateInput!]
+  connect: [PageWhereUniqueInput!]
+}
+
+input PageCreateOneWithoutLinksInput {
+  create: PageCreateWithoutLinksInput
+  connect: PageWhereUniqueInput
+}
+
+input PageCreateWithoutLinksInput {
+  url: String!
+  pageTitle: String
+  wordCount: Int
+}
+
+type PageEdge {
+  node: Page!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+enum PageOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  url_ASC
+  url_DESC
+  pageTitle_ASC
+  pageTitle_DESC
+  wordCount_ASC
+  wordCount_DESC
+}
+
+type PagePreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  url: String!
+  pageTitle: String
+  wordCount: Int
+}
+
+input PageScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  url: String
+  url_not: String
+  url_in: [String!]
+  url_not_in: [String!]
+  url_lt: String
+  url_lte: String
+  url_gt: String
+  url_gte: String
+  url_contains: String
+  url_not_contains: String
+  url_starts_with: String
+  url_not_starts_with: String
+  url_ends_with: String
+  url_not_ends_with: String
+  pageTitle: String
+  pageTitle_not: String
+  pageTitle_in: [String!]
+  pageTitle_not_in: [String!]
+  pageTitle_lt: String
+  pageTitle_lte: String
+  pageTitle_gt: String
+  pageTitle_gte: String
+  pageTitle_contains: String
+  pageTitle_not_contains: String
+  pageTitle_starts_with: String
+  pageTitle_not_starts_with: String
+  pageTitle_ends_with: String
+  pageTitle_not_ends_with: String
+  wordCount: Int
+  wordCount_not: Int
+  wordCount_in: [Int!]
+  wordCount_not_in: [Int!]
+  wordCount_lt: Int
+  wordCount_lte: Int
+  wordCount_gt: Int
+  wordCount_gte: Int
+  AND: [PageScalarWhereInput!]
+  OR: [PageScalarWhereInput!]
+  NOT: [PageScalarWhereInput!]
+}
+
+type PageSubscriptionPayload {
+  mutation: MutationType!
+  node: Page
+  updatedFields: [String!]
+  previousValues: PagePreviousValues
+}
+
+input PageSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PageWhereInput
+  AND: [PageSubscriptionWhereInput!]
+  OR: [PageSubscriptionWhereInput!]
+  NOT: [PageSubscriptionWhereInput!]
+}
+
+input PageUpdateDataInput {
+  url: String
+  pageTitle: String
+  wordCount: Int
+  links: LinkUpdateManyWithoutPageInput
+}
+
+input PageUpdateInput {
+  url: String
+  pageTitle: String
+  wordCount: Int
+  links: LinkUpdateManyWithoutPageInput
+}
+
+input PageUpdateManyDataInput {
+  url: String
+  pageTitle: String
+  wordCount: Int
+}
+
+input PageUpdateManyInput {
+  create: [PageCreateInput!]
+  update: [PageUpdateWithWhereUniqueNestedInput!]
+  upsert: [PageUpsertWithWhereUniqueNestedInput!]
+  delete: [PageWhereUniqueInput!]
+  connect: [PageWhereUniqueInput!]
+  disconnect: [PageWhereUniqueInput!]
+  deleteMany: [PageScalarWhereInput!]
+  updateMany: [PageUpdateManyWithWhereNestedInput!]
+}
+
+input PageUpdateManyMutationInput {
+  url: String
+  pageTitle: String
+  wordCount: Int
+}
+
+input PageUpdateManyWithWhereNestedInput {
+  where: PageScalarWhereInput!
+  data: PageUpdateManyDataInput!
+}
+
+input PageUpdateOneRequiredWithoutLinksInput {
+  create: PageCreateWithoutLinksInput
+  update: PageUpdateWithoutLinksDataInput
+  upsert: PageUpsertWithoutLinksInput
+  connect: PageWhereUniqueInput
+}
+
+input PageUpdateWithoutLinksDataInput {
+  url: String
+  pageTitle: String
+  wordCount: Int
+}
+
+input PageUpdateWithWhereUniqueNestedInput {
+  where: PageWhereUniqueInput!
+  data: PageUpdateDataInput!
+}
+
+input PageUpsertWithoutLinksInput {
+  update: PageUpdateWithoutLinksDataInput!
+  create: PageCreateWithoutLinksInput!
+}
+
+input PageUpsertWithWhereUniqueNestedInput {
+  where: PageWhereUniqueInput!
+  update: PageUpdateDataInput!
+  create: PageCreateInput!
+}
+
+input PageWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  url: String
+  url_not: String
+  url_in: [String!]
+  url_not_in: [String!]
+  url_lt: String
+  url_lte: String
+  url_gt: String
+  url_gte: String
+  url_contains: String
+  url_not_contains: String
+  url_starts_with: String
+  url_not_starts_with: String
+  url_ends_with: String
+  url_not_ends_with: String
+  pageTitle: String
+  pageTitle_not: String
+  pageTitle_in: [String!]
+  pageTitle_not_in: [String!]
+  pageTitle_lt: String
+  pageTitle_lte: String
+  pageTitle_gt: String
+  pageTitle_gte: String
+  pageTitle_contains: String
+  pageTitle_not_contains: String
+  pageTitle_starts_with: String
+  pageTitle_not_starts_with: String
+  pageTitle_ends_with: String
+  pageTitle_not_ends_with: String
+  wordCount: Int
+  wordCount_not: Int
+  wordCount_in: [Int!]
+  wordCount_not_in: [Int!]
+  wordCount_lt: Int
+  wordCount_lte: Int
+  wordCount_gt: Int
+  wordCount_gte: Int
+  links_every: LinkWhereInput
+  links_some: LinkWhereInput
+  links_none: LinkWhereInput
+  AND: [PageWhereInput!]
+  OR: [PageWhereInput!]
+  NOT: [PageWhereInput!]
+}
+
+input PageWhereUniqueInput {
+  id: ID
+  url: String
+}
+
+type Product {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  name: String
+  asin: String!
+  links(
+    where: LinkWhereInput
+    orderBy: LinkOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Link!]
+  availability: Availability
+}
+
+type ProductConnection {
+  pageInfo: PageInfo!
+  edges: [ProductEdge]!
+  aggregate: AggregateProduct!
+}
+
+input ProductCreateInput {
+  name: String
+  asin: String!
+  links: LinkCreateManyWithoutProductInput
+  availability: Availability
+}
+
+input ProductCreateOneWithoutLinksInput {
+  create: ProductCreateWithoutLinksInput
+  connect: ProductWhereUniqueInput
+}
+
+input ProductCreateWithoutLinksInput {
+  name: String
+  asin: String!
+  availability: Availability
+}
+
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+
+enum ProductOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  name_ASC
+  name_DESC
+  asin_ASC
+  asin_DESC
+  availability_ASC
+  availability_DESC
+}
+
+type ProductPreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  name: String
+  asin: String!
+  availability: Availability
+}
+
+type ProductSubscriptionPayload {
+  mutation: MutationType!
+  node: Product
+  updatedFields: [String!]
+  previousValues: ProductPreviousValues
+}
+
+input ProductSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductWhereInput
+  AND: [ProductSubscriptionWhereInput!]
+  OR: [ProductSubscriptionWhereInput!]
+  NOT: [ProductSubscriptionWhereInput!]
+}
+
+input ProductUpdateInput {
+  name: String
+  asin: String
+  links: LinkUpdateManyWithoutProductInput
+  availability: Availability
+}
+
+input ProductUpdateManyMutationInput {
+  name: String
+  asin: String
+  availability: Availability
+}
+
+input ProductUpdateOneWithoutLinksInput {
+  create: ProductCreateWithoutLinksInput
+  update: ProductUpdateWithoutLinksDataInput
+  upsert: ProductUpsertWithoutLinksInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductWhereUniqueInput
+}
+
+input ProductUpdateWithoutLinksDataInput {
+  name: String
+  asin: String
+  availability: Availability
+}
+
+input ProductUpsertWithoutLinksInput {
+  update: ProductUpdateWithoutLinksDataInput!
+  create: ProductCreateWithoutLinksInput!
+}
+
+input ProductWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  asin: String
+  asin_not: String
+  asin_in: [String!]
+  asin_not_in: [String!]
+  asin_lt: String
+  asin_lte: String
+  asin_gt: String
+  asin_gte: String
+  asin_contains: String
+  asin_not_contains: String
+  asin_starts_with: String
+  asin_not_starts_with: String
+  asin_ends_with: String
+  asin_not_ends_with: String
+  links_every: LinkWhereInput
+  links_some: LinkWhereInput
+  links_none: LinkWhereInput
+  availability: Availability
+  availability_not: Availability
+  availability_in: [Availability!]
+  availability_not_in: [Availability!]
+  AND: [ProductWhereInput!]
+  OR: [ProductWhereInput!]
+  NOT: [ProductWhereInput!]
+}
+
+input ProductWhereUniqueInput {
+  id: ID
+  asin: String
+}
+
+type Query {
+  domain(where: DomainWhereUniqueInput!): Domain
+  domains(
+    where: DomainWhereInput
+    orderBy: DomainOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Domain]!
+  domainsConnection(
+    where: DomainWhereInput
+    orderBy: DomainOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): DomainConnection!
+  link(where: LinkWhereUniqueInput!): Link
+  links(
+    where: LinkWhereInput
+    orderBy: LinkOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Link]!
+  linksConnection(
+    where: LinkWhereInput
+    orderBy: LinkOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): LinkConnection!
+  page(where: PageWhereUniqueInput!): Page
+  pages(
+    where: PageWhereInput
+    orderBy: PageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Page]!
+  pagesConnection(
+    where: PageWhereInput
+    orderBy: PageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PageConnection!
+  product(where: ProductWhereUniqueInput!): Product
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product]!
+  productsConnection(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+  user(where: UserWhereUniqueInput!): User
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]!
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
+  userDomainPreferences(
+    where: UserDomainPreferencesWhereUniqueInput!
+  ): UserDomainPreferences
+  userDomainPreferenceses(
+    where: UserDomainPreferencesWhereInput
+    orderBy: UserDomainPreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [UserDomainPreferences]!
+  userDomainPreferencesesConnection(
+    where: UserDomainPreferencesWhereInput
+    orderBy: UserDomainPreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserDomainPreferencesConnection!
+  node(id: ID!): Node
+}
+
+type Subscription {
+  domain(where: DomainSubscriptionWhereInput): DomainSubscriptionPayload
+  link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
+  page(where: PageSubscriptionWhereInput): PageSubscriptionPayload
+  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  userDomainPreferences(
+    where: UserDomainPreferencesSubscriptionWhereInput
+  ): UserDomainPreferencesSubscriptionPayload
+}
+
+type User {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  name: String!
+  email: String!
+  password: String!
+  domains(
+    where: DomainWhereInput
+    orderBy: DomainOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Domain!]
+}
+
+type UserConnection {
+  pageInfo: PageInfo!
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  name: String!
+  email: String!
+  password: String!
+  domains: DomainCreateManyWithoutUsersInput
+}
+
+input UserCreateManyWithoutDomainsInput {
+  create: [UserCreateWithoutDomainsInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutDomainsInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+type UserDomainPreferences {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  domain: Domain!
+  user: User!
+  sitemapUrls: [String!]!
+  contentSelectors: [String!]!
+}
+
+type UserDomainPreferencesConnection {
+  pageInfo: PageInfo!
+  edges: [UserDomainPreferencesEdge]!
+  aggregate: AggregateUserDomainPreferences!
+}
+
+input UserDomainPreferencesCreatecontentSelectorsInput {
+  set: [String!]
+}
+
+input UserDomainPreferencesCreateInput {
+  domain: DomainCreateOneWithoutPreferencesInput!
+  user: UserCreateOneInput!
+  sitemapUrls: UserDomainPreferencesCreatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesCreatecontentSelectorsInput
+}
+
+input UserDomainPreferencesCreateManyWithoutDomainInput {
+  create: [UserDomainPreferencesCreateWithoutDomainInput!]
+  connect: [UserDomainPreferencesWhereUniqueInput!]
+}
+
+input UserDomainPreferencesCreatesitemapUrlsInput {
+  set: [String!]
+}
+
+input UserDomainPreferencesCreateWithoutDomainInput {
+  user: UserCreateOneInput!
+  sitemapUrls: UserDomainPreferencesCreatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesCreatecontentSelectorsInput
+}
+
+type UserDomainPreferencesEdge {
+  node: UserDomainPreferences!
+  cursor: String!
+}
+
+enum UserDomainPreferencesOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserDomainPreferencesPreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  sitemapUrls: [String!]!
+  contentSelectors: [String!]!
+}
+
+input UserDomainPreferencesScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  AND: [UserDomainPreferencesScalarWhereInput!]
+  OR: [UserDomainPreferencesScalarWhereInput!]
+  NOT: [UserDomainPreferencesScalarWhereInput!]
+}
+
+type UserDomainPreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: UserDomainPreferences
+  updatedFields: [String!]
+  previousValues: UserDomainPreferencesPreviousValues
+}
+
+input UserDomainPreferencesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserDomainPreferencesWhereInput
+  AND: [UserDomainPreferencesSubscriptionWhereInput!]
+  OR: [UserDomainPreferencesSubscriptionWhereInput!]
+  NOT: [UserDomainPreferencesSubscriptionWhereInput!]
+}
+
+input UserDomainPreferencesUpdatecontentSelectorsInput {
+  set: [String!]
+}
+
+input UserDomainPreferencesUpdateInput {
+  domain: DomainUpdateOneRequiredWithoutPreferencesInput
+  user: UserUpdateOneRequiredInput
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
+}
+
+input UserDomainPreferencesUpdateManyDataInput {
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
+}
+
+input UserDomainPreferencesUpdateManyMutationInput {
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
+}
+
+input UserDomainPreferencesUpdateManyWithoutDomainInput {
+  create: [UserDomainPreferencesCreateWithoutDomainInput!]
+  delete: [UserDomainPreferencesWhereUniqueInput!]
+  connect: [UserDomainPreferencesWhereUniqueInput!]
+  disconnect: [UserDomainPreferencesWhereUniqueInput!]
+  update: [UserDomainPreferencesUpdateWithWhereUniqueWithoutDomainInput!]
+  upsert: [UserDomainPreferencesUpsertWithWhereUniqueWithoutDomainInput!]
+  deleteMany: [UserDomainPreferencesScalarWhereInput!]
+  updateMany: [UserDomainPreferencesUpdateManyWithWhereNestedInput!]
+}
+
+input UserDomainPreferencesUpdateManyWithWhereNestedInput {
+  where: UserDomainPreferencesScalarWhereInput!
+  data: UserDomainPreferencesUpdateManyDataInput!
+}
+
+input UserDomainPreferencesUpdatesitemapUrlsInput {
+  set: [String!]
+}
+
+input UserDomainPreferencesUpdateWithoutDomainDataInput {
+  user: UserUpdateOneRequiredInput
+  sitemapUrls: UserDomainPreferencesUpdatesitemapUrlsInput
+  contentSelectors: UserDomainPreferencesUpdatecontentSelectorsInput
+}
+
+input UserDomainPreferencesUpdateWithWhereUniqueWithoutDomainInput {
+  where: UserDomainPreferencesWhereUniqueInput!
+  data: UserDomainPreferencesUpdateWithoutDomainDataInput!
+}
+
+input UserDomainPreferencesUpsertWithWhereUniqueWithoutDomainInput {
+  where: UserDomainPreferencesWhereUniqueInput!
+  update: UserDomainPreferencesUpdateWithoutDomainDataInput!
+  create: UserDomainPreferencesCreateWithoutDomainInput!
+}
+
+input UserDomainPreferencesWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  domain: DomainWhereInput
+  user: UserWhereInput
+  AND: [UserDomainPreferencesWhereInput!]
+  OR: [UserDomainPreferencesWhereInput!]
+  NOT: [UserDomainPreferencesWhereInput!]
+}
+
+input UserDomainPreferencesWhereUniqueInput {
+  id: ID
+}
+
+type UserEdge {
+  node: User!
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  name_ASC
+  name_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UserScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  AND: [UserScalarWhereInput!]
+  OR: [UserScalarWhereInput!]
+  NOT: [UserScalarWhereInput!]
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+  AND: [UserSubscriptionWhereInput!]
+  OR: [UserSubscriptionWhereInput!]
+  NOT: [UserSubscriptionWhereInput!]
+}
+
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  domains: DomainUpdateManyWithoutUsersInput
+}
+
+input UserUpdateInput {
+  name: String
+  email: String
+  password: String
+  domains: DomainUpdateManyWithoutUsersInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpdateManyMutationInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpdateManyWithoutDomainsInput {
+  create: [UserCreateWithoutDomainsInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutDomainsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutDomainsInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutDomainsDataInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpdateWithWhereUniqueWithoutDomainsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutDomainsDataInput!
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutDomainsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutDomainsDataInput!
+  create: UserCreateWithoutDomainsInput!
+}
+
+input UserWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  domains_every: DomainWhereInput
+  domains_some: DomainWhereInput
+  domains_none: DomainWhereInput
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+}
+
+input UserWhereUniqueInput {
+  id: ID
+  email: String
+}
