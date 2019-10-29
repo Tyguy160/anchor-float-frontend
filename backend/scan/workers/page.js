@@ -140,17 +140,18 @@ async function parsePageHandler({ Body, MessageId }) {
           });
           if (hasAsin) {
             const asin = captureGroup[1];
-            // productProducer.send(
-            //   [
-            //     {
-            //       id: uuid(),
-            //       body: JSON.stringify({ asin, linkId: newLink.id }),
-            //     },
-            //   ],
-            //   (err) => {
-            //     if (err) console.log(err);
-            //   },
-            // );
+            console.log('This product has an ASIN');
+            productProducer.send(
+              [
+                {
+                  id: uuid(),
+                  body: JSON.stringify({ asin, linkId: newLink.id }),
+                },
+              ],
+              (err) => {
+                if (err) console.log(err);
+              },
+            );
           }
         }
       }
