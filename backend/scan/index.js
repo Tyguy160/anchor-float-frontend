@@ -2,10 +2,10 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-
 const { Consumer } = require('sqs-consumer');
 const { parseSitemapHandler } = require('./workers/sitemap');
 const { parsePageHandler } = require('./workers/page');
+const { parseProductHandler } = require('./workers/product');
 const { parseShortlinkHandler } = require('./workers/shortlink');
 
 const {
@@ -26,7 +26,8 @@ Object.entries({
   AWS_ACCESS_KEY_ID,
   AWS_REGION,
 }).forEach(([varName, varValue]) => {
-  if (!varValue) { // value is undefined
+  if (!varValue) {
+    // value is undefined
     console.error(`\nMissing required environment variable: ${varName}\n`); // eslint-disable-line no-console
     process.exit(1);
   }
@@ -47,6 +48,13 @@ try {
     console.error(err.message); // eslint-disable-line no-console
   });
 
+  const parseProductConsumer = Consumer.create({
+    queueUrl: PARSE_PAGE_QUEUE_URL,
+    handleMessage: parseProductHandler,
+  }).on('error', (err) => {
+    console.error(err.message); // eslint-disable-line no-console
+  });
+
   const parseShortlinkConsumer = Consumer.create({
     queueUrl: PARSE_SHORTLINK_QUEUE_URL,
     handleMessage: parseShortlinkHandler,
@@ -59,6 +67,9 @@ try {
 
   parsePageConsumer.start();
   console.info('Parse page consumer running...'); // eslint-disable-line no-console
+
+  parseProductConsumer.start();
+  console.info('Parse product consumer running...'); // eslint-disable-line no-console
 
   parseShortlinkConsumer.start();
   console.info('Parse shortlink consumer running...'); // eslint-disable-line no-console
