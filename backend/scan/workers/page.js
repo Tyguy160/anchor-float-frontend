@@ -1,7 +1,9 @@
 const axios = require('axios');
+const uuid = require('uuid/v4');
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { parseMarkup, parseHref } = require('../parsers');
+const { productProducer } = require('../producers.js');
 
 const db = getDB();
 
@@ -129,7 +131,7 @@ async function parsePageHandler({ Body, MessageId }) {
             anchorText: link.text,
           },
         });
-        console.log(`created new link: ${newLink.id}\n`);
+        // console.log(`created new link: ${newLink.id}\n`);
 
         if (hostname.includes('amazon.com')) {
           const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i];

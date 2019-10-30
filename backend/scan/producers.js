@@ -12,7 +12,7 @@ const pageProducer = Producer.create({
 });
 
 const productProducer = Producer.create({
-  queueUrl: process.env.PARSE_PAGE_QUEUE_URL,
+  queueUrl: process.env.PARSE_PRODUCT_QUEUE_URL,
   region: process.env.AWS_REGION,
 });
 

@@ -10,6 +10,7 @@ const { parseShortlinkHandler } = require('./workers/shortlink');
 
 const {
   PARSE_PAGE_QUEUE_URL,
+  PARSE_PRODUCT_QUEUE_URL,
   PARSE_SITEMAP_QUEUE_URL,
   PARSE_SHORTLINK_QUEUE_URL,
   AWS_SECRET_ACCESS_KEY,
@@ -49,7 +50,7 @@ try {
   });
 
   const parseProductConsumer = Consumer.create({
-    queueUrl: PARSE_PAGE_QUEUE_URL,
+    queueUrl: PARSE_PRODUCT_QUEUE_URL,
     handleMessage: parseProductHandler,
   }).on('error', (err) => {
     console.error(err.message); // eslint-disable-line no-console

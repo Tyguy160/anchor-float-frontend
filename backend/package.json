@@ -17,7 +17,9 @@
     "purge-parse-sitemap": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-sitemap",
     "purge-parse-page": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-page",
     "purge-parse-shortlink": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-shortlink",
-    "purge-queue": "purge-parse-sitemap && purge-parse-page && purge-parse-shortlink"
+    "purge-parse-product": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/parse-product",
+    "purge-generate-report": "aws sqs purge-queue --queue-url https://sqs.us-east-1.amazonaws.com/510755279176/generate-report",
+    "purge-queue": "npm run purge-parse-sitemap && npm run purge-parse-page && npm run purge-parse-shortlink && npm run purge-parse-product && npm run purge-generate-report"
   },
   "dependencies": {
     "apollo-server-express": "^2.8.1",
@@ -56,7 +58,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.2",
     "jest": "^23.6.0",
-    "prisma2": "^2.0.0-preview013.3"
+    "prisma2": "^2.0.0-preview015"
   },
   "prettier": {
     "singleQuote": true,
