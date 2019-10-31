@@ -1,15 +1,13 @@
 const axios = require('axios');
+const Bottleneck = require('bottleneck');
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
-const { amzApi } = require('../../amazon/amzApi');
-const { requestAndExtract } = require('../../amazon/request');
+const { createRequestFromAsins, getItemsPromise } = require('../../amazon/amzApi');
 
 const db = getDB();
-
-const api = amzApi({
-  associateTag: 'triplebar-20',
-  awsAccessKey: 'AKIAJEGKAA3435XIBHOA',
-  secretKey: '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',
+const limiter = new Bottleneck({
+  maxConcurrent: 1,
+  minTime: 500,
 });
 
 async function parseProductHandler({ Body, MessageId }) {
@@ -17,10 +15,12 @@ async function parseProductHandler({ Body, MessageId }) {
     const asin = getDataFromMessage(Body, 'asin');
     console.log(asin);
 
-    const requestUrl = await api.getUrl([asin]);
+    const requestUrl = await createRequestFromAsins([asin]);
     console.log(requestUrl);
 
-    requestAndExtract(requestUrl).then(details => console.log(details));
+    limiter.schedule(() => getItemsPromise(requestUrl)
+      .then(console.log)
+      .catch(console.log));
 
     const linkId = getDataFromMessage(Body, 'linkId');
     if (!asin) return;
