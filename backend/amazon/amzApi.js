@@ -17,7 +17,7 @@ function productAdvertisingApi() {
   return api;
 }
 
-function getItemsRequest(asins) {
+function createRequestFromAsins(asins) {
   const configuredRequest = new ProductAdvertisingAPIv1.GetItemsRequest();
 
   configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
@@ -55,7 +55,31 @@ function parseResponse(itemsResponseList) {
   return mappedResponse;
 }
 
-const callback = function callback(error, data, response) {
+function getItemsPromise(apiRequest) {
+  const api = productAdvertisingApi();
+  return new Promise((resolve, reject) => {
+    api.getItems(apiRequest, (error, data) => {
+      if (error) {
+        return reject(error);
+      }
+      if (data.Errors !== undefined) {
+        return reject(data.Errors);
+      }
+
+      console.log(JSON.stringify(data.ItemsResult.Items, null, 1));
+
+      const formattedItems = data.ItemsResult.Items.map(item => ({
+        asin: item.ASIN,
+        name: item.ItemInfo.Title.DisplayValue,
+        offers: item.Offers.Listings,
+      }));
+
+      return resolve(formattedItems);
+    });
+  });
+}
+
+function callback(error, data, response) {
   if (error) {
     console.log('Error calling PA-API 5.0!');
     console.log(`Printing Full Error Object:\n${JSON.stringify(error, null, 1)}`);
@@ -107,6 +131,6 @@ const callback = function callback(error, data, response) {
       console.log(`Error Message: ${error_0.Message}`);
     }
   }
-};
+}
 
-module.exports = { productAdvertisingApi, getItemsRequest, callback };
+module.exports = { productAdvertisingApi, createRequestFromAsins, getItemsPromise };
