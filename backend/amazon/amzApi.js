@@ -18,16 +18,17 @@ function productAdvertisingApi() {
 }
 
 function getItemsRequest(asins) {
-  const getItemsRequest = new ProductAdvertisingAPIv1.GetItemsRequest();
+  const configuredRequest = new ProductAdvertisingAPIv1.GetItemsRequest();
 
-  getItemsRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
-  getItemsRequest.PartnerType = process.env.AMAZON_ASSOCIATES_PARTNER_TYPE;
+  configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
+  configuredRequest.PartnerType = process.env.AMAZON_ASSOCIATES_PARTNER_TYPE;
 
-  getItemsRequest.ItemIds = asins; // The items to request ['B07WNY2WKG', '032157351X', 'B004FDMZDS', 'B0002SR9BS', 'B00009OYGK']
+  // The items to request ['B07WNY2WKG', '032157351X', 'B004FDMZDS', 'B0002SR9BS', 'B00009OYGK']
+  configuredRequest.ItemIds = asins;
 
-  getItemsRequest.Condition = process.env.AMAZON_ASSOCIATES_ITEM_CONDITION;
+  configuredRequest.Condition = process.env.AMAZON_ASSOCIATES_ITEM_CONDITION;
 
-  getItemsRequest.Resources = [
+  configuredRequest.Resources = [
     'CustomerReviews.Count',
     'CustomerReviews.StarRating',
     'Images.Primary.Medium',
@@ -43,7 +44,7 @@ function getItemsRequest(asins) {
     'Offers.Summaries.OfferCount',
   ];
 
-  return getItemsRequest;
+  return configuredRequest;
 }
 
 function parseResponse(itemsResponseList) {
