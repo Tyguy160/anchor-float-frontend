@@ -81,7 +81,7 @@ async function parsePageHandler({ Body, MessageId }) {
 
   console.log('getting page data...');
   const { pageTitle, links, wordCount } = await parseMarkup(response.data);
-  console.log(`Page title: ${pageTitle}, links: ${links}, word count: ${wordCount}`);
+  console.log(`Page title: ${pageTitle}, links: ${links.length}, word count: ${wordCount}`);
   const parsedLinks = links.map((link) => {
     const parsedHref = parseHref(link.href, url.origin);
     return { ...link, parsedHref };
@@ -142,7 +142,7 @@ async function parsePageHandler({ Body, MessageId }) {
           });
           if (hasAsin) {
             const asin = captureGroup[1];
-            console.log('This product has an ASIN');
+            // console.log('This product has an ASIN');
             productProducer.send(
               [
                 {
