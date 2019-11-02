@@ -3,24 +3,10 @@ const ProductAdvertisingAPIv1 = require('./src/index');
 
 dotenv.config();
 
-const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+const sleep = milliseconds => new Promise(async resolve => await setTimeout(resolve, milliseconds));
 
-function productAdvertisingApi() {
-  const defaultClient = ProductAdvertisingAPIv1.ApiClient.instance;
-
-  defaultClient.accessKey = process.env.AMAZON_ASSOCIATES_ACCESS_KEY;
-  defaultClient.secretKey = process.env.AMAZON_ASSOCIATES_SECRET_KEY;
-
-  defaultClient.host = process.env.AMAZON_ASSOCIATES_HOST;
-  defaultClient.region = process.env.AMAZON_ASSOCIATES_REGION;
-
-  const api = new ProductAdvertisingAPIv1.DefaultApi();
-
-  return api;
-}
-
-function createRequestFromAsins(asins) {
-  // sleep(35000);
+async function createRequestFromAsins(asins) {
+  // await sleep(3000);
   const configuredRequest = new ProductAdvertisingAPIv1.GetItemsRequest();
 
   configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
@@ -51,8 +37,16 @@ function createRequestFromAsins(asins) {
 }
 
 async function getItemsPromise(apiRequest) {
-  const api = productAdvertisingApi();
-  await sleep(3000);
+  // await sleep(3000);
+  const defaultClient = ProductAdvertisingAPIv1.ApiClient.instance;
+
+  defaultClient.accessKey = process.env.AMAZON_ASSOCIATES_ACCESS_KEY;
+  defaultClient.secretKey = process.env.AMAZON_ASSOCIATES_SECRET_KEY;
+
+  defaultClient.host = process.env.AMAZON_ASSOCIATES_HOST;
+  defaultClient.region = process.env.AMAZON_ASSOCIATES_REGION;
+
+  const api = new ProductAdvertisingAPIv1.DefaultApi();
   return new Promise((resolve, reject) => {
     api.getItems(apiRequest, (error, data) => {
       if (error) {
@@ -75,4 +69,4 @@ async function getItemsPromise(apiRequest) {
   });
 }
 
-module.exports = { productAdvertisingApi, createRequestFromAsins, getItemsPromise };
+module.exports = { createRequestFromAsins, getItemsPromise };
