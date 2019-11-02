@@ -50,9 +50,19 @@ async function getItemsPromise(apiRequest) {
   return new Promise((resolve, reject) => {
     api.getItems(apiRequest, (error, data) => {
       if (error) {
+        console.log(error);
         return reject(error);
       }
       if (data.Errors !== undefined) {
+        console.log('Data error');
+        console.log(data.Errors);
+
+        // const formattedItems = data.ItemsResult.Items.map(item => ({
+        //   asin: item.ASIN,
+        //   name: item.ItemInfo.Title.DisplayValue,
+        //   offers: item.Offers ? item.Offers.Listings : null,
+        // }));
+
         return reject(data.Errors);
       }
 

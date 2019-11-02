@@ -2,7 +2,7 @@ const { createRequestFromAsins, getItemsPromise } = require('./amzApi');
 
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-const asin = 'B00GPGKN4G';
+const asin = 'B01IE7QJDW';
 
 async function main() {
   // Create an Amazon Product Advertising API request
