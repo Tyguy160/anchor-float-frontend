@@ -1,19 +1,12 @@
-const dotenv = require('dotenv');
 const ProductAdvertisingAPIv1 = require('./src/index');
 
-dotenv.config();
-
-const sleep = milliseconds => new Promise(async resolve => await setTimeout(resolve, milliseconds));
-
 async function createRequestFromAsins(asins) {
-  // await sleep(3000);
   const configuredRequest = new ProductAdvertisingAPIv1.GetItemsRequest();
 
   configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
   configuredRequest.PartnerType = process.env.AMAZON_ASSOCIATES_PARTNER_TYPE;
 
-  // The items to request ['B07WNY2WKG', '032157351X', 'B004FDMZDS', 'B0002SR9BS', 'B00009OYGK']
-  configuredRequest.ItemIds = asins;
+  configuredRequest.ItemIds = asins; // Items to request as an array of ASINs
 
   configuredRequest.Condition = process.env.AMAZON_ASSOCIATES_ITEM_CONDITION;
 
@@ -37,7 +30,6 @@ async function createRequestFromAsins(asins) {
 }
 
 async function getItemsPromise(apiRequest) {
-  // await sleep(3000);
   const defaultClient = ProductAdvertisingAPIv1.ApiClient.instance;
 
   defaultClient.accessKey = process.env.AMAZON_ASSOCIATES_ACCESS_KEY;
@@ -50,31 +42,30 @@ async function getItemsPromise(apiRequest) {
   return new Promise((resolve, reject) => {
     api.getItems(apiRequest, (error, data) => {
       if (error) {
-        console.log(error);
+        console.log(error); // Often a 429 error from amzn
         return reject(error);
       }
-      if (data.Errors !== undefined) {
-        console.log('Data error');
-        console.log(data.Errors);
 
-        // const formattedItems = data.ItemsResult.Items.map(item => ({
-        //   asin: item.ASIN,
-        //   name: item.ItemInfo.Title.DisplayValue,
-        //   offers: item.Offers ? item.Offers.Listings : null,
-        // }));
-
-        return reject(data.Errors);
+      let items = null;
+      if (data.ItemsResult && data.ItemsResult.Items) {
+        items = data.ItemsResult.Items.map(item => ({
+          asin: item.ASIN,
+          name: item.ItemInfo.Title.DisplayValue,
+          offers: item.Offers ? item.Offers.Listings : null,
+        }));
       }
 
-      // console.log(JSON.stringify(data.ItemsResult.Items, null, 1));
 
-      const formattedItems = data.ItemsResult.Items.map(item => ({
-        asin: item.ASIN,
-        name: item.ItemInfo.Title.DisplayValue,
-        offers: item.Offers ? item.Offers.Listings : null,
-      }));
+      const errors = data.Errors ? data.Errors.map((amazonError) => {
+        const { Code: code } = amazonError;
+        const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
+        return {
+          asin,
+          code,
+        };
+      }) : null;
 
-      return resolve(formattedItems);
+      return resolve({ items, errors });
     });
   });
 }

@@ -1,25 +1,22 @@
+require('dotenv').config();
+
 const { createRequestFromAsins, getItemsPromise } = require('./amzApi');
 
-const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
-
-const asin = 'B01IE7QJDW';
+const asins = ['B00005UP2P', 'B002T45X1G'];
 
 async function main() {
-  // Create an Amazon Product Advertising API request
-  const requestUrl = await createRequestFromAsins([asin]);
-  // console.log(requestUrl);
+  const requestUrl = await createRequestFromAsins(asins);
+  let apiResp;
+  try {
+    apiResp = await getItemsPromise(requestUrl);
+  } catch (err) {
+    console.log(err);
+  }
 
-  // Get the response from the API
-  const apiResp = await getItemsPromise(requestUrl);
-
-  // Rate limit each request
-  // await sleep(5000);
-
-  console.log(JSON.stringify(apiResp[0], null, 1));
+  console.log(JSON.stringify(apiResp, null, 1));
 
   let availability;
-
-  const { offers } = apiResp[0];
+  const { offers } = apiResp ? apiResp[0] : null;
   if (offers) {
     const { IsAmazonFulfilled, IsFreeShippingEligible, IsPrimeEligible } = offers[0].DeliveryInfo;
     if (IsAmazonFulfilled || IsFreeShippingEligible || IsPrimeEligible) {
