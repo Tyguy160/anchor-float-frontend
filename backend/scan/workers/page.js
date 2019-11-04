@@ -1,7 +1,9 @@
 const axios = require('axios');
+const uuid = require('uuid/v4');
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { parseMarkup, parseHref } = require('../parsers');
+const { productProducer } = require('../producers.js');
 
 const db = getDB();
 
@@ -79,7 +81,7 @@ async function parsePageHandler({ Body, MessageId }) {
 
   console.log('getting page data...');
   const { pageTitle, links, wordCount } = await parseMarkup(response.data);
-  console.log(`Page title: ${pageTitle}, links: ${links}, word count: ${wordCount}`);
+  console.log(`Page title: ${pageTitle}, links: ${links.length}, word count: ${wordCount}`);
   const parsedLinks = links.map((link) => {
     const parsedHref = parseHref(link.href, url.origin);
     return { ...link, parsedHref };
@@ -129,7 +131,7 @@ async function parsePageHandler({ Body, MessageId }) {
             anchorText: link.text,
           },
         });
-        console.log(`created new link: ${newLink.id}\n`);
+        // console.log(`created new link: ${newLink.id}\n`);
 
         if (hostname.includes('amazon.com')) {
           const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i];
@@ -140,17 +142,18 @@ async function parsePageHandler({ Body, MessageId }) {
           });
           if (hasAsin) {
             const asin = captureGroup[1];
-            // productProducer.send(
-            //   [
-            //     {
-            //       id: uuid(),
-            //       body: JSON.stringify({ asin, linkId: newLink.id }),
-            //     },
-            //   ],
-            //   (err) => {
-            //     if (err) console.log(err);
-            //   },
-            // );
+            // console.log('This product has an ASIN');
+            productProducer.send(
+              [
+                {
+                  id: uuid(),
+                  body: JSON.stringify({ asin, linkId: newLink.id }),
+                },
+              ],
+              (err) => {
+                if (err) console.log(err);
+              },
+            );
           }
         }
       }

@@ -11,4 +11,9 @@ const pageProducer = Producer.create({
   region: process.env.AWS_REGION,
 });
 
-module.exports = { sitemapProducer, pageProducer };
+const productProducer = Producer.create({
+  queueUrl: process.env.PARSE_PRODUCT_QUEUE_URL,
+  region: process.env.AWS_REGION,
+});
+
+module.exports = { sitemapProducer, pageProducer, productProducer };
