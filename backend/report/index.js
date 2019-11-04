@@ -30,13 +30,14 @@
 //   }
 // });
 
-// try {
-//   const reportConsumer = Consumer.create({
-//     queueUrl: PARSE_PAGE_QUEUE_URL,
-//     handleMessage: reportHandler,
-//   }).on('error', (err) => {
-//     console.error(err.message); // eslint-disable-line no-console
-//   });
+try {
+  const reportConsumer = Consumer.create({
+    queueUrl: GENERATE_REPORT_QUEUE_URL,
+    handleMessage: reportHandler,
+  }).on('error', (err) => {
+    console.error(err.message); // eslint-disable-line no-console
+  });
+
 
 //   reportConsumer.start();
 //   console.info('Report consumer running...'); // eslint-disable-line no-console
