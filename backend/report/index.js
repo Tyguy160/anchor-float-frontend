@@ -32,7 +32,7 @@ Object.entries({
 
 try {
   const reportConsumer = Consumer.create({
-    queueUrl: PARSE_PAGE_QUEUE_URL,
+    queueUrl: GENERATE_REPORT_QUEUE_URL,
     handleMessage: reportHandler,
   }).on('error', (err) => {
     console.error(err.message); // eslint-disable-line no-console

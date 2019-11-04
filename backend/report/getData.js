@@ -14,7 +14,7 @@ async function getData(hostnameInput) {
     let data = [];
     let newData;
     while (moreResults) {
-      newData = await db.query.domains(
+      newData = await db.sites.findOne(
         {
           where: {
             hostname: hostnameInput,
