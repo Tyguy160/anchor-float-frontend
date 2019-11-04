@@ -1,24 +1,21 @@
-// require('dotenv').config();
-// const uuid = require('uuid/v4');
-// const { reportProducer } = require('./producers.js');
+require('dotenv').config();
+const uuid = require('uuid/v4');
+const { reportProducer } = require('./producers.js');
 
+const hostnameInput = process.argv.slice(2, 3)[0];
 
-// const userInputUrl = process.argv.slice(2, 3)[0];
+// const userInputUrl = `https://${sitemapUrl}`;
 
-// // const userInputUrl = `https://${sitemapUrl}`;
+console.log(`Generating a report for: ${hostnameInput}`);
 
-
-// console.log(`Generating a report for: ${userInputUrl}`);
-
-
-// // reportProducer.send(
-// //   [
-// //     {
-// //       id: uuid(),
-// //       body: JSON.stringify({ url: userInputUrl }),
-// //     },
-// //   ],
-// //   (err) => {
-// //     if (err) console.log(err);
-// //   },
-// // );
+reportProducer.send(
+  [
+    {
+      id: uuid(),
+      body: JSON.stringify({ hostname: hostnameInput }),
+    },
+  ],
+  (err) => {
+    if (err) console.log(err);
+  },
+);

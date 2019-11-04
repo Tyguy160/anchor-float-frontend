@@ -1,4 +1,3 @@
-
 const chalk = require('chalk');
 const Json2csvParser = require('json2csv').Parser;
 const fs = require('fs');
@@ -8,6 +7,7 @@ const { getDB } = require('../prisma/db');
 const db = getDB();
 
 async function getData(hostnameInput) {
+  console.log('Fetching data...');
   const numResults = 100;
   let index = 0;
   let moreResults = true;
@@ -47,6 +47,7 @@ async function getData(hostnameInput) {
       );
 
       if (newData) {
+        console.log(newData);
         // If data has information in it, add to it; otherwise, create data
         data[0] ? data[0].pages.push(...newData[0].pages) : (data = newData);
         console.log(`Parsing results page ${index / numResults + 1}`);
@@ -193,17 +194,17 @@ async function getData(hostnameInput) {
           value: 'links.product.availability',
         },
       ];
-      const parser = new Json2csvParser({ fields, unwind: 'links' });
-      const csv = parser.parse(data[0].pages);
-      fs.writeFile(`${hostname.split('.').filter(str => str !== '.')[1]}.csv`, csv, (err) => {
-        // throws an error, you could also catch it here
-        if (err) throw err;
+      // const parser = new Json2csvParser({ fields, unwind: 'links' });
+      // const csv = parser.parse(data[0].pages);
+      // fs.writeFile(`${hostname.split('.').filter(str => str !== '.')[1]}.csv`, csv, (err) => {
+      //   // throws an error, you could also catch it here
+      //   if (err) throw err;
 
-        // success case, the file was saved
-        console.log(
-          `${hostname.split('.').filter(str => str !== '.')[1]}.csv saved successfully.\n`,
-        );
-      });
+      //   // success case, the file was saved
+      //   console.log(
+      //     `${hostname.split('.').filter(str => str !== '.')[1]}.csv saved successfully.\n`,
+      //   );
+      // });
 
       const siteData = {
         hostname,
