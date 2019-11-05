@@ -118,10 +118,45 @@ async function parseProductHandler(messages) {
   }
 
   if (errors) {
-    errors.forEach((err) => {
+    errors.forEach(async (err) => {
       // Update items as unavailable
       console.log(err);
       // Use asinToLinkIdMap to ensure each link is connected
+      const { asin } = err;
+
+      if (!asin) return;
+
+      let existingProduct = await db.products.findOne({
+        where: {
+          asin,
+        },
+      });
+
+      if (existingProduct) {
+        await db.products.update({
+          where: { id: existingProduct.id },
+          data: { availability: 'UNAVAILABLE' },
+        });
+      }
+
+      if (!existingProduct) {
+        existingProduct = await db.products.create({
+          data: {
+            asin,
+            availability: 'UNAVAILABLE',
+          },
+        });
+      }
+
+      const linkIds = asinToLinkIdMap[asin];
+      if (linkIds.length > 0) {
+        linkIds.forEach(async (linkId) => {
+          await db.links.update({
+            where: { id: linkId },
+            data: { product: { connect: { id: existingProduct.id } } },
+          });
+        });
+      }
     });
   }
 }
