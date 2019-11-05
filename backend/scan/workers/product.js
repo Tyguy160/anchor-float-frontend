@@ -44,23 +44,10 @@ async function parseProductHandler(messages) {
       const { offers, name, asin } = item;
       const linkId = asinToLinkIdMap[asin];
 
-      const existingProduct = await db.products.findOne({
-        where: {
-          asin,
-        },
-      });
-
-      if (existingProduct && linkId.length) {
-        linkId.forEach(async (id) => {
-          await db.links.update({
-            where: { id },
-            data: { product: { connect: { id: existingProduct.id } } },
-          });
-        });
-      }
-
       // If the product doesn't exist yet, we're going to create it
+      let newProduct;
       let availability;
+
       if (offers) {
         const {
           IsAmazonFulfilled,
@@ -75,12 +62,35 @@ async function parseProductHandler(messages) {
       } else {
         availability = 'UNAVAILABLE';
       }
-
       console.log(`Product ASIN: ${asin}`);
       console.log(`Product Name: ${name}`);
       console.log(`Product Availability: ${availability}`);
 
-      let newProduct;
+      let existingProduct = await db.products.findOne({
+        where: {
+          asin,
+        },
+      });
+
+      // If the product exists and it has some type of availability listed,
+      // we're going to update the link to the product
+      if (existingProduct && linkId.length) {
+        existingProduct = await db.products.update({
+          where: { id: existingProduct.id },
+          data: {
+            asin,
+            availability,
+            name,
+          },
+        });
+        linkId.forEach(async (id) => {
+          await db.links.update({
+            where: { id },
+            data: { product: { connect: { id: existingProduct.id } } },
+          });
+        });
+      }
+
       try {
         if (!existingProduct) {
           newProduct = await db.products.create({
