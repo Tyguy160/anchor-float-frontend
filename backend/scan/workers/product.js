@@ -50,8 +50,6 @@ async function parseProductHandler(messages) {
         },
       });
 
-      // If the product exists and it has some type of availability listed,
-      // we're going to update it
       if (existingProduct && linkId.length) {
         linkId.forEach(async (id) => {
           await db.links.update({
@@ -62,9 +60,7 @@ async function parseProductHandler(messages) {
       }
 
       // If the product doesn't exist yet, we're going to create it
-      let newProduct;
       let availability;
-
       if (offers) {
         const {
           IsAmazonFulfilled,
@@ -79,10 +75,12 @@ async function parseProductHandler(messages) {
       } else {
         availability = 'UNAVAILABLE';
       }
+
       console.log(`Product ASIN: ${asin}`);
       console.log(`Product Name: ${name}`);
       console.log(`Product Availability: ${availability}`);
 
+      let newProduct;
       try {
         if (!existingProduct) {
           newProduct = await db.products.create({
@@ -110,10 +108,45 @@ async function parseProductHandler(messages) {
   }
 
   if (errors) {
-    errors.forEach((err) => {
+    errors.forEach(async (err) => {
       // Update items as unavailable
       console.log(err);
       // Use asinToLinkIdMap to ensure each link is connected
+      const { asin } = err;
+
+      if (!asin) return;
+
+      let existingProduct = await db.products.findOne({
+        where: {
+          asin,
+        },
+      });
+
+      if (existingProduct) {
+        await db.products.update({
+          where: { id: existingProduct.id },
+          data: { availability: 'UNAVAILABLE' },
+        });
+      }
+
+      if (!existingProduct) {
+        existingProduct = await db.products.create({
+          data: {
+            asin,
+            availability: 'UNAVAILABLE',
+          },
+        });
+      }
+
+      const linkIds = asinToLinkIdMap[asin];
+      if (linkIds.length > 0) {
+        linkIds.forEach(async (linkId) => {
+          await db.links.update({
+            where: { id: linkId },
+            data: { product: { connect: { id: existingProduct.id } } },
+          });
+        });
+      }
     });
   }
 }
