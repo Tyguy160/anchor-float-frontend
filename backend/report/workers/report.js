@@ -9,7 +9,6 @@ async function reportHandler({ Body, MessageId }) {
   try {
     console.log(`Creating a report for ${hostname}`);
     const siteData = await getData(hostname);
-    console.log(siteData);
   } catch (err) {
     console.log(`Invalid hostname: ${hostname}`);
   }
