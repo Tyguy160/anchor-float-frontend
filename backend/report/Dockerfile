@@ -17,4 +17,4 @@ COPY . .
 USER node
 
 # Run the app with node
-CMD [ "node", "./report/index.js" ]
+CMD [ "npm", "run", "devreport" ]

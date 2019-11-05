@@ -6,6 +6,7 @@
     "start": "nodemon -e js,graphql -x node api/index.js",
     "dev": "nodemon -e js,graphql -x node --inspect api/index.js",
     "devscan": "nodemon -e js,graphql -x node --inspect scan/index.js",
+    "devreport": "nodemon -e js,graphql -x node --inspect report/index.js",
     "test": "jest --watchAll",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
