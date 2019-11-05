@@ -62,3 +62,5 @@ typings/
 
 backend/prisma/dev.db
 backend/prisma/migrations
+
+backend/report/exports/*
