@@ -181,37 +181,40 @@ async function getData(hostnameInput) {
       ];
       const parser = new Json2csvParser({ fields, unwind: 'links' });
       const csv = parser.parse(data.pages);
-      console.log(hostname);
-      fs.writeFileSync(
-        path.join(__dirname, `exports/${hostname.split('.').filter(str => str !== '.')[0]}.csv`),
-        csv,
-        (err) => {
-          // throws an error, you could also catch it here
-          if (err) throw err;
 
-          // success case, the file was saved
-          console.log(
-            `${hostname.split('.').filter(str => str !== '.')[1]}.csv saved successfully.\n`,
-          );
-        },
+      csvPath = path.join(
+        __dirname,
+        `exports/${hostname.split('.').filter(str => str !== '.')[0]}.csv`,
       );
 
-      const siteData = {
-        hostname,
-        pageCount,
-        totalWordCount,
-        averageWordCount,
-        totalLinks,
-        affiliateLinks,
-        availableProducts,
-        thirdPartyProducts,
-        unavailableProducts,
-        percentAffiliatized,
-        percentAvailable,
-        percentThirdParty,
-        percentUnavailable,
-      };
-      return siteData;
+      console.log(hostname);
+      fs.writeFileSync(csvPath, csv, (err) => {
+        // throws an error, you could also catch it here
+        if (err) throw err;
+
+        // success case, the file was saved
+        console.log(
+          `${hostname.split('.').filter(str => str !== '.')[1]}.csv saved successfully.\n`,
+        );
+      });
+      return csvPath;
+
+      // const siteData = {
+      //   hostname,
+      //   pageCount,
+      //   totalWordCount,
+      //   averageWordCount,
+      //   totalLinks,
+      //   affiliateLinks,
+      //   availableProducts,
+      //   thirdPartyProducts,
+      //   unavailableProducts,
+      //   percentAffiliatized,
+      //   percentAvailable,
+      //   percentThirdParty,
+      //   percentUnavailable,
+      // };
+      // return siteData;
     }
     console.log(`No data for hostname containing '${hostnameInput}'`);
   } catch (err) {

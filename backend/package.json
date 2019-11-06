@@ -23,6 +23,7 @@
     "purge-queue": "npm run purge-parse-sitemap && npm run purge-parse-page && npm run purge-parse-shortlink && npm run purge-parse-product && npm run purge-generate-report"
   },
   "dependencies": {
+    "@google-cloud/storage": "^4.1.0",
     "apollo-server-express": "^2.8.1",
     "axios": "^0.18.1",
     "bcryptjs": "2.4.3",

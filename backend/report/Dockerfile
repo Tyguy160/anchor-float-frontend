@@ -14,7 +14,5 @@ RUN ./node_modules/.bin/prisma2 generate
 
 COPY . .
 
-USER node
-
 # Run the app with node
 CMD [ "npm", "run", "devreport" ]
