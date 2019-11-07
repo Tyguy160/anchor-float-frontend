@@ -6,6 +6,7 @@ const { reportHandler } = require('./workers/report');
 
 const {
   GENERATE_REPORT_QUEUE_URL,
+  GOOGLE_APPLICATION_CREDENTIALS,
   REPORT_BUCKET_NAME,
   AWS_SECRET_ACCESS_KEY,
   AWS_ACCESS_KEY_ID,
@@ -15,6 +16,7 @@ const {
 // // Validate that they all exist
 Object.entries({
   GENERATE_REPORT_QUEUE_URL,
+  GOOGLE_APPLICATION_CREDENTIALS,
   REPORT_BUCKET_NAME,
   AWS_SECRET_ACCESS_KEY,
   AWS_ACCESS_KEY_ID,
