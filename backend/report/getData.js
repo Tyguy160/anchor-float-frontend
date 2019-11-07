@@ -12,7 +12,7 @@ async function getData(hostnameInput) {
   let moreResults = true;
 
   try {
-    let allSiteData;
+    let allSiteData = {};
     let newData;
     while (moreResults) {
       // eslint-disable-next-line no-await-in-loop
@@ -34,7 +34,6 @@ async function getData(hostnameInput) {
       });
 
       if (newData) {
-        console.log(newData);
         // If data has information in it, add to it; otherwise, create data
 
         if (allSiteData.pages) {
