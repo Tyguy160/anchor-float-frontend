@@ -1,30 +1,55 @@
-const axios = require('axios');
-const { getDB } = require('../../prisma/db');
+const { Storage } = require('@google-cloud/storage');
+const { Readable } = require('stream');
+const { Transform } = require('json2csv');
+const cryptoRandomString = require('crypto-random-string');
 const { getData } = require('../getData');
-const { getDataFromMessage, uploadFile } = require('./utils');
+const { getDataFromMessage, csvFields } = require('../utils');
+
+// Cloud storage client
+const storage = new Storage();
+const reportBucket = storage.bucket(process.env.REPORT_BUCKET_NAME);
+
+// CSV parser config
+const csvOptions = { fields: csvFields, unwind: 'links' };
+const transformOpts = { highWaterMark: 16384, encoding: 'utf-8' };
+
+const cryptoStringConfig = { length: 11, characters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' };
 
 async function reportHandler({ Body, MessageId }) {
-  const hostname = getDataFromMessage(Body, 'hostname');
   const userId = getDataFromMessage(Body, 'userId');
-  const bucketName = 'anchor-float-report';
-  try {
-    console.log(`Creating a report for ${hostname}`);
-    const csvPath = await getData(hostname);
-    console.log(csvPath);
-    await uploadFile(bucketName, csvPath);
-  } catch (err) {
-    console.log(err);
-  }
+  const hostname = getDataFromMessage(Body, 'hostname');
 
-  // generateCSV()
-  // putCSVInCLOUDandAddRerport()
+  const allPagesArray = await getData(hostname).catch(console.log);
+  const allPagesJson = JSON.stringify(allPagesArray);
 
-  // Worker
-  //  Queries based on hostname
-  //  Generates a CSV
-  //  TODO: Upload CSV to cloud
-  //  TODO: Create report object in DB with file URL
-  //  return from function
+  const readableJsonStream = Readable();
+  readableJsonStream.push(allPagesJson);
+  readableJsonStream.push(null);
+
+  const json2csv = new Transform(csvOptions, transformOpts);
+
+  const reportObjName = cryptoRandomString(cryptoStringConfig);
+  const newReportFile = reportBucket.file(reportObjName);
+  const storageWriteStream = newReportFile.createWriteStream({
+    gzip: true,
+    metadata: {
+      contentType: 'text/csv',
+      contentLanguage: 'en',
+      contentDisposition: 'attachment; filename="amazon-link-report.csv"',
+      cacheControl: 'public, max-age=31536000',
+    },
+  });
+
+  readableJsonStream
+    .pipe(json2csv) // convert JSON stream to CSV stream
+    .pipe(storageWriteStream) // write CSV stream to storage bucket
+    .on('error', (err) => {
+      console.log('Error:\n');
+      console.log(err);
+    })
+    .on('finish', () => {
+      console.log(`Wrote CSV to file: ${reportObjName}`);
+    });
 }
 
 module.exports = { reportHandler };
