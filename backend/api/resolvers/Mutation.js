@@ -128,6 +128,7 @@ const Mutation = {
           user: { connect: { id: user.userId } },
           associatesApiKey: apiKey,
           minimumReview,
+          runningReport: false,
         },
       });
     }
@@ -168,6 +169,7 @@ const Mutation = {
           data: {
             associatesApiKey,
             minimumReview,
+            runningReport,
           },
         });
       });

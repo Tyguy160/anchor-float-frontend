@@ -60,6 +60,9 @@ const DomainSelection = props => {
         disabled={props.selectedDomain ? false : true}
         onClick={async () => {
           try {
+            toasts.successMessage(
+              'Queued up your report. Please check back shortly!'
+            );
             await runSiteReport();
           } catch (err) {
             toasts.errorMessage(

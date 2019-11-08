@@ -21,6 +21,7 @@ const USERSITES_QUERY = gql`
       hostname
       associatesApiKey
       minimumReview
+      runningReport
     }
   }
 `;

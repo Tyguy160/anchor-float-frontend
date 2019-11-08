@@ -26,12 +26,14 @@ const Query = {
         site: true,
         associatesApiKey: true,
         minimumReview: true,
+        runningReport: true,
       },
     });
     const sites = userSites.map(userSite => ({
       hostname: userSite.site.hostname,
       associatesApiKey: userSite.associatesApiKey,
       minimumReview: userSite.minimumReview,
+      runningReport: userSite.runningReport,
     }));
     return [...sites];
   },
@@ -49,7 +51,12 @@ const Query = {
     return { site: sitePages };
   },
   async siteReports(parent, { input }, { db }) {
-    return { reports: [{ hostname: 'www.flylingual.com', reportUrl: 'www.google.com', reportDate: Date.now() }, { hostname: 'www.flylingual.com', reportUrl: 'www.youtube.com', reportDate: Date.now() }] };
+    return {
+      reports: [
+        { hostname: 'www.flylingual.com', reportUrl: 'www.google.com', reportDate: Date.now() },
+        { hostname: 'www.flylingual.com', reportUrl: 'www.youtube.com', reportDate: Date.now() },
+      ],
+    };
   },
 };
 

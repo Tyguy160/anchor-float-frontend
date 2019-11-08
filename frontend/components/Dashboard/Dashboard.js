@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
-import { USERSITES_QUERY, SITEPAGES_QUERY } from '../resolvers/resolvers';
+import {
+  USERSITES_QUERY,
+  SITEPAGES_QUERY,
+  GET_CURRENT_USER,
+} from '../resolvers/resolvers';
 import { PageSection } from '../styles/styles';
 import AddDomain from './AddDomain';
 import DomainSettings from './DomainSettings';
@@ -53,6 +57,8 @@ const Dashboard = () => {
     USERSITES_QUERY
   );
 
+  const { loading: userLoading, data: userData } = useQuery(GET_CURRENT_USER);
+
   // These hooks are for the selected domain *name*, not the user site
   const [selectedDomain, setSelectedDomain] = useState();
 
@@ -65,12 +71,14 @@ const Dashboard = () => {
   return (
     <DashboardContainer>
       <DomainDataContainer>
+        <div>Credits remaining: {userData.me.creditsRemaining}</div>
         <DomainSelection
           selectedDomain={selectedDomain}
           setSelectedDomain={setSelectedDomain}
           userSites={userSites}
           selectedUserSite={selectedUserSite}
           setSelectedUserSite={setSelectedUserSite}
+          userData={userData}
         />
         <DomainData />
       </DomainDataContainer>

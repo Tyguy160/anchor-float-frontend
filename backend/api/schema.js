@@ -56,6 +56,7 @@ const typeDefs = gql`
     hostname: String!
     associatesApiKey: String!
     minimumReview: Float!
+    runningReport: Boolean!
   }
 
   type UpdateUserSitePayload {
@@ -82,6 +83,7 @@ const typeDefs = gql`
     hostname: String
     associatesApiKey: String
     minimumReview: Float
+    runningReport: Boolean
   }
 
   input SignUpInput {
@@ -110,6 +112,7 @@ const typeDefs = gql`
     hostname: String!
     apiKey: String!
     minimumReview: Float!
+    runningReport: Boolean!
   }
 
   input DeleteUserSiteInput {

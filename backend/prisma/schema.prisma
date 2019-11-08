@@ -46,6 +46,7 @@ model UserSite {
   site             Site
   minimumReview    Float?
   reports          Report[]
+  runningReport    Boolean
 }
 
 model Site {
