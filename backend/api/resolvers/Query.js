@@ -48,6 +48,9 @@ const Query = {
       .catch(console.log);
     return { site: sitePages };
   },
+  async siteReports(parent, { input }, { db }) {
+    return { reports: [{ hostname: 'www.flylingual.com', reportUrl: 'www.google.com', reportDate: Date.now() }, { hostname: 'www.flylingual.com', reportUrl: 'www.youtube.com', reportDate: Date.now() }] };
+  },
 };
 
 module.exports = Query;

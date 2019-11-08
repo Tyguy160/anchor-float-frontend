@@ -45,6 +45,7 @@ model UserSite {
   user             User
   site             Site
   minimumReview    Float?
+  reports          Report[]
 }
 
 model Site {
@@ -87,6 +88,13 @@ model Product {
   asin         String        @unique
   links        Link[]
   availability Availability?
+}
+
+model Report {
+  id        String   @default(cuid()) @id @unique
+  createdAt DateTime @default(now())
+  fileUrl   String?  @unique
+  userSite  UserSite
 }
 
 enum Availability {

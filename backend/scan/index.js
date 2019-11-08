@@ -1,6 +1,4 @@
-const dotenv = require('dotenv');
-
-dotenv.config();
+require('dotenv').config();
 
 const { Consumer } = require('sqs-consumer');
 const { parseSitemapHandler } = require('./workers/sitemap');
@@ -16,6 +14,14 @@ const {
   AWS_SECRET_ACCESS_KEY,
   AWS_ACCESS_KEY_ID,
   AWS_REGION,
+  AMAZON_ASSOCIATES_PARTNER_TAG,
+  AMAZON_ASSOCIATES_PARTNER_TYPE,
+  AMAZON_ASSOCIATES_ITEM_CONDITION,
+  AMAZON_ASSOCIATES_ACCESS_KEY,
+  AMAZON_ASSOCIATES_SECRET_KEY,
+  AMAZON_ASSOCIATES_HOST,
+  AMAZON_ASSOCIATES_REGION,
+
 } = process.env;
 
 // Validate that they all exist
@@ -27,6 +33,13 @@ Object.entries({
   AWS_SECRET_ACCESS_KEY,
   AWS_ACCESS_KEY_ID,
   AWS_REGION,
+  AMAZON_ASSOCIATES_PARTNER_TAG,
+  AMAZON_ASSOCIATES_PARTNER_TYPE,
+  AMAZON_ASSOCIATES_ITEM_CONDITION,
+  AMAZON_ASSOCIATES_ACCESS_KEY,
+  AMAZON_ASSOCIATES_SECRET_KEY,
+  AMAZON_ASSOCIATES_HOST,
+  AMAZON_ASSOCIATES_REGION,
 }).forEach(([varName, varValue]) => {
   if (!varValue) {
     // value is undefined
@@ -54,7 +67,7 @@ try {
     queueUrl: PARSE_PRODUCT_QUEUE_URL,
     handleMessageBatch: parseProductHandler,
     batchSize: 10,
-    pollingWaitTimeMs: 5000,
+    pollingWaitTimeMs: 7500,
   }).on('error', (err) => {
     console.error(err.message); // eslint-disable-line no-console
   });

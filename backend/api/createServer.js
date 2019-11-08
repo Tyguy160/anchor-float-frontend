@@ -53,7 +53,7 @@ function initDB() {
 const getDBConnection = initDB();
 
 async function createServer() {
-  db = await getDBConnection();
+  const db = await getDBConnection();
   return new ApolloServer({
     typeDefs,
     resolvers,
