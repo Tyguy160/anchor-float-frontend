@@ -20,6 +20,11 @@ const typeDefs = gql`
     updateUserPassword(input: UpdatePasswordInput!): UpdatePasswordPayload
     updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPayload
     createStripeSession(input: CreateStripeSessionInput!): CreateStripeSessionPayload
+    runSiteReport(input: RunSiteReportInput!): RunSiteReportPayload
+  }
+
+  input RunSiteReportInput {
+    hostname: String
   }
 
   input CreateStripeSessionInput {
@@ -127,6 +132,10 @@ const typeDefs = gql`
     resetToken: String!
     password: String!
     confirmPassword: String!
+  }
+
+  type RunSiteReportPayload {
+    creditsRemaining: Int
   }
 
   type UserSitesPayload {

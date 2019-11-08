@@ -78,6 +78,14 @@ const CREATE_STRIPE_SESSION_MUTATION = gql`
   }
 `;
 
+const RUN_SITE_REPORT_MUTATION = gql`
+  mutation RUN_SITE_REPORT_MUTATION($input: RunSiteReportInput!) {
+    runSiteReport(input: $input) {
+      creditsRemaining
+    }
+  }
+`;
+
 export {
   GET_CURRENT_USER,
   USERSITES_QUERY,
@@ -86,4 +94,5 @@ export {
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
   CREATE_STRIPE_SESSION_MUTATION,
+  RUN_SITE_REPORT_MUTATION,
 };

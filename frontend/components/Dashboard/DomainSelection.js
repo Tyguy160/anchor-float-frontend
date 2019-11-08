@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { Domain } from 'domain';
 import styled from 'styled-components';
-import { USERSITES_QUERY, SITEPAGES_QUERY } from '../resolvers/resolvers';
+import toasts from '../Misc/Toasts';
+import {
+  USERSITES_QUERY,
+  SITEPAGES_QUERY,
+  RUN_SITE_REPORT_MUTATION,
+} from '../resolvers/resolvers';
 import Select from 'react-select';
 
 import {
@@ -14,6 +19,16 @@ import {
 } from '../styles/styles';
 
 const DomainSelection = props => {
+  const [runSiteReport, { error, data }] = useMutation(
+    RUN_SITE_REPORT_MUTATION,
+    {
+      variables: {
+        input: {
+          hostname: props.selectedDomain ? props.selectedDomain.value : null,
+        },
+      },
+    }
+  );
   return (
     <ComponentContainer>
       <StyledDropdown>
@@ -41,7 +56,17 @@ const DomainSelection = props => {
           }
         />
       </StyledDropdown>
-      <StyledButton disabled={props.selectedDomain ? false : true}>
+      <StyledButton
+        disabled={props.selectedDomain ? false : true}
+        onClick={async () => {
+          try {
+            await runSiteReport();
+          } catch (err) {
+            toasts.errorMessage(
+              `You don't have enough credits to generate this report`
+            );
+          }
+        }}>
         Run report
       </StyledButton>
     </ComponentContainer>
