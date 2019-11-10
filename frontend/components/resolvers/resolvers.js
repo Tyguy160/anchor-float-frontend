@@ -26,6 +26,20 @@ const USERSITES_QUERY = gql`
   }
 `;
 
+const REPORTS_QUERY = gql`
+  query REPORTS_QUERY($input: SiteReportsInput!) {
+    siteReports(input: $input) {
+      reports {
+        createdAt
+        fileUrl
+        # userSite {
+        #   hostname
+        # }
+      }
+    }
+  }
+`;
+
 const SITEPAGES_QUERY = gql`
   query SITEPAGES_QUERY($input: SitePagesInput!) {
     sitePages(input: $input) {
@@ -90,6 +104,7 @@ const RUN_SITE_REPORT_MUTATION = gql`
 export {
   GET_CURRENT_USER,
   USERSITES_QUERY,
+  REPORTS_QUERY,
   SITEPAGES_QUERY,
   ADD_USERSITE_MUTATION,
   UPDATE_USERSITE_MUTATION,

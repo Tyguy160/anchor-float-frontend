@@ -71,7 +71,12 @@ const Dashboard = () => {
   return (
     <DashboardContainer>
       <DomainDataContainer>
-        <div>Credits remaining: {userData.me.creditsRemaining}</div>
+        <div>
+          Credits remaining:{' '}
+          {!userLoading && userData
+            ? userData.me.creditsRemaining
+            : 'Loading...'}
+        </div>
         <DomainSelection
           selectedDomain={selectedDomain}
           setSelectedDomain={setSelectedDomain}
@@ -80,7 +85,7 @@ const Dashboard = () => {
           setSelectedUserSite={setSelectedUserSite}
           userData={userData}
         />
-        <DomainData />
+        <DomainData selectedDomain={selectedDomain} />
       </DomainDataContainer>
       <DomainSettingsContainer>
         <DomainSettings

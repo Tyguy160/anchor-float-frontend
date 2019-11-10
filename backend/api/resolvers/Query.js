@@ -12,7 +12,6 @@ const Query = {
         res.clearCookie('token');
         throw new Error('There was an issue finding your account details');
       });
-    console.log(dbUser);
     return dbUser;
   },
 
@@ -50,13 +49,22 @@ const Query = {
       .catch(console.log);
     return { site: sitePages };
   },
-  async siteReports(parent, { input }, { db }) {
-    return {
-      reports: [
-        { hostname: 'www.flylingual.com', reportUrl: 'www.google.com', reportDate: Date.now() },
-        { hostname: 'www.flylingual.com', reportUrl: 'www.youtube.com', reportDate: Date.now() },
-      ],
-    };
+  async siteReports(parent, { input }, { user, db }) {
+    console.log(user);
+
+    // Get all reports with the input domain for logged-in user
+    const reports = await db.reports.findMany({
+      where: {
+        domain: input.domain,
+        userSite: {
+          user: {
+            id: user.userId,
+          },
+        },
+      },
+    });
+
+    return { reports };
   },
 };
 

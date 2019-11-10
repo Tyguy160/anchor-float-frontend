@@ -154,7 +154,7 @@ const typeDefs = gql`
   }
 
   input SiteReportsInput {
-    hostname: String
+    domain: String
   }
 
   type SiteReportsPayload {
@@ -183,9 +183,9 @@ const typeDefs = gql`
   }
 
   type Report {
-    hostname: String
-    reportDate: String
-    reportUrl: String
+    domain: String
+    createdAt: String
+    fileUrl: String
   }
 `;
 

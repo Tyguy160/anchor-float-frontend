@@ -95,6 +95,7 @@ model Report {
   id        String   @default(cuid()) @id @unique
   createdAt DateTime @default(now())
   fileUrl   String?  @unique
+  domain    String
   userSite  UserSite
 }
 
