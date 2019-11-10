@@ -29,7 +29,9 @@ const AddDomain = props => {
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
-    variables: { input: { hostname: domain, apiKey, minimumReview } },
+    variables: {
+      input: { hostname: domain, apiKey, minimumReview, runningReport: false },
+    },
     refetchQueries: ['userSites'],
   });
 

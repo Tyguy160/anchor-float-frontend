@@ -21,6 +21,21 @@ const USERSITES_QUERY = gql`
       hostname
       associatesApiKey
       minimumReview
+      runningReport
+    }
+  }
+`;
+
+const REPORTS_QUERY = gql`
+  query REPORTS_QUERY($input: SiteReportsInput!) {
+    siteReports(input: $input) {
+      reports {
+        createdAt
+        fileUrl
+        # userSite {
+        #   hostname
+        # }
+      }
     }
   }
 `;
@@ -78,12 +93,22 @@ const CREATE_STRIPE_SESSION_MUTATION = gql`
   }
 `;
 
+const RUN_SITE_REPORT_MUTATION = gql`
+  mutation RUN_SITE_REPORT_MUTATION($input: RunSiteReportInput!) {
+    runSiteReport(input: $input) {
+      creditsRemaining
+    }
+  }
+`;
+
 export {
   GET_CURRENT_USER,
   USERSITES_QUERY,
+  REPORTS_QUERY,
   SITEPAGES_QUERY,
   ADD_USERSITE_MUTATION,
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
   CREATE_STRIPE_SESSION_MUTATION,
+  RUN_SITE_REPORT_MUTATION,
 };

@@ -46,6 +46,7 @@ model UserSite {
   site             Site
   minimumReview    Float?
   reports          Report[]
+  runningReport    Boolean
 }
 
 model Site {
@@ -94,6 +95,7 @@ model Report {
   id        String   @default(cuid()) @id @unique
   createdAt DateTime @default(now())
   fileUrl   String?  @unique
+  domain    String
   userSite  UserSite
 }
 

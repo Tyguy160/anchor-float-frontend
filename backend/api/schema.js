@@ -20,6 +20,11 @@ const typeDefs = gql`
     updateUserPassword(input: UpdatePasswordInput!): UpdatePasswordPayload
     updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPayload
     createStripeSession(input: CreateStripeSessionInput!): CreateStripeSessionPayload
+    runSiteReport(input: RunSiteReportInput!): RunSiteReportPayload
+  }
+
+  input RunSiteReportInput {
+    hostname: String
   }
 
   input CreateStripeSessionInput {
@@ -51,6 +56,7 @@ const typeDefs = gql`
     hostname: String!
     associatesApiKey: String!
     minimumReview: Float!
+    runningReport: Boolean!
   }
 
   type UpdateUserSitePayload {
@@ -77,6 +83,7 @@ const typeDefs = gql`
     hostname: String
     associatesApiKey: String
     minimumReview: Float
+    runningReport: Boolean
   }
 
   input SignUpInput {
@@ -105,6 +112,7 @@ const typeDefs = gql`
     hostname: String!
     apiKey: String!
     minimumReview: Float!
+    runningReport: Boolean!
   }
 
   input DeleteUserSiteInput {
@@ -129,6 +137,10 @@ const typeDefs = gql`
     confirmPassword: String!
   }
 
+  type RunSiteReportPayload {
+    creditsRemaining: Int
+  }
+
   type UserSitesPayload {
     userSites: [UserSite]
   }
@@ -142,7 +154,7 @@ const typeDefs = gql`
   }
 
   input SiteReportsInput {
-    hostname: String
+    domain: String
   }
 
   type SiteReportsPayload {
@@ -171,9 +183,9 @@ const typeDefs = gql`
   }
 
   type Report {
-    hostname: String
-    reportDate: String
-    reportUrl: String
+    domain: String
+    createdAt: String
+    fileUrl: String
   }
 `;
 

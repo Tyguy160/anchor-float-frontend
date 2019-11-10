@@ -3,6 +3,10 @@ const { randomBytes } = require('crypto');
 const { promisify } = require('util');
 const stripe = require('stripe')('sk_test_b0MPemUYvtnsaU6aaHzyMKUA');
 
+// Sitemap parsing imports
+const uuid = require('uuid/v4');
+const { sitemapProducer } = require('../../scan/producers');
+
 const { transport, emailTemplate } = require('../mail');
 const { getUserTokenFromId } = require('../user');
 const {
@@ -124,6 +128,7 @@ const Mutation = {
           user: { connect: { id: user.userId } },
           associatesApiKey: apiKey,
           minimumReview,
+          runningReport: false,
         },
       });
     }
@@ -164,6 +169,7 @@ const Mutation = {
           data: {
             associatesApiKey,
             minimumReview,
+            runningReport,
           },
         });
       });
@@ -395,6 +401,49 @@ const Mutation = {
     }
 
     return { stripeSessionId: stripeSession.id };
+  },
+  async runSiteReport(parent, { input }, { user, db }) {
+    const dbUser = await db.users
+      .findOne({
+        where: { id: user.userId },
+        // include: { sites: true, plan: true },
+      })
+      .catch(() => {
+        res.clearCookie('token');
+        throw new Error('There was an issue finding your account details');
+      });
+    const accountCredits = dbUser.creditsRemaining;
+    console.log(accountCredits);
+
+    if (accountCredits > 0) {
+      // Run the report
+      console.log('Running 🏃');
+      sitemapProducer.send(
+        [
+          {
+            id: uuid(),
+            body: JSON.stringify({ url: 'https://www.triplebarcoffee.com/sitemap.xml' }),
+          },
+        ],
+        (err) => {
+          if (err) console.log(err);
+        },
+      );
+      await db.users.update({
+        where: {
+          id: user.userId,
+        },
+        data: {
+          creditsRemaining: accountCredits - 1,
+        },
+      });
+      console.log(
+        `You've queued up a report and now you only have ${accountCredits - 1} credits left`,
+      );
+    } else {
+      throw new Error("You don't have enough credits to generate this report");
+    }
+    return 0;
   },
 };
 
