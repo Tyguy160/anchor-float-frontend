@@ -381,6 +381,23 @@ const StyledPricingCTAButton = styled(CTAButton)`
 
 const StyledPricingCTAButtonContainer = styled(CTAButtonContainer)``;
 
+const DashboardContainer = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  margin: 20px;
+`;
+
+const DomainSettingsContainer = styled.div`
+  flex: 1;
+  order: 2;
+`;
+
+const DomainDataContainer = styled.div`
+  flex: 2;
+  order: 1;
+  min-width: 60%;
+`;
+
 export {
   SigninFormContainer,
   SigninForm,
@@ -423,4 +440,7 @@ export {
   DeleteButton,
   StyledDropdown,
   CenteredH2,
+  DashboardContainer,
+  DomainSettingsContainer,
+  DomainDataContainer,
 };

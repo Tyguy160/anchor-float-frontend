@@ -6,13 +6,29 @@ import {
   ComponentContainer,
   CenteredH2,
 } from '../styles/styles';
-import ReactTable from 'react-table';
 import styled from 'styled-components';
 import { REPORTS_QUERY } from '../resolvers/resolvers';
 
 const DataContainer = styled.div`
   min-height: 350px;
   display: grid;
+`;
+
+const StyledTable = styled.table`
+  padding: 20px;
+  table-layout: auto;
+  text-align: right;
+  th,
+  td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  th:nth-child(1) {
+    text-align: left;
+  }
+  td:nth-child(1) {
+    text-align: left;
+  }
 `;
 
 const DomainData = props => {
@@ -30,7 +46,7 @@ const DomainData = props => {
       <CenteredH2>Reports and Data</CenteredH2>
       <DataContainer>
         {reports.length ? (
-          <table>
+          <StyledTable>
             <thead>
               <tr>
                 <th>Report Date</th>
@@ -47,7 +63,7 @@ const DomainData = props => {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </StyledTable>
         ) : (
           <p
             style={{
