@@ -1,28 +1,39 @@
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { createRequestFromAsins, getItemsPromise } = require('../../amazon/amzApi');
+const progress = require('../../manager/index');
 
 const db = getDB();
 
 async function parseProductHandler(messages) {
-  const parsedMessages = messages.map(({ Body }) => ({
+  const parsedMessages = messages.map(({ Body, MessageId }) => ({
     asin: getDataFromMessage(Body, 'asin'),
     linkId: getDataFromMessage(Body, 'linkId'),
     jobId: getDataFromMessage(Body, 'jobId'),
+    taskId: MessageId,
   }));
 
-  // Make a dictionary of ASIN => linkIds
-  const asinToLinkIdMap = parsedMessages.reduce((dict, message) => {
-    const { asin, linkId } = message;
-
+  const keyByAsinReducer = (dict, {
+    asin, linkId, jobId, taskId,
+  }) => {
     if (dict[asin]) {
-      dict[asin].push(linkId);
-    } else {
-      dict[asin] = [linkId];
+      return {
+        ...dict,
+        [asin]: dict[asin].concat({
+          asin, linkId, jobId, taskId,
+        }),
+      };
     }
+    return {
+      ...dict,
+      [asin]: [{
+        asin, linkId, jobId, taskId,
+      }],
+    };
+  };
 
-    return dict;
-  }, {});
+  // Make a dictionary of ASIN => linkIds
+  const asinToMessageDataMap = parsedMessages.reduce(keyByAsinReducer, {});
 
   const uniqueAsins = [...new Set(parsedMessages.map(info => info.asin))];
   const requestUrl = await createRequestFromAsins(uniqueAsins); // create the request object
@@ -66,10 +77,9 @@ async function parseProductHandler(messages) {
         },
       });
 
-      // If the product exists and it has some type of availability listed,
-      // we're going to update the link to the product
-      const linkIdsForProduct = asinToLinkIdMap[asin];
-      if (existingProduct && linkIdsForProduct.length) {
+      const tasksForProduct = asinToMessageDataMap[asin];
+
+      if (existingProduct && tasksForProduct.length) {
         existingProduct = await db.products.update({
           where: { id: existingProduct.id },
           data: {
@@ -78,11 +88,14 @@ async function parseProductHandler(messages) {
             name,
           },
         });
-        linkIdsForProduct.forEach(async (id) => {
+
+        tasksForProduct.forEach(async (task) => {
           await db.links.update({
-            where: { id },
+            where: { id: task.linkId },
             data: { product: { connect: { id: existingProduct.id } } },
           });
+
+          progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
         });
       }
 
@@ -96,12 +109,14 @@ async function parseProductHandler(messages) {
             },
           });
 
-          if (linkIdsForProduct.length) {
-            linkIdsForProduct.forEach(async (id) => {
+          if (tasksForProduct.length) {
+            tasksForProduct.forEach(async (task) => {
               await db.links.update({
-                where: { id },
+                where: { id: task.linkId },
                 data: { product: { connect: { id: newProduct.id } } },
               });
+
+              progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
             });
           }
         }
@@ -115,7 +130,7 @@ async function parseProductHandler(messages) {
   if (errors) { // Usually items no longer sold
     errors.forEach(async (err) => {
       // Update items as unavailable
-      // Use asinToLinkIdMap to ensure each link is connected
+      // Use asinToMessageDataMap to ensure each link is connected
       const { asin } = err;
 
       if (!asin) return;
@@ -142,13 +157,15 @@ async function parseProductHandler(messages) {
         });
       }
 
-      const linkIds = asinToLinkIdMap[asin];
-      if (linkIds.length > 0) {
-        linkIds.forEach(async (linkId) => {
+      const tasksForProduct = asinToMessageDataMap[asin];
+      if (tasksForProduct.length > 0) {
+        tasksForProduct.forEach(async (task) => {
           await db.links.update({
-            where: { id: linkId },
+            where: { id: task.linkId },
             data: { product: { connect: { id: existingProduct.id } } },
           });
+
+          progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
         });
       }
     });

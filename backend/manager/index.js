@@ -126,6 +126,7 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
   const pagesKey = `${jobId}:pages`;
 
   redisClient.srem(pagesKey, taskId);
+
   redisClient.scard(pagesKey, (err, pagesRemainingCount) => {
     if (pagesRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
@@ -152,11 +153,12 @@ progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
   const productsKey = `${jobId}:products`;
 
   redisClient.srem(productsKey, taskId);
+
   redisClient.scard(productsKey, (err, productsRemainingCount) => {
     if (productsRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'pagesComplete', (err, isComplete) => {
+      redisClient.hget(metaKey, 'pagesComplete', (errFromHget, isComplete) => {
         if (isComplete) {
           redisClient.hmset(metaKey, {
             productsComplete: 1,
