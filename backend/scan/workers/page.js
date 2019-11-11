@@ -4,6 +4,7 @@ const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { parseMarkup, parseHref } = require('../parsers');
 const { productProducer } = require('../producers.js');
+const progress = require('../../manager/index');
 
 const db = getDB();
 
@@ -24,6 +25,7 @@ function handleResponseErrors(error) {
 
 async function parsePageHandler({ Body, MessageId }) {
   const urlStr = getDataFromMessage(Body, 'url');
+  const jobId = getDataFromMessage(Body, 'jobId');
   if (!urlStr) return;
 
   // Ensure URL string is a valid URL
@@ -69,10 +71,10 @@ async function parsePageHandler({ Body, MessageId }) {
     .catch(console.log);
 
   const response = await axios.get(url.href).catch(handleResponseErrors);
-  console.log(response.status);
   if (response.responseStatus) {
     // Log the non-200 response, then return
     console.log(response.responseStatus);
+    progress.pageParseCompleted({ jobId, taskId: MessageId });
     return;
   }
 
@@ -100,6 +102,8 @@ async function parsePageHandler({ Body, MessageId }) {
   for (const link of parsedLinks) {
     await processLink(link, newOrExistingPage);
   }
+
+  progress.pageParseCompleted({ jobId, taskId: MessageId });
 
   async function processLink(link, page) {
     try {
@@ -131,7 +135,6 @@ async function parsePageHandler({ Body, MessageId }) {
             anchorText: link.text,
           },
         });
-        // console.log(`created new link: ${newLink.id}\n`);
 
         if (hostname.includes('amazon.com')) {
           const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i];
@@ -142,18 +145,21 @@ async function parsePageHandler({ Body, MessageId }) {
           });
           if (hasAsin) {
             const asin = captureGroup[1];
-            // console.log('This product has an ASIN');
+            const id = uuid();
+
             productProducer.send(
               [
                 {
-                  id: uuid(),
-                  body: JSON.stringify({ asin, linkId: newLink.id }),
+                  id,
+                  body: JSON.stringify({ asin, linkId: newLink.id, jobId }),
                 },
               ],
               (err) => {
                 if (err) console.log(err);
               },
             );
+
+            progress.productFetchAdded({ jobId, taskId: id });
           }
         }
       }
@@ -161,8 +167,6 @@ async function parsePageHandler({ Body, MessageId }) {
       console.log(err);
     }
   }
-
-  return url;
 }
 
 module.exports = { parsePageHandler };

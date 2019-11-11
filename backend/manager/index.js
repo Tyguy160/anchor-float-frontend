@@ -1,7 +1,29 @@
+require('dotenv').config();
+
 const EventEmitter = require('events');
 const redis = require('redis');
 
-const redisClient = redis.createClient();
+const uuid = require('uuid/v4');
+const { reportProducer } = require('../report/producers');
+
+// Will likely need some config later
+const redisClient = redis.createClient({
+  host: 'redis',
+  retry_strategy(options) {
+    if (options.error && options.error.code === 'ECONNREFUSED') {
+      return new Error('The server refused the connection');
+    }
+    if (options.total_retry_time > 1000 * 60 * 60) {
+      return new Error('Retry time exhausted');
+    }
+    if (options.attempt > 10) {
+      // End reconnecting with built in error
+      return undefined;
+    }
+    // reconnect after
+    return Math.min(options.attempt * 100, 3000);
+  },
+});
 redisClient.on('connect', () => {
   console.log('connected to Redis');
 });
@@ -16,41 +38,136 @@ const PAGE_PARSE_COMPLETED = 'pageParseCompleted';
 const PRODUCT_FETCH_ADDED = 'productFetchAdded';
 const PRODUCT_FETCH_COMPLETED = 'productFetchCompleted';
 
-// Redis constants
-const JOBS_COMPLETED_SET = 'jobs-completed';
-const JOBS_ALL_SET = 'jobs-all';
+const FULL_SITE_COMPLETED = 'fullSiteCompleted';
 
 class ProgressManager extends EventEmitter {
-  sitemapParseStarted(jobInfo) {
-    this.emit(SITEMAP_PARSE_STARTED, jobInfo);
+  sitemapParseStarted(eventInfo) {
+    this.emit(SITEMAP_PARSE_STARTED, eventInfo);
+  }
+
+  sitemapParseCompleted(eventInfo) {
+    this.emit(SITEMAP_PARSE_COMPLETED, eventInfo);
+  }
+
+  pageParseAdded(eventInfo) {
+    this.emit(PAGE_PARSE_ADDED, eventInfo);
+  }
+
+  pageParseCompleted(eventInfo) {
+    this.emit(PAGE_PARSE_COMPLETED, eventInfo);
+  }
+
+  productFetchAdded(eventInfo) {
+    this.emit(PRODUCT_FETCH_ADDED, eventInfo);
+  }
+
+  productFetchCompleted(eventInfo) {
+    this.emit(PRODUCT_FETCH_COMPLETED, eventInfo);
   }
 }
 
 const progMan = new ProgressManager();
 
-// Noun - Verb - Stage i.e. sitemapParseStarted
+// To trigger report generation
+progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
+  const metaKey = `${jobId}:meta`;
+  redisClient.hgetall(metaKey, (err, metaInfo) => {
+    const { userId, hostname } = metaInfo;
+    console.log(`Site complete.\nAdding report generation job for: ${hostname}\nUser: ${userId}\n`);
+
+    reportProducer.send(
+      [
+        {
+          id: uuid(),
+          body: JSON.stringify({ userId, hostname }),
+        },
+      ],
+    );
+  });
+});
 
 // Sitemap
-progMan.on(SITEMAP_PARSE_STARTED, ({ taskId, userId, sitemapUrl }) => {
-  console.log(`Started: ${taskId}`);
-  redisClient.sadd(JOBS_ALL_SET, taskId);
+progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
+  if (!userId) {
+    console.log('No userId on sitemap job. No progress tracking');
+    return;
+  }
+
+  console.log(`Sitemap starting for jobId: ${jobId}\nuserId: ${userId}\nhostname: ${hostname}\n`);
+  const metaKey = `${jobId}:meta`;
+  redisClient.hmset(metaKey, { // Set to nothing completed
+    userId,
+    hostname,
+    sitemapComplete: 0,
+    pagesComplete: 0,
+    productsComplete: 0,
+  });
 });
 
-progMan.on(SITEMAP_PARSE_COMPLETED, ({ taskId }) => {
+progMan.on(SITEMAP_PARSE_COMPLETED, ({ jobId }) => {
+  const metaKey = `${jobId}:meta`;
+  redisClient.hlen(metaKey, (err, length) => { // Make sure job is being tracked
+    if (length > 0) {
+      console.log(`Sitemap complete: ${jobId}`);
+      redisClient.hmset(metaKey, {
+        sitemapComplete: 1,
+      });
+    }
+  });
 });
 
-progMan.on(PAGE_PARSE_ADDED, ({ taskId, pageUrl }) => {
+progMan.on(PAGE_PARSE_ADDED, ({ jobId, taskId }) => {
+  const pagesKey = `${jobId}:pages`;
+  redisClient.sadd(pagesKey, taskId);
 });
 
 // Page
-progMan.on(PAGE_PARSE_COMPLETED, ({ taskId }) => {
+progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
+  const pagesKey = `${jobId}:pages`;
+
+  redisClient.srem(pagesKey, taskId);
+  redisClient.scard(pagesKey, (err, pagesRemainingCount) => {
+    if (pagesRemainingCount === 0) {
+      const metaKey = `${jobId}:meta`;
+
+      redisClient.hget(metaKey, 'sitemapComplete', (err, isComplete) => {
+        if (isComplete) {
+          console.log(`Page parsing complete: ${jobId}`);
+          redisClient.hmset(metaKey, {
+            pagesComplete: 1,
+          });
+        }
+      });
+    }
+  });
 });
 
-progMan.on(PRODUCT_FETCH_ADDED, ({ taskId, asin, linkId }) => {
+progMan.on(PRODUCT_FETCH_ADDED, ({ jobId, taskId }) => {
+  const productsKey = `${jobId}:products`;
+  redisClient.sadd(productsKey, taskId);
 });
 
 // Product
-progMan.on(PRODUCT_FETCH_COMPLETED, ({ taskId }) => {
+progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
+  const productsKey = `${jobId}:products`;
+
+  redisClient.srem(productsKey, taskId);
+  redisClient.scard(productsKey, (err, productsRemainingCount) => {
+    if (productsRemainingCount === 0) {
+      const metaKey = `${jobId}:meta`;
+
+      redisClient.hget(metaKey, 'pagesComplete', (err, isComplete) => {
+        if (isComplete) {
+          redisClient.hmset(metaKey, {
+            productsComplete: 1,
+          });
+
+          console.log(`Product fetching complete: ${jobId}`);
+          progMan.emit(FULL_SITE_COMPLETED, { jobId });
+        }
+      });
+    }
+  });
 });
 
 module.exports = progMan;

@@ -8,6 +8,7 @@ async function parseProductHandler(messages) {
   const parsedMessages = messages.map(({ Body }) => ({
     asin: getDataFromMessage(Body, 'asin'),
     linkId: getDataFromMessage(Body, 'linkId'),
+    jobId: getDataFromMessage(Body, 'jobId'),
   }));
 
   // Make a dictionary of ASIN => linkIds
@@ -38,9 +39,6 @@ async function parseProductHandler(messages) {
 
   if (items) {
     items.forEach(async (item) => {
-      // Update the items in here
-      // console.log(item);
-
       const { offers, name, asin } = item;
       const linkId = asinToLinkIdMap[asin];
 
