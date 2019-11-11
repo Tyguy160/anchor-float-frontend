@@ -32,7 +32,7 @@ async function parseProductHandler(messages) {
     apiResponse = await getItemsPromise(requestUrl); // call the API
   } catch (err) {
     console.log('There was an error with the API request');
-    throw Error('API response error');
+    throw Error('API response error'); // Put all items back into the queue
   }
 
   const { items, errors } = apiResponse;
@@ -40,7 +40,6 @@ async function parseProductHandler(messages) {
   if (items) {
     items.forEach(async (item) => {
       const { offers, name, asin } = item;
-      const linkId = asinToLinkIdMap[asin];
 
       // If the product doesn't exist yet, we're going to create it
       let newProduct;
@@ -60,9 +59,6 @@ async function parseProductHandler(messages) {
       } else {
         availability = 'UNAVAILABLE';
       }
-      console.log(`Product ASIN: ${asin}`);
-      console.log(`Product Name: ${name}`);
-      console.log(`Product Availability: ${availability}`);
 
       let existingProduct = await db.products.findOne({
         where: {
@@ -72,7 +68,8 @@ async function parseProductHandler(messages) {
 
       // If the product exists and it has some type of availability listed,
       // we're going to update the link to the product
-      if (existingProduct && linkId.length) {
+      const linkIdsForProduct = asinToLinkIdMap[asin];
+      if (existingProduct && linkIdsForProduct.length) {
         existingProduct = await db.products.update({
           where: { id: existingProduct.id },
           data: {
@@ -81,7 +78,7 @@ async function parseProductHandler(messages) {
             name,
           },
         });
-        linkId.forEach(async (id) => {
+        linkIdsForProduct.forEach(async (id) => {
           await db.links.update({
             where: { id },
             data: { product: { connect: { id: existingProduct.id } } },
@@ -99,8 +96,8 @@ async function parseProductHandler(messages) {
             },
           });
 
-          if (linkId.length) {
-            linkId.forEach(async (id) => {
+          if (linkIdsForProduct.length) {
+            linkIdsForProduct.forEach(async (id) => {
               await db.links.update({
                 where: { id },
                 data: { product: { connect: { id: newProduct.id } } },
@@ -115,10 +112,9 @@ async function parseProductHandler(messages) {
     });
   }
 
-  if (errors) {
+  if (errors) { // Usually items no longer sold
     errors.forEach(async (err) => {
       // Update items as unavailable
-      console.log(err);
       // Use asinToLinkIdMap to ensure each link is connected
       const { asin } = err;
 

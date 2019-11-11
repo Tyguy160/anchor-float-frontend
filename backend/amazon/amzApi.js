@@ -41,8 +41,7 @@ async function getItemsPromise(apiRequest) {
   const api = new ProductAdvertisingAPIv1.DefaultApi();
   return new Promise((resolve, reject) => {
     api.getItems(apiRequest, (error, data) => {
-      if (error) {
-        console.log(error); // Often a 429 error from amzn
+      if (error) { // Usually a 429 error (too many requests)
         return reject(error);
       }
 
