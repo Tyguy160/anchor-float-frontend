@@ -94,6 +94,7 @@ progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
   }
 
   console.log(`Sitemap starting for jobId: ${jobId}\nuserId: ${userId}\nhostname: ${hostname}\n`);
+
   const metaKey = `${jobId}:meta`;
   redisClient.hmset(metaKey, { // Set to nothing completed
     userId,
@@ -105,6 +106,8 @@ progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
 });
 
 progMan.on(SITEMAP_PARSE_COMPLETED, ({ jobId }) => {
+  console.log(`Sitemap parse completed for jobId: ${jobId}\n`);
+
   const metaKey = `${jobId}:meta`;
   redisClient.hlen(metaKey, (err, length) => { // Make sure job is being tracked
     if (length > 0) {
@@ -117,6 +120,8 @@ progMan.on(SITEMAP_PARSE_COMPLETED, ({ jobId }) => {
 });
 
 progMan.on(PAGE_PARSE_ADDED, ({ jobId, taskId }) => {
+  console.log(`Page parse added: ${jobId}\ntaskId: ${taskId}\n`);
+
   const pagesKey = `${jobId}:pages`;
   redisClient.sadd(pagesKey, taskId);
 });
@@ -124,6 +129,8 @@ progMan.on(PAGE_PARSE_ADDED, ({ jobId, taskId }) => {
 // Page
 progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
   const pagesKey = `${jobId}:pages`;
+
+  console.log(`Page parse completed: ${jobId}\ntaskId: ${taskId}\n`);
 
   redisClient.srem(pagesKey, taskId);
 
@@ -144,12 +151,15 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
 });
 
 progMan.on(PRODUCT_FETCH_ADDED, ({ jobId, taskId }) => {
+  console.log(`Product fetch added: ${jobId}\ntaskId: ${taskId}\n`);
   const productsKey = `${jobId}:products`;
   redisClient.sadd(productsKey, taskId);
 });
 
 // Product
 progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
+  console.log(`Product fetch completed: ${jobId}\ntaskId: ${taskId}\n`);
+
   const productsKey = `${jobId}:products`;
 
   redisClient.srem(productsKey, taskId);
@@ -164,7 +174,7 @@ progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
             productsComplete: 1,
           });
 
-          console.log(`Product fetching complete: ${jobId}`);
+          console.log(`FULL SITE COMPLETE: ${jobId}`);
           progMan.emit(FULL_SITE_COMPLETED, { jobId });
         }
       });
