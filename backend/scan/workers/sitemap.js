@@ -47,7 +47,7 @@ async function parseSitemapHandler({ Body }) {
       [
         {
           id: taskId,
-          body: JSON.stringify({ pageUrl, jobId, taskId }),
+          body: JSON.stringify({ url: pageUrl, jobId, taskId }),
         },
       ],
       (err) => {
