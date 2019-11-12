@@ -5,6 +5,10 @@ const cryptoRandomString = require('crypto-random-string');
 const { getData } = require('../getData');
 const { getDataFromMessage, csvFields } = require('../utils');
 
+const { getDB } = require('../../prisma/db');
+
+const db = getDB();
+
 // Cloud storage client
 const storage = new Storage();
 const reportBucket = storage.bucket(process.env.REPORT_BUCKET_NAME);
@@ -21,7 +25,9 @@ async function reportHandler({ Body }) {
   const userId = getDataFromMessage(Body, 'userId');
   const hostname = getDataFromMessage(Body, 'hostname');
 
-  if (!userId || !hostname) { // Required fields
+  if (!userId || !hostname) {
+    // Required fields
+    console.log('userId and hostname are both required to generate a report');
     return;
   }
 
@@ -58,11 +64,58 @@ async function reportHandler({ Body }) {
       console.log('Error:\n');
       console.log(err);
     })
-    .on('finish', () => {
-      console.log(`Finished uploading report: https://storage.googleapis.com/anchor-float-report/${reportObjName}`);
+    .on('finish', async () => {
+      console.log(
+        `Finished uploading report: https://storage.googleapis.com/anchor-float-report/${reportObjName}`,
+      );
       // TODO: create a new report in Database eg db.reports.create...
       //    Set reportUrl as `https://storage.googleapis.com/anchor-float-report/${reportObjName}`
       //    Connec to userSite based on userId variable passed in
+
+      const fileUrl = `https://storage.googleapis.com/anchor-float-report/${reportObjName}`;
+      const domain = hostname;
+
+      // Query DB for siteID based on hostname
+      const site = await db.sites.findOne({
+        where: {
+          hostname,
+        },
+      });
+
+      if (!site.id) {
+        console.log(`No site (siteId) found for: ${hostname}`);
+        return;
+      }
+
+      // Query DB for userSites where the siteID and userID match
+      const userSites = await db.userSites.findMany({
+        where: {
+          site: {
+            id: site.id,
+          },
+          user: {
+            id: userId,
+          },
+        },
+      });
+
+      if (userSites.length === 0) {
+        console.log('No userSites found');
+        return;
+      }
+
+      // Create a new report and add the file URL
+      await db.reports.create({
+        data: {
+          fileUrl,
+          domain,
+          userSite: {
+            connect: {
+              id: userSites[0].id,
+            },
+          },
+        },
+      });
     });
 }
 
