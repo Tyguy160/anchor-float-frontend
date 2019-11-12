@@ -23,9 +23,10 @@ function handleResponseErrors(error) {
   }
 }
 
-async function parsePageHandler({ Body, MessageId }) {
+async function parsePageHandler({ Body }) {
   const urlStr = getDataFromMessage(Body, 'url');
   const jobId = getDataFromMessage(Body, 'jobId');
+  const taskId = getDataFromMessage(Body, 'taskId');
   if (!urlStr) return;
 
   // Ensure URL string is a valid URL
@@ -74,7 +75,7 @@ async function parsePageHandler({ Body, MessageId }) {
   if (response.responseStatus) {
     // Log the non-200 response, then return
     console.log(response.responseStatus);
-    progress.pageParseCompleted({ jobId, taskId: MessageId });
+    progress.pageParseCompleted({ jobId, taskId });
     return;
   }
 
@@ -103,7 +104,7 @@ async function parsePageHandler({ Body, MessageId }) {
     await processLink(link, newOrExistingPage);
   }
 
-  progress.pageParseCompleted({ jobId, taskId: MessageId });
+  progress.pageParseCompleted({ jobId, taskId });
 
   async function processLink(link, page) {
     try {
@@ -138,20 +139,27 @@ async function parsePageHandler({ Body, MessageId }) {
 
         if (hostname.includes('amazon.com')) {
           const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i];
+
           let captureGroup;
           const hasAsin = asinRegexs.some((regex) => {
             captureGroup = pathname.match(regex);
             return captureGroup;
           });
+
           if (hasAsin) {
             const asin = captureGroup[1];
-            const id = uuid();
+            const productTaskId = uuid();
 
             productProducer.send(
               [
                 {
-                  id,
-                  body: JSON.stringify({ asin, linkId: newLink.id, jobId }),
+                  id: taskId,
+                  body: JSON.stringify({
+                    asin,
+                    linkId: newLink.id,
+                    jobId,
+                    taskId: productTaskId,
+                  }),
                 },
               ],
               (err) => {
@@ -159,7 +167,7 @@ async function parsePageHandler({ Body, MessageId }) {
               },
             );
 
-            progress.productFetchAdded({ jobId, taskId: id });
+            progress.productFetchAdded({ jobId, taskId: productTaskId });
           }
         }
       }

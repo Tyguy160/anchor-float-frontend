@@ -6,11 +6,11 @@ const progress = require('../../manager/index');
 const db = getDB();
 
 async function parseProductHandler(messages) {
-  const parsedMessages = messages.map(({ Body, MessageId }) => ({
+  const parsedMessages = messages.map(({ Body }) => ({
     asin: getDataFromMessage(Body, 'asin'),
     linkId: getDataFromMessage(Body, 'linkId'),
     jobId: getDataFromMessage(Body, 'jobId'),
-    taskId: MessageId,
+    taskId: getDataFromMessage(Body, 'taskId'),
   }));
 
   const keyByAsinReducer = (dict, {

@@ -73,13 +73,18 @@ progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
   const metaKey = `${jobId}:meta`;
   redisClient.hgetall(metaKey, (err, metaInfo) => {
     const { userId, hostname } = metaInfo;
+
     console.log(`Site complete.\nAdding report generation job for: ${hostname}\nUser: ${userId}\n`);
+
+    const taskId = uuid();
 
     reportProducer.send(
       [
         {
-          id: uuid(),
-          body: JSON.stringify({ userId, hostname }),
+          id: taskId,
+          body: JSON.stringify({
+            userId, hostname, jobId, taskId,
+          }),
         },
       ],
     );
