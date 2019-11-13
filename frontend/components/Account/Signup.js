@@ -4,6 +4,17 @@ import { useMutation } from '@apollo/react-hooks';
 import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import toasts from '../Misc/Toasts';
+import { Formik, ErrorMessage } from 'formik';
+import styled from 'styled-components';
+
+import * as Yup from 'yup';
+
+const SignupSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Your email address is invalid')
+    .required('Required'),
+});
+
 import {
   SignupForm,
   CenteredHeading,
@@ -35,9 +46,24 @@ const Signup = () => {
     refetchQueries: ['me'],
   });
 
+  const ErrorStyles = styled.div`
+    padding: 2rem;
+    background: white;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-left: 5px solid red;
+    p {
+      margin: 0;
+      font-weight: 100;
+    }
+    strong {
+      margin-right: 1rem;
+    }
+  `;
+
   const createAccount = async e => {
     // Prevent the form from submitting
-    e.preventDefault();
+    // e.preventDefault();
 
     if (password === confirmPassword) {
       // Call the mutation
@@ -82,7 +108,63 @@ const Signup = () => {
     <PageSection handleChange={handleChange}>
       <CenteredHeading>Register</CenteredHeading>
       <SignupFormContainer>
-        <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
+        <Formik
+          initialValues={{
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+          }}
+          validationSchema={SignupSchema}
+          onSubmit={(values, e) => createAccount(values, e)}
+          render={({ errors, status, touched, isSubmitting }) => (
+            <SignupForm>
+              <SignupInputContainer>
+                <label htmlFor="firstName">First Name</label>
+                <SignupTextInput id="firstName" name="firstName" type="text" />
+              </SignupInputContainer>
+              <SignupInputContainer>
+                <label htmlFor="lastName">Last Name</label>
+                <SignupTextInput id="lastName" name="lastName" type="text" />
+              </SignupInputContainer>
+              <SignupInputContainer>
+                <label htmlFor="email">Email</label>
+                <SignupTextInput id="email" name="email" type="email" />
+              </SignupInputContainer>
+              <SignupInputContainer>
+                <label htmlFor="password">Password</label>
+                <SignupTextInput
+                  id="password"
+                  name="password"
+                  type="password"
+                />
+              </SignupInputContainer>
+              <SignupInputContainer>
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <SignupTextInput
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                />
+              </SignupInputContainer>
+              {status && status.msg && <div>{status.msg}</div>}
+              <ContinueButton type="submit" disabled={isSubmitting}>
+                Continue
+              </ContinueButton>
+              {console.log(errors.keys)}
+              {Object.keys(errors).length ? (
+                <ErrorStyles>
+                  <strong>Shoot!</strong>
+                  {Object.keys(errors).map((error, i) => (
+                    <p key={i}>{errors[error]}</p>
+                  ))}
+                </ErrorStyles>
+              ) : null}
+            </SignupForm>
+          )}
+        />
+        {/* <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
           <SignupInputContainer>
             <label htmlFor="firstName">First Name</label>
             <SignupTextInput
@@ -156,9 +238,9 @@ const Signup = () => {
           <ContinueButton type="submit" form="urlForm">
             Continue
           </ContinueButton>
-        </SignupForm>
+        </SignupForm> */}
       </SignupFormContainer>
-      <Error error={error} />
+      {/* <Error error={error} /> */}
     </PageSection>
   );
 };

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Field, Form } from 'formik';
 
 const StyledButton = styled.button`
   padding: 10px 20px 10px 20px;
@@ -45,7 +46,7 @@ const PlanInfoContainer = styled(SignupFormContainer)`
   padding: 20px;
 `;
 
-const SignupForm = styled.form`
+const SignupForm = styled(Form)`
   display: grid;
   padding: 20px;
   grid-gap: 15px;
@@ -74,7 +75,7 @@ const SignupInputContainer = styled.div`
   }
 `;
 
-const SignupTextInput = styled.input`
+const SignupTextInput = styled(Field)`
   border-radius: 4px;
   border: 1px solid #dedede;
   height: 2em;
