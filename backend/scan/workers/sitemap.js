@@ -2,7 +2,7 @@ const Sitemapper = require('sitemapper');
 const uuid = require('uuid/v4');
 const { getDataFromMessage } = require('./utils');
 const { pageProducer } = require('../producers');
-const progress = require('../../manager/index');
+const progress = require('../../progress/index');
 
 async function parseSitemapHandler({ Body }) {
   // Get the sitemap using the URL and queue up pages based on the sitemap
