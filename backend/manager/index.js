@@ -87,6 +87,9 @@ progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
           }),
         },
       ],
+      (producerError) => {
+        if (producerError) console.log(producerError);
+      },
     );
   });
 });
