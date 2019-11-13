@@ -1,7 +1,7 @@
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { createRequestFromAsins, getItemsPromise } = require('../../amazon/amzApi');
-const progress = require('../../manager/index');
+const progress = require('../../progress/index');
 
 const db = getDB();
 
