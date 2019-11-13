@@ -7,11 +7,13 @@ const userId = 'test';
 
 console.log(`Generating a report for: ${hostnameInput}`);
 
+const taskId = uuid();
+
 reportProducer.send(
   [
     {
-      id: uuid(),
-      body: JSON.stringify({ hostname: hostnameInput, userId }),
+      id: taskId,
+      body: JSON.stringify({ hostname: hostnameInput, userId, taskId }),
     },
   ],
   (err) => {

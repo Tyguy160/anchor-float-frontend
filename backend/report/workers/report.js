@@ -68,9 +68,6 @@ async function reportHandler({ Body }) {
       console.log(
         `Finished uploading report: https://storage.googleapis.com/anchor-float-report/${reportObjName}`,
       );
-      // TODO: create a new report in Database eg db.reports.create...
-      //    Set reportUrl as `https://storage.googleapis.com/anchor-float-report/${reportObjName}`
-      //    Connec to userSite based on userId variable passed in
 
       const fileUrl = `https://storage.googleapis.com/anchor-float-report/${reportObjName}`;
       const domain = hostname;

@@ -1,6 +1,7 @@
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { createRequestFromAsins, getItemsPromise } = require('../../amazon/amzApi');
+const progress = require('../../manager/index');
 
 const db = getDB();
 
@@ -8,20 +9,31 @@ async function parseProductHandler(messages) {
   const parsedMessages = messages.map(({ Body }) => ({
     asin: getDataFromMessage(Body, 'asin'),
     linkId: getDataFromMessage(Body, 'linkId'),
+    jobId: getDataFromMessage(Body, 'jobId'),
+    taskId: getDataFromMessage(Body, 'taskId'),
   }));
 
-  // Make a dictionary of ASIN => linkIds
-  const asinToLinkIdMap = parsedMessages.reduce((dict, message) => {
-    const { asin, linkId } = message;
-
+  const keyByAsinReducer = (dict, {
+    asin, linkId, jobId, taskId,
+  }) => {
     if (dict[asin]) {
-      dict[asin].push(linkId);
-    } else {
-      dict[asin] = [linkId];
+      return {
+        ...dict,
+        [asin]: dict[asin].concat({
+          asin, linkId, jobId, taskId,
+        }),
+      };
     }
+    return {
+      ...dict,
+      [asin]: [{
+        asin, linkId, jobId, taskId,
+      }],
+    };
+  };
 
-    return dict;
-  }, {});
+  // Make a dictionary of ASIN => linkIds
+  const asinToMessageDataMap = parsedMessages.reduce(keyByAsinReducer, {});
 
   const uniqueAsins = [...new Set(parsedMessages.map(info => info.asin))];
   const requestUrl = await createRequestFromAsins(uniqueAsins); // create the request object
@@ -31,18 +43,14 @@ async function parseProductHandler(messages) {
     apiResponse = await getItemsPromise(requestUrl); // call the API
   } catch (err) {
     console.log('There was an error with the API request');
-    throw Error('API response error');
+    throw Error('API response error'); // Put all items back into the queue
   }
 
   const { items, errors } = apiResponse;
 
   if (items) {
     items.forEach(async (item) => {
-      // Update the items in here
-      // console.log(item);
-
       const { offers, name, asin } = item;
-      const linkId = asinToLinkIdMap[asin];
 
       // If the product doesn't exist yet, we're going to create it
       let newProduct;
@@ -62,9 +70,6 @@ async function parseProductHandler(messages) {
       } else {
         availability = 'UNAVAILABLE';
       }
-      console.log(`Product ASIN: ${asin}`);
-      console.log(`Product Name: ${name}`);
-      console.log(`Product Availability: ${availability}`);
 
       let existingProduct = await db.products.findOne({
         where: {
@@ -72,9 +77,9 @@ async function parseProductHandler(messages) {
         },
       });
 
-      // If the product exists and it has some type of availability listed,
-      // we're going to update the link to the product
-      if (existingProduct && linkId.length) {
+      const tasksForProduct = asinToMessageDataMap[asin];
+
+      if (existingProduct && tasksForProduct.length) {
         existingProduct = await db.products.update({
           where: { id: existingProduct.id },
           data: {
@@ -83,11 +88,14 @@ async function parseProductHandler(messages) {
             name,
           },
         });
-        linkId.forEach(async (id) => {
+
+        tasksForProduct.forEach(async (task) => {
           await db.links.update({
-            where: { id },
+            where: { id: task.linkId },
             data: { product: { connect: { id: existingProduct.id } } },
           });
+
+          progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
         });
       }
 
@@ -101,12 +109,14 @@ async function parseProductHandler(messages) {
             },
           });
 
-          if (linkId.length) {
-            linkId.forEach(async (id) => {
+          if (tasksForProduct.length) {
+            tasksForProduct.forEach(async (task) => {
               await db.links.update({
-                where: { id },
+                where: { id: task.linkId },
                 data: { product: { connect: { id: newProduct.id } } },
               });
+
+              progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
             });
           }
         }
@@ -117,11 +127,10 @@ async function parseProductHandler(messages) {
     });
   }
 
-  if (errors) {
+  if (errors) { // Usually items no longer sold
     errors.forEach(async (err) => {
       // Update items as unavailable
-      console.log(err);
-      // Use asinToLinkIdMap to ensure each link is connected
+      // Use asinToMessageDataMap to ensure each link is connected
       const { asin } = err;
 
       if (!asin) return;
@@ -148,13 +157,15 @@ async function parseProductHandler(messages) {
         });
       }
 
-      const linkIds = asinToLinkIdMap[asin];
-      if (linkIds.length > 0) {
-        linkIds.forEach(async (linkId) => {
+      const tasksForProduct = asinToMessageDataMap[asin];
+      if (tasksForProduct.length > 0) {
+        tasksForProduct.forEach(async (task) => {
           await db.links.update({
-            where: { id: linkId },
+            where: { id: task.linkId },
             data: { product: { connect: { id: existingProduct.id } } },
           });
+
+          progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
         });
       }
     });

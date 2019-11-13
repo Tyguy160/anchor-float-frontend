@@ -1,6 +1,6 @@
 const { getDataFromMessage } = require('./utils');
 
-async function parseShortlinkHandler({ Body, MessageId }) {
+async function parseShortlinkHandler({ Body }) {
   const urlStr = getDataFromMessage(Body, 'url');
   if (!urlStr) return;
   // Ensure URL string is a valid URL

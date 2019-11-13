@@ -44,9 +44,10 @@ db.connect()
         })
         .catch(console.error);
     });
-    db.plans.findMany().then((plans) => {
+
+    setTimeout(() => db.plans.findMany().then((plans) => {
       console.log(plans);
       process.exit(0);
-    });
+    }), 3000);
   })
   .catch(console.err);
