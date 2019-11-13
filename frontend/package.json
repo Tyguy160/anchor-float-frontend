@@ -27,6 +27,7 @@
     "downshift": "^2.2.3",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
+    "formik": "^2.0.4",
     "glamor": "^2.20.40",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.9.2",
@@ -45,7 +46,8 @@
     "react-toastify": "^5.4.0",
     "react-transition-group": "^2.9.0",
     "styled-components": "^4.3.2",
-    "waait": "^1.0.5"
+    "waait": "^1.0.5",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "babel-jest": "^23.6.0",
