@@ -15,6 +15,16 @@ import {
   CenteredHeading,
 } from '../styles/styles';
 
+import { Formik, ErrorMessage } from 'formik';
+
+import * as Yup from 'yup';
+
+const SignupSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Your email address is invalid')
+    .required('Required'),
+});
+
 const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($input: SignInInput!) {
     signIn(input: $input) {

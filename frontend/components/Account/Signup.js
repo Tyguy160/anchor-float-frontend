@@ -10,9 +10,20 @@ import styled from 'styled-components';
 import * as Yup from 'yup';
 
 const SignupSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Your email address is invalid')
+  firstName: Yup.string()
+    .max(15, 'Must be 15 characters or less')
     .required('Required'),
+  lastName: Yup.string()
+    .max(20, 'Must be 20 characters or less')
+    .required('Required'),
+  email: Yup.string()
+    .email('Invalid email address`')
+    .required('Required'),
+  password: Yup.string().required('Password is required'),
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref('password'), null],
+    'Passwords must match'
+  ),
 });
 
 import {
@@ -117,20 +128,43 @@ const Signup = () => {
             confirmPassword: '',
           }}
           validationSchema={SignupSchema}
-          onSubmit={(values, e) => createAccount(values, e)}
-          render={({ errors, status, touched, isSubmitting }) => (
-            <SignupForm>
+          onSubmit={(values, e) => createAccount(values, e)}>
+          {formik => (
+            <SignupForm onSubmit={formik.handleSubmit}>
               <SignupInputContainer>
                 <label htmlFor="firstName">First Name</label>
-                <SignupTextInput id="firstName" name="firstName" type="text" />
+                <SignupTextInput
+                  id="firstName"
+                  type="text"
+                  {...formik.getFieldProps('firstName')}
+                />
+                {formik.touched.firstName && formik.errors.firstName ? (
+                  <div>{formik.errors.firstName}</div>
+                ) : null}
               </SignupInputContainer>
               <SignupInputContainer>
                 <label htmlFor="lastName">Last Name</label>
-                <SignupTextInput id="lastName" name="lastName" type="text" />
+                <SignupTextInput
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  {...formik.getFieldProps('lastName')}
+                />
+                {formik.touched.lastName && formik.errors.lastName ? (
+                  <div>{formik.errors.lastName}</div>
+                ) : null}
               </SignupInputContainer>
               <SignupInputContainer>
                 <label htmlFor="email">Email</label>
-                <SignupTextInput id="email" name="email" type="email" />
+                <SignupTextInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  {...formik.getFieldProps('email')}
+                />
+                {formik.touched.email && formik.errors.email ? (
+                  <div>{formik.errors.email}</div>
+                ) : null}
               </SignupInputContainer>
               <SignupInputContainer>
                 <label htmlFor="password">Password</label>
@@ -138,7 +172,11 @@ const Signup = () => {
                   id="password"
                   name="password"
                   type="password"
+                  {...formik.getFieldProps('password')}
                 />
+                {formik.touched.password && formik.errors.password ? (
+                  <div>{formik.errors.password}</div>
+                ) : null}
               </SignupInputContainer>
               <SignupInputContainer>
                 <label htmlFor="confirmPassword">Confirm Password</label>
@@ -146,13 +184,20 @@ const Signup = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
+                  {...formik.getFieldProps('confirmPassword')}
                 />
+                {formik.touched.confirmPassword &&
+                formik.errors.confirmPassword ? (
+                  <div>{formik.errors.confirmPassword}</div>
+                ) : null}
               </SignupInputContainer>
-              {status && status.msg && <div>{status.msg}</div>}
-              <ContinueButton type="submit" disabled={isSubmitting}>
+              {formik.status && formik.status.msg && (
+                <div>{formik.status.msg}</div>
+              )}
+              <ContinueButton type="submit" disabled={formik.isSubmitting}>
                 Continue
               </ContinueButton>
-              {console.log(errors.keys)}
+              {/* {console.log(errors.keys)}
               {Object.keys(errors).length ? (
                 <ErrorStyles>
                   <strong>Shoot!</strong>
@@ -160,10 +205,10 @@ const Signup = () => {
                     <p key={i}>{errors[error]}</p>
                   ))}
                 </ErrorStyles>
-              ) : null}
+              ) : null} */}
             </SignupForm>
           )}
-        />
+        </Formik>
         {/* <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
           <SignupInputContainer>
             <label htmlFor="firstName">First Name</label>
