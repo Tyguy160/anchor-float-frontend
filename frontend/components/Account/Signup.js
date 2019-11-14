@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import * as Yup from 'yup';
 
 const SignupSchema = Yup.object().shape({
+<<<<<<< HEAD
   firstName: Yup.string()
     .max(15, 'Must be 15 characters or less')
     .required('Required'),
@@ -24,6 +25,11 @@ const SignupSchema = Yup.object().shape({
     [Yup.ref('password'), null],
     'Passwords must match'
   ),
+=======
+  email: Yup.string()
+    .email('Your email address is invalid')
+    .required('Required'),
+>>>>>>> 6ab1372b6b5e70f80fe6dd175391a76edfacc5c1
 });
 
 import {
