@@ -3,7 +3,7 @@ const uuid = require('uuid/v4');
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const { parseMarkup, parseHref } = require('../parsers');
-const { productProducer } = require('../producers.js');
+const { createAndConnectProducer } = require('../producers');
 const progress = require('../../progress/index');
 
 const db = getDB();
@@ -150,7 +150,7 @@ async function parsePageHandler({ Body }) {
             const asin = captureGroup[1];
             const productTaskId = uuid();
 
-            productProducer.send(
+            createAndConnectProducer.send(
               [
                 {
                   id: taskId,
