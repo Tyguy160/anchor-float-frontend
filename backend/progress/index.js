@@ -25,7 +25,7 @@ const redisClient = redis.createClient({
   },
 });
 redisClient.on('connect', () => {
-  console.log('connected to Redis');
+  console.log('Progress manager connected to Redis');
 });
 
 // Event name

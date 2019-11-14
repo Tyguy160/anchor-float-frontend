@@ -3,11 +3,13 @@ require('dotenv').config();
 const { Consumer } = require('sqs-consumer');
 const { parseSitemapHandler } = require('./workers/sitemap');
 const { parsePageHandler } = require('./workers/page');
+const { createAndConnectProductHandler } = require('./workers/createAndConnectProduct');
 const { parseProductHandler } = require('./workers/product');
 const { parseShortlinkHandler } = require('./workers/shortlink');
 
 const {
   PARSE_PAGE_QUEUE_URL,
+  CREATE_CONNECT_PRODUCT_QUEUE_URL,
   PARSE_PRODUCT_QUEUE_URL,
   PARSE_SITEMAP_QUEUE_URL,
   PARSE_SHORTLINK_QUEUE_URL,
@@ -27,6 +29,7 @@ const {
 // Validate that they all exist
 Object.entries({
   PARSE_PAGE_QUEUE_URL,
+  CREATE_CONNECT_PRODUCT_QUEUE_URL,
   PARSE_PRODUCT_QUEUE_URL,
   PARSE_SITEMAP_QUEUE_URL,
   PARSE_SHORTLINK_QUEUE_URL,
@@ -63,11 +66,18 @@ try {
     console.error(err.message); // eslint-disable-line no-console
   });
 
+  const createAndConnectProductConsumer = Consumer.create({
+    queueUrl: CREATE_CONNECT_PRODUCT_QUEUE_URL,
+    handleMessage: createAndConnectProductHandler,
+  }).on('error', (err) => {
+    console.error(err.message); // eslint-disable-line no-console
+  });
+
   const parseProductConsumer = Consumer.create({
     queueUrl: PARSE_PRODUCT_QUEUE_URL,
     handleMessageBatch: parseProductHandler,
     batchSize: 10,
-    pollingWaitTimeMs: 7500,
+    pollingWaitTimeMs: 10000, // 10 second wait between requests
   }).on('error', (err) => {
     console.error(err.message); // eslint-disable-line no-console
   });
@@ -84,6 +94,9 @@ try {
 
   parsePageConsumer.start();
   console.info('Parse page consumer running...'); // eslint-disable-line no-console
+
+  createAndConnectProductConsumer.start();
+  console.info('Create and connect product consumer running...'); // eslint-disable-line no-console
 
   parseProductConsumer.start();
   console.info('Parse product consumer running...'); // eslint-disable-line no-console
