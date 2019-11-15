@@ -66,13 +66,32 @@ const DeleteButton = styled(StyledButton)`
   }
 `;
 
-const SignupInputContainer = styled.div`
+const FormInputContainer = styled.div`
+  /* display: flex;
+  justify-self: flex-end;
+  flex-wrap: wrap;
+  label {
+    align-self: center;
+  } */
+  display: grid;
+`;
+
+const FormInput = styled.div`
   display: flex;
   justify-self: flex-end;
   flex-wrap: wrap;
   label {
     align-self: center;
   }
+`;
+
+const FormError = styled.div`
+  color: red;
+  /* align-self: center; */
+  justify-self: right;
+  padding-right: 10px;
+  padding-top: 5px;
+  font-size: 0.75em;
 `;
 
 const SignupTextInput = styled(Field)`
@@ -94,7 +113,7 @@ const SigninFormContainer = styled(SignupFormContainer)``;
 
 const SigninForm = styled(SignupForm)``;
 
-const SigninInputContainer = styled(SignupInputContainer)``;
+const SigninInputContainer = styled(FormInputContainer)``;
 
 const SigninTextInput = styled(SignupTextInput)``;
 
@@ -407,7 +426,9 @@ export {
   SignupForm,
   PlanInfoContainer,
   SignupFormContainer,
-  SignupInputContainer,
+  FormInputContainer,
+  FormInput,
+  FormError,
   SignupTextInput,
   CenteredHeading,
   ContinueButton,
