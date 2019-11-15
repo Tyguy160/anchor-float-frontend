@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import toasts from '../Misc/Toasts';
-import { Formik, ErrorMessage } from 'formik';
+import { Formik, ErrorMessage, useField } from 'formik';
 import styled from 'styled-components';
 
 import * as Yup from 'yup';
@@ -19,7 +19,7 @@ const SignupSchema = Yup.object().shape({
   email: Yup.string()
     .email('Invalid email address`')
     .required('Required'),
-  password: Yup.string().required('Password is required'),
+  password: Yup.string().required('Required'),
   confirmPassword: Yup.string().oneOf(
     [Yup.ref('password'), null],
     'Passwords must match'
@@ -58,23 +58,31 @@ const Signup = () => {
   });
 
   const ErrorStyles = styled.div`
-    padding: 2rem;
-    background: white;
-    margin: 2rem 0;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-left: 5px solid red;
-    p {
-      margin: 0;
-      font-weight: 100;
-    }
-    strong {
-      margin-right: 1rem;
-    }
+    color: red;
+    align-self: center;
+    font-size: 0.75em;
   `;
+
+  const TextInput = ({ label, ...props }) => {
+    // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+    // which we can spread on <input> and alse replace ErrorMessage entirely.
+    const [field, meta] = useField(props);
+    return (
+      <SignupInputContainer>
+        <label htmlFor={props.id || props.name}>{label}</label>
+        <SignupTextInput className="text-input" {...field} {...props} />
+        {meta.touched && meta.error ? (
+          <ErrorStyles className="error">{meta.error}</ErrorStyles>
+        ) : null}
+      </SignupInputContainer>
+    );
+  };
 
   const createAccount = async e => {
     // Prevent the form from submitting
     // e.preventDefault();
+    console.log(e);
+    return;
 
     if (password === confirmPassword) {
       // Call the mutation
@@ -131,161 +139,26 @@ const Signup = () => {
           onSubmit={(values, e) => createAccount(values, e)}>
           {formik => (
             <SignupForm onSubmit={formik.handleSubmit}>
-              <SignupInputContainer>
-                <label htmlFor="firstName">First Name</label>
-                <SignupTextInput
-                  id="firstName"
-                  type="text"
-                  {...formik.getFieldProps('firstName')}
-                />
-                {formik.touched.firstName && formik.errors.firstName ? (
-                  <div>{formik.errors.firstName}</div>
-                ) : null}
-              </SignupInputContainer>
-              <SignupInputContainer>
-                <label htmlFor="lastName">Last Name</label>
-                <SignupTextInput
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  {...formik.getFieldProps('lastName')}
-                />
-                {formik.touched.lastName && formik.errors.lastName ? (
-                  <div>{formik.errors.lastName}</div>
-                ) : null}
-              </SignupInputContainer>
-              <SignupInputContainer>
-                <label htmlFor="email">Email</label>
-                <SignupTextInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  {...formik.getFieldProps('email')}
-                />
-                {formik.touched.email && formik.errors.email ? (
-                  <div>{formik.errors.email}</div>
-                ) : null}
-              </SignupInputContainer>
-              <SignupInputContainer>
-                <label htmlFor="password">Password</label>
-                <SignupTextInput
-                  id="password"
-                  name="password"
-                  type="password"
-                  {...formik.getFieldProps('password')}
-                />
-                {formik.touched.password && formik.errors.password ? (
-                  <div>{formik.errors.password}</div>
-                ) : null}
-              </SignupInputContainer>
-              <SignupInputContainer>
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <SignupTextInput
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  {...formik.getFieldProps('confirmPassword')}
-                />
-                {formik.touched.confirmPassword &&
-                formik.errors.confirmPassword ? (
-                  <div>{formik.errors.confirmPassword}</div>
-                ) : null}
-              </SignupInputContainer>
+              <TextInput label="First Name" name="firstName" type="text" />
+              <TextInput label="Last Name" name="lastName" type="text" />
+              <TextInput label="Email" name="email" type="email" />
+              <TextInput label="Password" name="password" type="password" />
+              <TextInput
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+              />
+
               {formik.status && formik.status.msg && (
                 <div>{formik.status.msg}</div>
               )}
               <ContinueButton type="submit" disabled={formik.isSubmitting}>
                 Continue
               </ContinueButton>
-              {/* {console.log(errors.keys)}
-              {Object.keys(errors).length ? (
-                <ErrorStyles>
-                  <strong>Shoot!</strong>
-                  {Object.keys(errors).map((error, i) => (
-                    <p key={i}>{errors[error]}</p>
-                  ))}
-                </ErrorStyles>
-              ) : null} */}
             </SignupForm>
           )}
         </Formik>
-        {/* <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
-          <SignupInputContainer>
-            <label htmlFor="firstName">First Name</label>
-            <SignupTextInput
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder=""
-              required
-              value={firstName}
-              disabled={loading}
-              aria-busy={loading}
-              onChange={e => handleChange(e, 'FIRST_NAME')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="lastName">Last Name</label>
-            <SignupTextInput
-              id="lastName"
-              name="lastName"
-              type="text"
-              placeholder=""
-              required
-              value={lastName}
-              disabled={loading}
-              aria-busy={loading}
-              onChange={e => handleChange(e, 'LAST_NAME')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="email">Email Address</label>
-            <SignupTextInput
-              id="email"
-              name="email"
-              type="text"
-              placeholder=""
-              required
-              value={email}
-              disabled={loading}
-              aria-busy={loading}
-              onChange={e => handleChange(e, 'EMAIL')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="password">Password</label>
-            <SignupTextInput
-              id="password"
-              name="password"
-              type="password"
-              placeholder=""
-              required
-              value={password}
-              disabled={loading}
-              aria-busy={loading}
-              onChange={e => handleChange(e, 'PASSWORD')}
-            />
-          </SignupInputContainer>
-          <SignupInputContainer>
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <SignupTextInput
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder=""
-              required
-              value={confirmPassword}
-              disabled={loading}
-              aria-busy={loading}
-              onChange={e => handleChange(e, 'CONFIRM_PASSWORD')}
-            />
-          </SignupInputContainer>
-          <ContinueButton type="submit" form="urlForm">
-            Continue
-          </ContinueButton>
-        </SignupForm> */}
       </SignupFormContainer>
-      {/* <Error error={error} /> */}
     </PageSection>
   );
 };
