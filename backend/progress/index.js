@@ -35,6 +35,9 @@ const SITEMAP_PARSE_COMPLETED = 'sitemapParseCompleted';
 const PAGE_PARSE_ADDED = 'pageParseAdded';
 const PAGE_PARSE_COMPLETED = 'pageParseCompleted';
 
+const PRODUCT_CONNECT_ADDED = 'productConnectAdded';
+const PRODUCT_CONNECT_COMPLETED = 'productConnectCompleted';
+
 const PRODUCT_FETCH_ADDED = 'productFetchAdded';
 const PRODUCT_FETCH_COMPLETED = 'productFetchCompleted';
 
@@ -55,6 +58,14 @@ class ProgressManager extends EventEmitter {
 
   pageParseCompleted(eventInfo) {
     this.emit(PAGE_PARSE_COMPLETED, eventInfo);
+  }
+
+  productConnectAdded(eventInfo) {
+    this.emit(PRODUCT_CONNECT_ADDED, eventInfo);
+  }
+
+  productConnectCompleted(eventInfo) {
+    this.emit(PRODUCT_CONNECT_COMPLETED, eventInfo);
   }
 
   productFetchAdded(eventInfo) {
@@ -146,7 +157,7 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
     if (pagesRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'sitemapComplete', (err, isComplete) => {
+      redisClient.hget(metaKey, 'sitemapComplete', (errFromHget, isComplete) => {
         if (isComplete) {
           console.log(`Page parsing complete: ${jobId}`);
           redisClient.hmset(metaKey, {
@@ -156,6 +167,14 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
       });
     }
   });
+});
+
+progMan.on(PRODUCT_CONNECT_ADDED, ({ jobId, taskId }) => {
+  console.log(`Product connect added: ${jobId}\ntaskId: ${taskId}\n`);
+});
+
+progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
+  console.log(`Product connect completed: ${jobId}\ntaskId: ${taskId}\n`);
 });
 
 progMan.on(PRODUCT_FETCH_ADDED, ({ jobId, taskId }) => {
