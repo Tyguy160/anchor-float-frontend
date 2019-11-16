@@ -1,59 +1,60 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import toasts from '../Misc/Toasts';
-import { Formik } from 'formik';
-import TextInput from '../Misc/TextInput';
-import * as Yup from 'yup';
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import toasts from "../Misc/Toasts";
+import { Formik } from "formik";
+import TextInput from "../Misc/TextInput";
+import * as Yup from "yup";
+import url from "url";
 
 const DomainSchema = Yup.object().shape({
-  hostname: Yup.string()
-    .url('Enter a valid URL')
-    .required('Required'),
-  minimumReview: Yup.number('Enter a valid number')
-    .lessThan(5, 'Minimum review must be less than 5')
-    .min(0, 'Enter a positive number')
-    .required('Required'),
+  domain: Yup.string()
+    .url("Enter a valid URL")
+    .required("Required"),
+  minimumReview: Yup.number("Enter a valid number")
+    .lessThan(5, "Minimum review must be less than 5")
+    .min(0, "Enter a positive number")
+    .required("Required")
 });
 
 import {
   GET_CURRENT_USER,
-  ADD_USERSITE_MUTATION,
-} from '../resolvers/resolvers';
+  ADD_USERSITE_MUTATION
+} from "../resolvers/resolvers";
 
 import {
   StyledForm,
   FormContainer,
   ContinueButton,
   ComponentContainer,
-  CenteredH2,
-} from '../styles/styles';
+  CenteredH2
+} from "../styles/styles";
 
 const AddDomain = props => {
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
-    refetchQueries: ['userSites'],
+    refetchQueries: ["userSites"]
   });
 
   const addDomainToUser = async (values, e) => {
-    const { hostname, apiKey, minimumReview } = values;
-    console.log(hostname);
+    const { domain, apiKey, minimumReview } = values;
+    const { host } = url.parse(domain);
     try {
       const res = await addUserSite({
         variables: {
           input: {
-            hostname,
+            hostname: host,
             apiKey,
             minimumReview,
-            runningReport: false,
-          },
-        },
+            runningReport: false
+          }
+        }
       });
 
-      toasts.successMessage('Domain has been added.');
+      toasts.successMessage("Domain has been added.");
     } catch (err) {
       console.log(err);
-      toasts.errorMessage('This domain has already been added to your site.');
+      toasts.errorMessage("This domain has already been added to your site.");
     }
   };
 
@@ -63,27 +64,30 @@ const AddDomain = props => {
       <FormContainer style={{ border: `none` }}>
         <Formik
           initialValues={{
-            hostname: '',
-            apiKey: '',
-            minimumReview: '',
+            domain: "",
+            apiKey: "",
+            minimumReview: ""
           }}
           validationSchema={DomainSchema}
-          onSubmit={(values, e) => addDomainToUser(values, e)}>
+          onSubmit={(values, e) => addDomainToUser(values, e)}
+        >
           {formik => (
             <StyledForm onSubmit={formik.handleSubmit}>
-              <TextInput label="Domain" name="hostname" type="text"></TextInput>
+              <TextInput label="Domain" name="domain" type="text"></TextInput>
               <TextInput label="API Key" name="apiKey" type="text"></TextInput>
               <TextInput
                 label="Min. Review"
                 name="minimumReview"
-                type="number"></TextInput>
+                type="number"
+              ></TextInput>
               {formik.status && formik.status.msg && (
                 <div>{formik.status.msg}</div>
               )}
               <ContinueButton
                 style={{ marginTop: `10px` }}
                 type="submit"
-                value="Add domain">
+                value="Add domain"
+              >
                 Add domain
               </ContinueButton>
             </StyledForm>

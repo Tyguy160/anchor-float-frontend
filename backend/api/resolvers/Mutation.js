@@ -23,9 +23,7 @@ const {
 
 const Mutation = {
   async signUp(parent, { input }, context) {
-    const {
-      email, password, firstName, lastName,
-    } = input;
+    const { email, password, firstName, lastName } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await context.db.users
@@ -42,7 +40,7 @@ const Mutation = {
           },
         },
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         throw new Error(EMAIL_TAKEN);
       });
@@ -64,7 +62,7 @@ const Mutation = {
           email,
         },
       })
-      .catch((err) => {
+      .catch(err => {
         console.log('got the email not found error');
         throw new Error(EMAIL_NOT_FOUND);
       });
@@ -84,23 +82,21 @@ const Mutation = {
   // Create UserSite
   async addUserSite(
     parent,
-    {
-      input: { hostname, apiKey, minimumReview },
-    },
+    { input: { hostname, apiKey, minimumReview } },
     { user, db },
-    info,
+    info
   ) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
     }
 
     // validate hostname
-    // const hostnameValidator = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/g;
-    // const validHostname = hostnameValidator.test(hostname);
+    const hostnameValidator = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/g;
+    const validHostname = hostnameValidator.test(hostname);
 
-    // if (!validHostname) {
-    //   throw new Error(INVALID_HOSTNAME);
-    // }
+    if (!validHostname) {
+      throw new Error(INVALID_HOSTNAME);
+    }
 
     const site = await db.sites.upsert({
       where: { hostname },
@@ -139,13 +135,9 @@ const Mutation = {
   // Update UserSite
   async updateUserSite(
     parent,
-    {
-      input: {
-        hostname, associatesApiKey, minimumReview, runningReport,
-      },
-    },
+    { input: { hostname, associatesApiKey, minimumReview, runningReport } },
     { user, db },
-    info,
+    info
   ) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
@@ -163,7 +155,7 @@ const Mutation = {
     });
 
     if (userSites.length) {
-      userSites.map(async (userSite) => {
+      userSites.map(async userSite => {
         await db.userSites.update({
           where: {
             id: userSite.id,
@@ -180,14 +172,7 @@ const Mutation = {
     return { domain: { hostname } };
   },
 
-  async deleteUserSite(
-    parent,
-    {
-      input: { hostname },
-    },
-    { user, db },
-    info,
-  ) {
+  async deleteUserSite(parent, { input: { hostname } }, { user, db }, info) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
     }
@@ -197,7 +182,7 @@ const Mutation = {
       .findOne({
         where: { hostname },
       })
-      .catch((err) => {
+      .catch(err => {
         throw new Error(SITE_NOT_FOUND);
       });
 
@@ -225,9 +210,11 @@ const Mutation = {
     const { email } = input;
 
     // Check to see if the user exists
-    const user = await context.db.users.findOne({ where: { email } }).catch((err) => {
-      throw new Error(NO_USER_FOUND);
-    });
+    const user = await context.db.users
+      .findOne({ where: { email } })
+      .catch(err => {
+        throw new Error(NO_USER_FOUND);
+      });
 
     // Create a reset token and expiry
     const randomBytesPromisified = promisify(randomBytes);
@@ -248,7 +235,7 @@ const Mutation = {
       html: emailTemplate(
         `Your password reset token is here.
           \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
-            Click here</a> to reset your password.`,
+            Click here</a> to reset your password.`
       ),
     });
 
@@ -338,7 +325,7 @@ const Mutation = {
           id: user.userId,
         },
       })
-      .catch((err) => {
+      .catch(err => {
         throw new Error(EMAIL_NOT_FOUND);
       });
 
@@ -368,17 +355,17 @@ const Mutation = {
           id: user.userId,
         },
       })
-      .catch((err) => {
+      .catch(err => {
         throw new Error(EMAIL_NOT_FOUND);
       });
 
     const customerInfo = dbUser.stripeCustomerId
       ? {
-        customer: dbUser.stripeCustomerId,
-      }
+          customer: dbUser.stripeCustomerId,
+        }
       : {
-        customer_email: dbUser.email,
-      };
+          customer_email: dbUser.email,
+        };
 
     const { stripePlanId } = input;
     let stripeSession;
@@ -392,7 +379,8 @@ const Mutation = {
             },
           ],
         },
-        success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+        success_url:
+          'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: 'http://localhost:3000/cancel',
         client_reference_id: user.userId,
         ...customerInfo,
@@ -424,12 +412,14 @@ const Mutation = {
         [
           {
             id: uuid(),
-            body: JSON.stringify({ url: 'https://www.triplebarcoffee.com/sitemap.xml' }),
+            body: JSON.stringify({
+              url: 'https://www.triplebarcoffee.com/sitemap.xml',
+            }),
           },
         ],
-        (err) => {
+        err => {
           if (err) console.log(err);
-        },
+        }
       );
       await db.users.update({
         where: {
@@ -440,7 +430,8 @@ const Mutation = {
         },
       });
       console.log(
-        `You've queued up a report and now you only have ${accountCredits - 1} credits left`,
+        `You've queued up a report and now you only have ${accountCredits -
+          1} credits left`
       );
     } else {
       throw new Error("You don't have enough credits to generate this report");
