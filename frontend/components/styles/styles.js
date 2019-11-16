@@ -32,7 +32,7 @@ const StyledDropdown = styled.div`
   width: 90%;
 `;
 
-const SignupFormContainer = styled.div`
+const FormContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
   display: flex;
@@ -42,11 +42,11 @@ const SignupFormContainer = styled.div`
   border-radius: 5px;
 `;
 
-const PlanInfoContainer = styled(SignupFormContainer)`
+const PlanInfoContainer = styled(FormContainer)`
   padding: 20px;
 `;
 
-const SignupForm = styled(Form)`
+const StyledForm = styled(Form)`
   display: grid;
   padding: 20px;
   grid-gap: 15px;
@@ -67,12 +67,6 @@ const DeleteButton = styled(StyledButton)`
 `;
 
 const FormInputContainer = styled.div`
-  /* display: flex;
-  justify-self: flex-end;
-  flex-wrap: wrap;
-  label {
-    align-self: center;
-  } */
   display: grid;
 `;
 
@@ -94,7 +88,7 @@ const FormError = styled.div`
   font-size: 0.75em;
 `;
 
-const SignupTextInput = styled(Field)`
+const TextInputField = styled(Field)`
   border-radius: 4px;
   border: 1px solid #dedede;
   height: 2em;
@@ -109,13 +103,7 @@ const SignupTextInput = styled(Field)`
   }
 `;
 
-const SigninFormContainer = styled(SignupFormContainer)``;
-
-const SigninForm = styled(SignupForm)``;
-
 const SigninInputContainer = styled(FormInputContainer)``;
-
-const SigninTextInput = styled(SignupTextInput)``;
 
 const NavBar = styled.div`
   background: #383838;
@@ -419,17 +407,14 @@ const DomainDataContainer = styled.div`
 `;
 
 export {
-  SigninFormContainer,
-  SigninForm,
+  FormContainer,
   SigninInputContainer,
-  SigninTextInput,
-  SignupForm,
   PlanInfoContainer,
-  SignupFormContainer,
+  StyledForm,
   FormInputContainer,
   FormInput,
+  TextInputField,
   FormError,
-  SignupTextInput,
   CenteredHeading,
   ContinueButton,
   NavBar,

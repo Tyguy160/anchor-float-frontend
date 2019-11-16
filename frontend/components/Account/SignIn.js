@@ -5,24 +5,26 @@ import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import Link from 'next/link';
 import toasts from '../Misc/Toasts';
+
+import TextInput from '../Misc/TextInput';
+
 import {
-  SigninFormContainer,
-  SigninForm,
-  SigninInputContainer,
-  SigninTextInput,
+  FormContainer,
+  StyledForm,
   ContinueButton,
   PageSection,
   CenteredHeading,
 } from '../styles/styles';
 
-import { Formik, ErrorMessage } from 'formik';
+import { Formik } from 'formik';
 
 import * as Yup from 'yup';
 
-const SignupSchema = Yup.object().shape({
+const SigninSchema = Yup.object().shape({
   email: Yup.string()
     .email('Your email address is invalid')
     .required('Required'),
+  password: Yup.string().required('Required'),
 });
 
 const SIGNIN_MUTATION = gql`
@@ -47,66 +49,59 @@ const GET_CURRENT_USER = gql`
 `;
 
 const SignIn = () => {
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-
   const [signIn, { error }] = useMutation(SIGNIN_MUTATION, {
     refetchQueries: ['me'],
-    variables: { input: { email, password } },
   });
+
+  const signInToAccount = async (values, e) => {
+    const { email, password } = values;
+    try {
+      const res = await signIn({
+        variables: {
+          input: { email, password },
+        },
+      });
+      toasts.successMessage(`Welcome back!`);
+      Router.push({
+        pathname: '/dashboard',
+      });
+    } catch (err) {
+      toasts.errorMessage('Something went wrong...');
+      console.log(err);
+    }
+  };
 
   return (
     <PageSection>
       <CenteredHeading>Sign into your account</CenteredHeading>
-      <SigninFormContainer>
-        <SigninForm
-          method="post"
-          onSubmit={async e => {
-            e.preventDefault();
-            try {
-              const res = await signIn();
-              toasts.successMessage(`Welcome back!`);
-              Router.push({
-                pathname: '/dashboard',
-              });
-            } catch (err) {
-              toasts.errorMessage('Something went wrong...');
-              console.log(err);
-            }
-          }}>
-          <SigninInputContainer>
-            <label htmlFor="email">
-              Email
-              <SigninTextInput
-                type="email"
-                name="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-            </label>
-          </SigninInputContainer>
-          <SigninInputContainer>
-            <label htmlFor="password">
-              Password
-              <SigninTextInput
-                type="password"
-                name="password"
-                // placeholder="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </label>
-          </SigninInputContainer>
-          <ContinueButton type="submit" value="Sign In!">
-            Sign In!
-          </ContinueButton>
-          <Link href="/request-reset">
-            <i style={{ textAlign: `center`, cursor: `pointer` }}>
-              Forgot password?
-            </i>
-          </Link>
-        </SigninForm>
-      </SigninFormContainer>
+      <FormContainer>
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          validationSchema={SigninSchema}
+          onSubmit={(values, e) => signInToAccount(values, e)}>
+          {formik => (
+            <StyledForm
+              onSubmit={formik => {
+                formik.handleSubmit;
+                formik.resetForm();
+              }}>
+              <TextInput label="Email" name="email" type="email"></TextInput>
+              <TextInput label="Password" name="password" type="password" />
+              <ContinueButton type="submit" value="Sign In!">
+                Sign In!
+              </ContinueButton>
+              <Link href="/request-reset">
+                <i style={{ textAlign: `center`, cursor: `pointer` }}>
+                  Forgot password?
+                </i>
+              </Link>
+            </StyledForm>
+          )}
+        </Formik>
+      </FormContainer>
       <Error error={error} />
     </PageSection>
   );

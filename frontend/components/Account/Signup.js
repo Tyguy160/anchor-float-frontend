@@ -1,19 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
-import Error from '../Misc/ErrorMessage';
 import Router from 'next/router';
 import toasts from '../Misc/Toasts';
-import { Formik, ErrorMessage, useField } from 'formik';
-import styled from 'styled-components';
-
+import { Formik } from 'formik';
+import TextInput from '../Misc/TextInput';
 import * as Yup from 'yup';
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string().max(15, 'Must be 15 characters or less'),
   lastName: Yup.string().max(20, 'Must be 20 characters or less'),
   email: Yup.string()
-    .email('Invalid email address`')
+    .email('Invalid email address')
     .required('Required'),
   password: Yup.string().required('Required'),
   confirmPassword: Yup.string().oneOf(
@@ -23,13 +21,9 @@ const SignupSchema = Yup.object().shape({
 });
 
 import {
-  SignupForm,
+  StyledForm,
   CenteredHeading,
-  SignupFormContainer,
-  FormInputContainer,
-  FormInput,
-  FormError,
-  SignupTextInput,
+  FormContainer,
   ContinueButton,
   PageSection,
 } from '../styles/styles';
@@ -48,24 +42,9 @@ const Signup = () => {
     refetchQueries: ['me'],
   });
 
-  const TextInput = ({ label, ...props }) => {
-    const [field, meta] = useField(props);
-    return (
-      <FormInputContainer>
-        <FormInput>
-          <label htmlFor={props.id || props.name}>{label}</label>
-          <SignupTextInput className="text-input" {...field} {...props} />
-        </FormInput>
-        {meta.touched && meta.error ? (
-          <FormError className="error">{meta.error}</FormError>
-        ) : null}
-      </FormInputContainer>
-    );
-  };
-
-  const createAccount = async e => {
+  const createAccount = async (values, e) => {
     // Get the submitted information
-    const { firstName, lastName, email, password, confirmPassword } = e;
+    const { firstName, lastName, email, password, confirmPassword } = values;
 
     if (password === confirmPassword) {
       // Call the mutation
@@ -92,7 +71,7 @@ const Signup = () => {
   return (
     <PageSection>
       <CenteredHeading>Register</CenteredHeading>
-      <SignupFormContainer>
+      <FormContainer>
         <Formik
           initialValues={{
             firstName: '',
@@ -104,7 +83,7 @@ const Signup = () => {
           validationSchema={SignupSchema}
           onSubmit={(values, e) => createAccount(values, e)}>
           {formik => (
-            <SignupForm onSubmit={formik.handleSubmit}>
+            <StyledForm onSubmit={formik.handleSubmit}>
               <TextInput label="First Name" name="firstName" type="text" />
               <TextInput label="Last Name" name="lastName" type="text" />
               <TextInput label="Email" name="email" type="email" />
@@ -123,10 +102,10 @@ const Signup = () => {
                 disabled={formik.isSubmitting || loading}>
                 Continue
               </ContinueButton>
-            </SignupForm>
+            </StyledForm>
           )}
         </Formik>
-      </SignupFormContainer>
+      </FormContainer>
     </PageSection>
   );
 };

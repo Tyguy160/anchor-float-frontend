@@ -7,7 +7,7 @@ import Error from '../Misc/ErrorMessage';
 import toasts from '../Misc/Toasts';
 import {
   SignupForm,
-  SignupFormContainer,
+  FormContainer,
   SignupInputContainer,
   SignupTextInput,
   ContinueButton,

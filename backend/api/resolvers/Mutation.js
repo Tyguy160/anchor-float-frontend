@@ -95,12 +95,12 @@ const Mutation = {
     }
 
     // validate hostname
-    const hostnameValidator = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/g;
-    const validHostname = hostnameValidator.test(hostname);
+    // const hostnameValidator = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/g;
+    // const validHostname = hostnameValidator.test(hostname);
 
-    if (!validHostname) {
-      throw new Error(INVALID_HOSTNAME);
-    }
+    // if (!validHostname) {
+    //   throw new Error(INVALID_HOSTNAME);
+    // }
 
     const site = await db.sites.upsert({
       where: { hostname },
@@ -140,7 +140,9 @@ const Mutation = {
   async updateUserSite(
     parent,
     {
-      input: { hostname, associatesApiKey, minimumReview },
+      input: {
+        hostname, associatesApiKey, minimumReview, runningReport,
+      },
     },
     { user, db },
     info,

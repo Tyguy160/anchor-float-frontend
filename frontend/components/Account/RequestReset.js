@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import {
-  SigninFormContainer,
+  FormContainer,
   SigninForm,
   SigninInputContainer,
   SigninTextInput,
@@ -37,7 +37,7 @@ const RequestReset = props => {
   return (
     <PageSection>
       <CenteredHeading>Reset your password</CenteredHeading>
-      <SigninFormContainer>
+      <FormContainer>
         <SigninForm
           method="post"
           onSubmit={async e => {
@@ -62,7 +62,7 @@ const RequestReset = props => {
           </SigninInputContainer>
           <ContinueButton value="Reset" type="submit" disabled={data} />
         </SigninForm>
-      </SigninFormContainer>
+      </FormContainer>
       <div style={{ textAlign: `center`, padding: `15px` }}>
         {data ? <i>A reset link has been sent to your email.</i> : ''}
       </div>

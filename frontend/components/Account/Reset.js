@@ -11,7 +11,7 @@ const PageHeading = styled.h2`
   text-align: center;
 `;
 
-const SignupFormContainer = styled.div`
+const FormContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
   display: grid;
@@ -124,7 +124,7 @@ const Reset = props => {
   return (
     <Container handleChange={handleChange}>
       <PageHeading>Reset Password</PageHeading>
-      <SignupFormContainer>
+      <FormContainer>
         <ErrorMessage error={props.error} />
         <SignupForm id="urlForm" onSubmit={e => createAccount(e)}>
           <SignupInputContainer>
@@ -153,7 +153,7 @@ const Reset = props => {
           </SignupInputContainer>
         </SignupForm>
         <ContinueButton type="submit" value="Reset" form="urlForm" />
-      </SignupFormContainer>
+      </FormContainer>
     </Container>
   );
 };
