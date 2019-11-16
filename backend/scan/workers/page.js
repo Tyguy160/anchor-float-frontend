@@ -100,8 +100,8 @@ async function parsePageHandler({ Body }) {
     },
   });
 
-  for (const link of parsedLinks) {
-    await processLink(link, newOrExistingPage);
+  for (const link of parsedLinks) { // eslint-disable-line
+    await processLink(link, newOrExistingPage); // eslint-disable-line
   }
 
   progress.pageParseCompleted({ jobId, taskId });
@@ -138,7 +138,7 @@ async function parsePageHandler({ Body }) {
         });
 
         if (hostname.includes('amazon.com')) {
-          const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i];
+          const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i]; // eslint-disable-line no-useless-escape
 
           let captureGroup;
           const hasAsin = asinRegexs.some((regex) => {
