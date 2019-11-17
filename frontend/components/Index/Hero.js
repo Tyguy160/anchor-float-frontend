@@ -1,5 +1,5 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 
 import {
   HeroContainer,
@@ -7,8 +7,8 @@ import {
   HeroHeadline,
   HeroSubtext,
   HeroCTAButton,
-  HeroCTAButtonContainer,
-} from '../styles/styles';
+  HeroCTAButtonContainer
+} from "../styles/styles";
 
 const Hero = () => {
   return (

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Router from 'next/router';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Router from "next/router";
 import {
   PageSection,
   ComponentContainer,
@@ -8,8 +8,8 @@ import {
   CTAButtonContainer,
   CenteredHeading,
   HeroHeadline,
-  HeroSubtext,
-} from '../components/styles/styles';
+  HeroSubtext
+} from "../components/styles/styles";
 
 const AboutSection = styled.div`
   /* min-height: 50vh; */
@@ -88,7 +88,7 @@ const ReportTypeDescription = styled.div`
 `;
 
 class About extends Component {
-  render() {
+  render(props) {
     return (
       <PageSection>
         <AboutSection>
@@ -184,7 +184,7 @@ class About extends Component {
         <AboutSection>
           <AboutH2>Ready to learn about your links?</AboutH2>
           <CTAButtonContainer>
-            <CTAButton onClick={() => Router.push('/signup')}>
+            <CTAButton onClick={() => Router.push("/signup")}>
               Sign Up
             </CTAButton>
           </CTAButtonContainer>
