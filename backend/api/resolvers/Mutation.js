@@ -207,7 +207,7 @@ const Mutation = {
   },
 
   async requestReset(parent, { input }, context, info) {
-    const { email } = input;
+    const email = input.email.toLowerCase();
 
     // Check to see if the user exists
     const user = await context.db.users

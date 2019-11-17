@@ -1,10 +1,11 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 const GET_CURRENT_USER = gql`
   query me {
     me {
       id
       creditsRemaining
+      email
       plan {
         level
         creditsPerMonth
@@ -110,5 +111,5 @@ export {
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
   CREATE_STRIPE_SESSION_MUTATION,
-  RUN_SITE_REPORT_MUTATION,
+  RUN_SITE_REPORT_MUTATION
 };

@@ -1,9 +1,9 @@
-import React from 'react';
-import ChangePassword from './ChangePassword';
-import SubscriptionInfo from './SubscriptionInfo';
-import { PageSection } from '../styles/styles';
+import React from "react";
+import ChangePassword from "./ChangePassword";
+import SubscriptionInfo from "./SubscriptionInfo";
+import { PageSection } from "../styles/styles";
 
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const AccountContainer = styled.div`
   display: flex;
