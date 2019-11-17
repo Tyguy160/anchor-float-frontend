@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Field, Form } from 'formik';
+import styled from "styled-components";
+import { Field, Form } from "formik";
 
 const StyledButton = styled.button`
   padding: 10px 20px 10px 20px;
@@ -92,7 +92,7 @@ const TextInputField = styled(Field)`
   border-radius: 4px;
   border: 1px solid #dedede;
   height: 2em;
-  font-family: 'Assistant', sans-serif;
+  font-family: "Assistant", sans-serif;
   font-size: 1em;
   outline: none;
   margin-left: 5px;
@@ -183,13 +183,13 @@ const StyledLink = styled.a`
 const HeroContainer = styled.div`
   color: white;
 
-  background-image: url('/water.svg');
+  background-image: url("/water.svg");
   background-repeat: repeat-x;
   background-position: bottom 0 left 50%;
-  background-origin: border-box;
-  height: 100%;
+  /* background-origin: border-box; */
+  height: 100vh;
   width: 100%;
-  position: fixed;
+
   display: grid;
   grid-template-columns: 1fr;
   @media screen and (max-width: 850px) {
@@ -197,7 +197,7 @@ const HeroContainer = styled.div`
   }
   @media screen and (min-width: 851px) {
     background-size: 1000% 65%;
-    grid-template-rows: 35% auto;
+    grid-template-rows: 50% auto;
     align-items: center;
   }
 `;
@@ -449,5 +449,5 @@ export {
   CenteredH2,
   DashboardContainer,
   DomainSettingsContainer,
-  DomainDataContainer,
+  DomainDataContainer
 };
