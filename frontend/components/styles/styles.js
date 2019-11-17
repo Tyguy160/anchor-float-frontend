@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Field, Form } from 'formik';
 
 const StyledButton = styled.button`
   padding: 10px 20px 10px 20px;
@@ -31,7 +32,7 @@ const StyledDropdown = styled.div`
   width: 90%;
 `;
 
-const SignupFormContainer = styled.div`
+const FormContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.125);
   display: flex;
@@ -41,11 +42,11 @@ const SignupFormContainer = styled.div`
   border-radius: 5px;
 `;
 
-const PlanInfoContainer = styled(SignupFormContainer)`
+const PlanInfoContainer = styled(FormContainer)`
   padding: 20px;
 `;
 
-const SignupForm = styled.form`
+const StyledForm = styled(Form)`
   display: grid;
   padding: 20px;
   grid-gap: 15px;
@@ -65,7 +66,11 @@ const DeleteButton = styled(StyledButton)`
   }
 `;
 
-const SignupInputContainer = styled.div`
+const FormInputContainer = styled.div`
+  display: grid;
+`;
+
+const FormInput = styled.div`
   display: flex;
   justify-self: flex-end;
   flex-wrap: wrap;
@@ -74,7 +79,16 @@ const SignupInputContainer = styled.div`
   }
 `;
 
-const SignupTextInput = styled.input`
+const FormError = styled.div`
+  color: red;
+  /* align-self: center; */
+  justify-self: right;
+  padding-right: 10px;
+  padding-top: 5px;
+  font-size: 0.75em;
+`;
+
+const TextInputField = styled(Field)`
   border-radius: 4px;
   border: 1px solid #dedede;
   height: 2em;
@@ -89,13 +103,7 @@ const SignupTextInput = styled.input`
   }
 `;
 
-const SigninFormContainer = styled(SignupFormContainer)``;
-
-const SigninForm = styled(SignupForm)``;
-
-const SigninInputContainer = styled(SignupInputContainer)``;
-
-const SigninTextInput = styled(SignupTextInput)``;
+const SigninInputContainer = styled(FormInputContainer)``;
 
 const NavBar = styled.div`
   background: #383838;
@@ -399,15 +407,14 @@ const DomainDataContainer = styled.div`
 `;
 
 export {
-  SigninFormContainer,
-  SigninForm,
+  FormContainer,
   SigninInputContainer,
-  SigninTextInput,
-  SignupForm,
   PlanInfoContainer,
-  SignupFormContainer,
-  SignupInputContainer,
-  SignupTextInput,
+  StyledForm,
+  FormInputContainer,
+  FormInput,
+  TextInputField,
+  FormError,
   CenteredHeading,
   ContinueButton,
   NavBar,

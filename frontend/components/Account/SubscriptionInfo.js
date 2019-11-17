@@ -1,18 +1,19 @@
 // ! NOT WORKING YET
-import React from 'react';
-import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_CURRENT_USER } from '../resolvers/resolvers';
-import Link from 'next/link';
+import React from "react";
+import styled from "styled-components";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_CURRENT_USER } from "../resolvers/resolvers";
+import Link from "next/link";
 import {
   ComponentContainer,
   CenteredH2,
   StyledButton,
   DeleteButton,
-} from '../styles/styles';
+  PageSection
+} from "../styles/styles";
 
-import ChangePassword from './ChangePassword';
-import PlanComponent from './PlanComponent';
+import ChangePassword from "./ChangePassword";
+import PlanComponent from "./PlanComponent";
 
 const SubscriptionInfoContainer = styled.div`
   /* max-width: 1200px; */
@@ -45,6 +46,7 @@ const ButtonContainer = styled(ComponentContainer)`
 const SubscriptionInfo = () => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
   const plan = data && data.me && data.me.plan;
+  const user = data && data.me;
   const creditsRemaining = data && data.me && data.me.creditsRemaining;
 
   if (loading) {
@@ -58,7 +60,7 @@ const SubscriptionInfo = () => {
     );
   }
 
-  if (!plan || typeof creditsRemaining !== 'number') {
+  if (!plan || typeof creditsRemaining !== "number") {
     return null;
   }
 
@@ -67,15 +69,21 @@ const SubscriptionInfo = () => {
       <CenteredH2>Subscription Information</CenteredH2>
       {!loading && (
         <SubscriptionInfoContainer>
-          <ComponentContainer style={{ border: `none` }}>
+          <ComponentContainer
+          // style={{ border: `none` }}
+          >
             <PlanComponent
               style={{ flex: `1 100%` }}
               planId={plan.stripePlanId}
               planTitle={plan.name}
-              planPrice={plan.stripePlanId == 'free' ? '$0' : 'More than $0'}
-              planCredits={plan.creditsPerMonth}></PlanComponent>
+              planPrice={plan.stripePlanId == "free" ? "$0" : "More than $0"}
+              planCredits={plan.creditsPerMonth}
+            ></PlanComponent>
           </ComponentContainer>
           <SubscriptionDetailsContainer>
+            <ComponentContainer>
+              <PageSection>{user.email}</PageSection>
+            </ComponentContainer>
             <p>
               You have the <b>{plan.name}</b> subscription.
             </p>

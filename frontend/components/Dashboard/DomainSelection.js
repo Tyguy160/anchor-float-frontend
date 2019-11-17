@@ -13,8 +13,6 @@ import Select from 'react-select';
 import {
   StyledButton,
   StyledDropdown,
-  PageSection,
-  SignupFormContainer,
   ComponentContainer,
 } from '../styles/styles';
 

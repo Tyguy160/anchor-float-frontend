@@ -1,128 +1,100 @@
-import React, { useState } from 'react';
-import Error from '../Misc/ErrorMessage';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-import toasts from '../Misc/Toasts';
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import toasts from "../Misc/Toasts";
+import { Formik } from "formik";
+import TextInput from "../Misc/TextInput";
+import * as Yup from "yup";
+import url from "url";
+
+const DomainSchema = Yup.object().shape({
+  domain: Yup.string()
+    .url("Enter a valid URL")
+    .required("Required"),
+  minimumReview: Yup.number("Enter a valid number")
+    .lessThan(5, "Minimum review must be less than 5")
+    .min(0, "Enter a positive number")
+    .required("Required")
+});
 
 import {
   GET_CURRENT_USER,
-  USERSITES_QUERY,
-  ADD_USERSITE_MUTATION,
-} from '../resolvers/resolvers';
+  ADD_USERSITE_MUTATION
+} from "../resolvers/resolvers";
 
 import {
-  SignupForm,
-  SignupFormContainer,
-  SignupInputContainer,
-  SignupTextInput,
+  StyledForm,
+  FormContainer,
   ContinueButton,
-  PageSection,
   ComponentContainer,
-  CenteredH2,
-} from '../styles/styles';
+  CenteredH2
+} from "../styles/styles";
 
 const AddDomain = props => {
-  const [domain, setDomain] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [minimumReview, setMinimumReview] = useState(3);
-
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
   const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
-    variables: {
-      input: { hostname: domain, apiKey, minimumReview, runningReport: false },
-    },
-    refetchQueries: ['userSites'],
+    refetchQueries: ["userSites"]
   });
 
-  const handleChange = (e, hookType) => {
-    const { name, value, type } = e.target;
-    switch (hookType) {
-      case 'NEW_PASSWORD':
-        setPassword(value);
-        break;
-      case 'CONFIRM_NEW_PASSWORD':
-        setConfirmPassword(value);
-        break;
-      case 'DOMAIN':
-        setDomain(value);
-        break;
-      case 'API_KEY':
-        setApiKey(value);
-        break;
-      case 'MIN_REVIEW':
-        setMinimumReview(parseFloat(value));
-        break;
+  const addDomainToUser = async (values, e) => {
+    const { domain, apiKey, minimumReview } = values;
+    const { host } = url.parse(domain);
+    try {
+      const res = await addUserSite({
+        variables: {
+          input: {
+            hostname: host,
+            apiKey,
+            minimumReview,
+            runningReport: false
+          }
+        }
+      });
+
+      toasts.successMessage("Domain has been added.");
+    } catch (err) {
+      console.log(err);
+      toasts.errorMessage("This domain has already been added to your site.");
     }
   };
 
   return (
-    // <PageSection>
     <ComponentContainer>
       <CenteredH2>Add A Domain</CenteredH2>
-      <SignupForm
-        id="addDomainForm"
-        method="post"
-        onSubmit={async e => {
-          e.preventDefault();
-          try {
-            const res = await addUserSite();
-            setDomain('');
-            setApiKey('');
-            toasts.successMessage('Domain has been added.');
-          } catch (err) {
-            console.log(err);
-            toasts.errorMessage(
-              'This domain has already been added to your site.'
-            );
-          }
-        }}>
-        <SignupInputContainer>
-          <label htmlFor="domain">Domain</label>
-          <SignupTextInput
-            id="domainInput"
-            name="domain"
-            type="text"
-            placeholder=""
-            required
-            value={domain}
-            onChange={e => handleChange(e, 'DOMAIN')}
-          />
-        </SignupInputContainer>
-        <SignupInputContainer>
-          <label htmlFor="apiKey">Amazon API Key</label>
-          <SignupTextInput
-            id="apiKeyInput"
-            name="apiKey"
-            type="text"
-            placeholder=""
-            required
-            value={apiKey}
-            onChange={e => handleChange(e, 'API_KEY')}
-          />
-        </SignupInputContainer>
-        <SignupInputContainer>
-          <label htmlFor="minimumReview">
-            Minimum Review: <b>{minimumReview}</b> stars
-          </label>
-          <SignupTextInput
-            id="minimumReviewInput"
-            name="minimumReview"
-            type="range"
-            min="0"
-            max="5"
-            step="0.5"
-            required
-            value={minimumReview}
-            onChange={e => handleChange(e, 'MIN_REVIEW')}
-          />
-        </SignupInputContainer>
-        <ContinueButton type="submit" value="Add domain" form="addDomainForm">
-          Add domain
-        </ContinueButton>
-      </SignupForm>
+      <FormContainer style={{ border: `none` }}>
+        <Formik
+          initialValues={{
+            domain: "",
+            apiKey: "",
+            minimumReview: ""
+          }}
+          validationSchema={DomainSchema}
+          onSubmit={(values, e) => addDomainToUser(values, e)}
+        >
+          {formik => (
+            <StyledForm onSubmit={formik.handleSubmit}>
+              <TextInput label="Domain" name="domain" type="text"></TextInput>
+              <TextInput label="API Key" name="apiKey" type="text"></TextInput>
+              <TextInput
+                label="Min. Review"
+                name="minimumReview"
+                type="number"
+              ></TextInput>
+              {formik.status && formik.status.msg && (
+                <div>{formik.status.msg}</div>
+              )}
+              <ContinueButton
+                style={{ marginTop: `10px` }}
+                type="submit"
+                value="Add domain"
+              >
+                Add domain
+              </ContinueButton>
+            </StyledForm>
+          )}
+        </Formik>
+      </FormContainer>
     </ComponentContainer>
-    // </PageSection>
   );
 };
 
