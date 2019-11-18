@@ -1,3 +1,5 @@
+
+const uuid = require('uuid/v4');
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const productCache = require('../productCache');
@@ -38,29 +40,40 @@ async function createAndConnectProductHandler({ Body }) {
     },
   });
 
-  const productUpdatedRecently = await productCache.isRecentlyUpdated(asin);
+  progress.productConnectCompleted({ jobId, taskId });
 
+  const productIsAlreadyQueued = await productCache.isAlreadyQueued(asin);
+  if (productIsAlreadyQueued) {
+    console.log(`${asin} ALREADY QUEUED - SKIPPING`);
+    return;
+  }
+
+  const productUpdatedRecently = await productCache.isRecentlyUpdated(asin);
   if (productUpdatedRecently) {
     console.log(`${asin} UPDATED RECENTLY - SKIPPING`);
-    progress.productFetchCompleted({ jobId, taskId });
-  } else {
-    console.log(`${asin} NOT UPDATED - ADDING`);
-    productProducer.send(
-      [
-        {
-          id: taskId,
-          body: JSON.stringify({
-            asin,
-            jobId,
-            taskId,
-          }),
-        },
-      ],
-      (err) => {
-        if (err) console.log(err);
-      },
-    );
+    return;
   }
+
+  console.log(`${asin} NOT UPDATED OR QUEUED - ADDING`);
+  const productFetchTaskId = uuid();
+  productProducer.send(
+    [
+      {
+        id: productFetchTaskId,
+        body: JSON.stringify({
+          asin,
+          jobId,
+          taskId: productFetchTaskId,
+        }),
+      },
+    ],
+    (err) => {
+      if (err) console.log(err);
+    },
+  );
+
+  progress.productFetchAdded({ jobId, taskId: productFetchTaskId });
+  productCache.setProductQueued(asin);
 }
 
 module.exports = { createAndConnectProductHandler };

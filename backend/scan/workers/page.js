@@ -148,17 +148,17 @@ async function parsePageHandler({ Body }) {
 
           if (hasAsin) {
             const asin = captureGroup[1];
-            const productTaskId = uuid();
+            const createAndConnectTaskId = uuid();
 
             createAndConnectProducer.send(
               [
                 {
-                  id: taskId,
+                  id: createAndConnectTaskId,
                   body: JSON.stringify({
                     asin,
                     linkId: newLink.id,
                     jobId,
-                    taskId: productTaskId,
+                    taskId: createAndConnectTaskId,
                   }),
                 },
               ],
@@ -167,7 +167,7 @@ async function parsePageHandler({ Body }) {
               },
             );
 
-            progress.productFetchAdded({ jobId, taskId: productTaskId });
+            progress.productConnectAdded({ jobId, taskId: createAndConnectTaskId });
           }
         }
       }
