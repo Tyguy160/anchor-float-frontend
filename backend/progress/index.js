@@ -169,6 +169,7 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
   });
 });
 
+// Create Product and link to Link
 progMan.on(PRODUCT_CONNECT_ADDED, ({ jobId, taskId }) => {
   console.log(`Product connect added: ${jobId}\ntaskId: ${taskId}\n`);
 });
@@ -177,13 +178,13 @@ progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
   console.log(`Product connect completed: ${jobId}\ntaskId: ${taskId}\n`);
 });
 
+// Product
 progMan.on(PRODUCT_FETCH_ADDED, ({ jobId, taskId }) => {
   console.log(`Product fetch added: ${jobId}\ntaskId: ${taskId}\n`);
   const productsKey = `${jobId}:products`;
   redisClient.sadd(productsKey, taskId);
 });
 
-// Product
 progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
   console.log(`Product fetch completed: ${jobId}\ntaskId: ${taskId}\n`);
 
