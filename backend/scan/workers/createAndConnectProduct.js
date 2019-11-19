@@ -22,23 +22,33 @@ async function createAndConnectProductHandler({ Body }) {
   });
 
   if (!dbProduct) {
-    dbProduct = await db.products.create({
-      data: {
-        asin,
-      },
-    });
+    try {
+      dbProduct = await db.products.create({
+        data: {
+          asin,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      throw new Error('There was an error creating a new DB product');
+    }
   }
 
-  await db.links.update({
-    where: { id: linkId },
-    data: {
-      product: {
-        connect: {
-          id: dbProduct.id,
+  try {
+    await db.links.update({
+      where: { id: linkId },
+      data: {
+        product: {
+          connect: {
+            id: dbProduct.id,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (err) {
+    console.log(err);
+    throw new Error('There was an error updating the given link');
+  }
 
   progress.productConnectCompleted({ jobId, taskId });
 
