@@ -25,7 +25,7 @@ const redisClient = redis.createClient({
 const getAsync = promisify(redisClient.get).bind(redisClient);
 
 redisClient.on('connect', () => {
-  console.log('Product cahce connected to Redis');
+  console.log('Product cache connected to Redis');
 });
 
 const PRODUCT_UPDATED_PREFIX = 'product:updated:';
