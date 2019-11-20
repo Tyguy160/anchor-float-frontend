@@ -65,7 +65,11 @@ async function createAndConnectProductHandler({ Body }) {
   }
 
   console.log(`${asin} NOT UPDATED OR QUEUED - ADDING`);
+
   const productFetchTaskId = uuid();
+
+  progress.productFetchAdded({ jobId, taskId: productFetchTaskId });
+
   productProducer.send(
     [
       {
@@ -82,7 +86,6 @@ async function createAndConnectProductHandler({ Body }) {
     },
   );
 
-  progress.productFetchAdded({ jobId, taskId: productFetchTaskId });
   productCache.setProductQueued(asin);
 }
 

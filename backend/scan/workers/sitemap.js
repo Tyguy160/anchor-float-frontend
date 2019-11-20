@@ -54,8 +54,11 @@ async function parseSitemapHandler({ Body }) {
         if (err) console.log(err);
       },
     );
+
     progress.pageParseAdded({ jobId, taskId });
   });
+
+  progress.sitemapParseCompleted({ jobId });
 }
 
 module.exports = { parseSitemapHandler };

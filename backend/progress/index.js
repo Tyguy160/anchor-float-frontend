@@ -118,10 +118,6 @@ progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
   redisClient.hmset(metaKey, { // Set to nothing completed
     userId,
     hostname,
-    sitemapComplete: 0,
-    pagesComplete: 0,
-    connectionsComplete: 0,
-    productsComplete: 0,
   });
 });
 
@@ -133,7 +129,7 @@ progMan.on(SITEMAP_PARSE_COMPLETED, ({ jobId }) => {
     if (length > 0) {
       console.log(`Sitemap complete: ${jobId}`);
       redisClient.hmset(metaKey, {
-        sitemapComplete: 1,
+        sitemapComplete: 'true',
       });
     }
   });
@@ -158,11 +154,13 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
     if (pagesRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'sitemapComplete', (errFromHget, isComplete) => {
+      redisClient.hexists(metaKey, 'sitemapComplete', (errFromHget, isComplete) => {
+        console.log(`sitemapComplete:${isComplete}`);
+
         if (isComplete) {
-          console.log(`Page parsing complete: ${jobId}`);
+          console.log(`Sitemap read complete: ${jobId}`);
           redisClient.hmset(metaKey, {
-            pagesComplete: 1,
+            pagesComplete: 'true',
           });
         }
       });
@@ -190,14 +188,16 @@ progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
     if (connectionsRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'pagesComplete', (errFromHget, isPageParsingComplete) => {
+      redisClient.hexists(metaKey, 'pagesComplete', (errFromHget, isPageParsingComplete) => {
+        console.log(`pagesComplete:${isPageParsingComplete}`);
         if (isPageParsingComplete) {
           redisClient.hmset(metaKey, {
-            connectionsComplete: 1, // connections only complete if page parsing is
+            connectionsComplete: 'true', // connections only complete if page parsing is
           });
 
           // Check if product fetching is already done
-          redisClient.hget(metaKey, 'productsComplete', (errFromOtherHget, isProductFetchingComplete) => {
+          redisClient.hexists(metaKey, 'productsComplete', (errFromOtherHget, isProductFetchingComplete) => {
+            console.log(`productsComplete:${isProductFetchingComplete}`);
             if (isProductFetchingComplete) {
               console.log(`FULL SITE COMPLETE (connections): ${jobId}`);
               progMan.emit(FULL_SITE_COMPLETED, { jobId });
@@ -229,10 +229,12 @@ progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
     if (productsRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'connectionsComplete', (errFromHget, connectionsComplete) => {
+      redisClient.hexists(metaKey, 'connectionsComplete', (errFromHget, connectionsComplete) => {
+        console.log(`connectionsComplete:${connectionsComplete}`);
+
         if (connectionsComplete) {
           redisClient.hmset(metaKey, {
-            productsComplete: 1,
+            productsComplete: 'true',
           });
 
           console.log(`FULL SITE COMPLETE (products): ${jobId}`);
