@@ -12,13 +12,17 @@ const handleWebhook = async (req, res) => {
     stripe.checkout.sessions.retrieve(sessionId, async (err, session) => {
       const { id: stripePlanId } = session.display_items[0].plan;
 
-      const { creditsPerMonth } = await db.plans.findOne({
-        where: { stripePlanId },
-      }).catch(console.log);
+      const { creditsPerMonth } = await db.plans
+        .findOne({
+          where: { stripePlanId },
+        })
+        .catch(console.log);
 
-      const { creditsRemaining } = await db.users.findOne({
-        where: { id: session.client_reference_id },
-      }).catch(console.log);
+      const { creditsRemaining } = await db.users
+        .findOne({
+          where: { id: session.client_reference_id },
+        })
+        .catch(console.log);
 
       const updatedCreditsRemaining = creditsPerMonth + creditsRemaining;
 
@@ -31,6 +35,21 @@ const handleWebhook = async (req, res) => {
           creditsRemaining: updatedCreditsRemaining,
         },
       });
+    });
+  }
+
+  if (req.body.type === 'customer.subscription.updated') {
+    const db = await getDBConnection();
+    const stripeSubscription = req.body.data.object;
+
+    // Update plan ID in DB
+    await db.users.update({
+      where: { stripeCustomerId: stripeSubscription.customer },
+      data: {
+        plan: {
+          connect: { stripePlanId: stripeSubscription.plan.id },
+        },
+      },
     });
   }
 };

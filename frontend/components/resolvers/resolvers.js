@@ -94,6 +94,16 @@ const CREATE_STRIPE_SESSION_MUTATION = gql`
   }
 `;
 
+const UPDATE_STRIPE_SUBSCRIPTION_MUTATION = gql`
+  mutation UPDATE_STRIPE_SUBSCRIPTION_MUTATION(
+    $input: UpdateStripeSubscriptionInput!
+  ) {
+    updateStripeSubscription(input: $input) {
+      message
+    }
+  }
+`;
+
 const RUN_SITE_REPORT_MUTATION = gql`
   mutation RUN_SITE_REPORT_MUTATION($input: RunSiteReportInput!) {
     runSiteReport(input: $input) {
@@ -111,5 +121,6 @@ export {
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
   CREATE_STRIPE_SESSION_MUTATION,
+  UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
   RUN_SITE_REPORT_MUTATION
 };

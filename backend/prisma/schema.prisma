@@ -20,8 +20,8 @@ model User {
   resetTokenExpiry     Int?
   sites                UserSite[]
   plan                 Plan
-  stripeSubscriptionId String?
-  stripeCustomerId     String?
+  stripeSubscriptionId String?    @unique
+  stripeCustomerId     String?    @unique
   creditsRemaining     Int        @default(0)
 }
 

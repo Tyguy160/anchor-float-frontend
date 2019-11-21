@@ -356,19 +356,21 @@ const Mutation = {
         },
       })
       .catch(err => {
-        throw new Error(EMAIL_NOT_FOUND);
+        throw new Error('Unknown database error');
       });
 
-    const customerInfo = dbUser.stripeCustomerId
-      ? {
-          customer: dbUser.stripeCustomerId,
-        }
-      : {
-          customer_email: dbUser.email,
-        };
+    if (!dbUser) {
+      throw new Error(EMAIL_NOT_FOUND);
+    }
+
+    if (dbUser.stripeCustomerId) {
+      throw new Error('A subscription for this account already exists');
+    }
 
     const { stripePlanId } = input;
     let stripeSession;
+
+    // Create a new subscription
     try {
       stripeSession = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
@@ -383,15 +385,58 @@ const Mutation = {
           'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: 'http://localhost:3000/cancel',
         client_reference_id: user.userId,
-        ...customerInfo,
+        customer_email: dbUser.email,
       });
     } catch (err) {
       console.log(err);
       throw new Error('There was an error creating a checkout session');
     }
-
     return { stripeSessionId: stripeSession.id };
   },
+  async updateStripeSubscription(parent, { input }, { user, db }) {
+    if (!user) {
+      throw new Error(SIGN_IN_REQUIRED);
+    }
+
+    const dbUser = await db.users
+      .findOne({
+        where: {
+          id: user.userId,
+        },
+      })
+      .catch(err => {
+        throw new Error('Unknown database error');
+      });
+
+    if (!dbUser) {
+      throw new Error(EMAIL_NOT_FOUND);
+    }
+
+    if (!dbUser.stripeCustomerId) {
+      throw new Error('An existing subscription was not found');
+    }
+
+    const { stripePlanId } = input;
+
+    // Get the subscription item ID
+    const subscriptionList = await stripe.subscriptions.list({
+      customer: dbUser.stripeCustomerId,
+    });
+
+    if (!subscriptionList) {
+      throw new Error('Error encountered with payment processor');
+    }
+
+    const subscriptionItemId = subscriptionList.data[0].items.data[0].id;
+
+    const res = await stripe.subscriptions.update(dbUser.stripeSubscriptionId, {
+      prorate: false,
+      items: [{ id: subscriptionItemId, plan: stripePlanId }],
+    });
+
+    return { message: `Changed to the ${res.plan.nickname} plan` };
+  },
+
   async runSiteReport(parent, { input }, { user, db }) {
     const dbUser = await db.users
       .findOne({
