@@ -82,9 +82,7 @@ async function parsePageHandler({ Body }) {
   // Delete existing links before parsing new ones
   await db.links.deleteMany({ where: { page: { id: newOrExistingPage.id } } }, '{ count }', () => console.log('deleted links'));
 
-  console.log('getting page data...');
   const { pageTitle, links, wordCount } = await parseMarkup(response.data);
-  console.log(`Page title: ${pageTitle}, links: ${links.length}, word count: ${wordCount}`);
   const parsedLinks = links.map((link) => {
     const parsedHref = parseHref(link.href, url.origin);
     return { ...link, parsedHref };
