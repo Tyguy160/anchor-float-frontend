@@ -54,13 +54,11 @@ async function createAndConnectProductHandler({ Body }) {
 
   const productIsAlreadyQueued = await productCache.isAlreadyQueued(asin);
   if (productIsAlreadyQueued) {
-    console.log(`${asin} ALREADY QUEUED - SKIPPING`);
     return;
   }
 
   const productUpdatedRecently = await productCache.isRecentlyUpdated(asin);
   if (productUpdatedRecently) {
-    console.log(`${asin} UPDATED RECENTLY - SKIPPING`);
     return;
   }
 

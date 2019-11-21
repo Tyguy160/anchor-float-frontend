@@ -160,16 +160,12 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
 
 // Create Product and link to Link
 progMan.on(PRODUCT_CONNECT_ADDED, ({ jobId, taskId }) => {
-  console.log(`Product connect added: ${jobId}\ntaskId: ${taskId}\n`);
-
   const connectKey = `${jobId}:connections`;
 
   redisClient.sadd(connectKey, taskId);
 });
 
 progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
-  console.log(`Product connect completed: ${jobId}\ntaskId: ${taskId}\n`);
-
   const connectKey = `${jobId}:connections`;
 
   redisClient.srem(connectKey, taskId);
