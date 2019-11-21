@@ -1,3 +1,7 @@
+dev-up:
+	docker-compose up --build
+dev-down:
+	docker-compose down -v
 migrate:
 	docker build -f ./backend/prisma/Dockerfile -t dbmigrateandseed ./backend
 	docker run -it --rm --network=associate-engine_default dbmigrateandseed
