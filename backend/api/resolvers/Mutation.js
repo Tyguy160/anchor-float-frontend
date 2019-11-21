@@ -357,7 +357,7 @@ const Mutation = {
           id: user.userId,
         },
       })
-      .catch((err) => {
+      .catch(() => {
         throw new Error('Unknown database error');
       });
 
