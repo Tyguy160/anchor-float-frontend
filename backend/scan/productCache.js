@@ -25,13 +25,13 @@ const redisClient = redis.createClient({
 const getAsync = promisify(redisClient.get).bind(redisClient);
 
 redisClient.on('connect', () => {
-  console.log('Product cahce connected to Redis');
+  console.log('Product cache connected to Redis');
 });
 
-const PRODUCT_PREFIX = 'product:';
+const PRODUCT_UPDATED_PREFIX = 'product:updated:';
 
 async function isRecentlyUpdated(asin) {
-  const key = PRODUCT_PREFIX + asin;
+  const key = PRODUCT_UPDATED_PREFIX + asin;
 
   const value = await getAsync(key);
 
@@ -43,13 +43,42 @@ async function isRecentlyUpdated(asin) {
 }
 
 function setProductUpdated(asin) {
-  const key = PRODUCT_PREFIX + asin;
+  const key = PRODUCT_UPDATED_PREFIX + asin;
   const ONE_DAY = 86400;
 
   redisClient.setex(key, ONE_DAY, Date.now().toString());
 }
 
+const PRODUCT_QUEUED_PREFIX = 'product:queued:';
+
+function setProductQueued(asin) {
+  const key = PRODUCT_QUEUED_PREFIX + asin;
+
+  redisClient.set(key, 'true');
+}
+
+async function isAlreadyQueued(asin) {
+  const key = PRODUCT_QUEUED_PREFIX + asin;
+
+  const value = await getAsync(key);
+
+  if (!value) {
+    return false;
+  }
+
+  return true;
+}
+
+function deleteProductQueued(asin) {
+  const key = PRODUCT_QUEUED_PREFIX + asin;
+
+  redisClient.del(key);
+}
+
 module.exports = {
   isRecentlyUpdated,
   setProductUpdated,
+  setProductQueued,
+  isAlreadyQueued,
+  deleteProductQueued,
 };

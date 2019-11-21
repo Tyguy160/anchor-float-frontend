@@ -82,9 +82,7 @@ async function parsePageHandler({ Body }) {
   // Delete existing links before parsing new ones
   await db.links.deleteMany({ where: { page: { id: newOrExistingPage.id } } }, '{ count }', () => console.log('deleted links'));
 
-  console.log('getting page data...');
   const { pageTitle, links, wordCount } = await parseMarkup(response.data);
-  console.log(`Page title: ${pageTitle}, links: ${links.length}, word count: ${wordCount}`);
   const parsedLinks = links.map((link) => {
     const parsedHref = parseHref(link.href, url.origin);
     return { ...link, parsedHref };
@@ -100,8 +98,8 @@ async function parsePageHandler({ Body }) {
     },
   });
 
-  for (const link of parsedLinks) {
-    await processLink(link, newOrExistingPage);
+  for (const link of parsedLinks) { // eslint-disable-line
+    await processLink(link, newOrExistingPage); // eslint-disable-line
   }
 
   progress.pageParseCompleted({ jobId, taskId });
@@ -138,7 +136,7 @@ async function parsePageHandler({ Body }) {
         });
 
         if (hostname.includes('amazon.com')) {
-          const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i];
+          const asinRegexs = [/\/dp\/([^\?#\/]+)/i, /\/gp\/product\/([^\?#\/]+)/i]; // eslint-disable-line no-useless-escape
 
           let captureGroup;
           const hasAsin = asinRegexs.some((regex) => {
@@ -148,17 +146,17 @@ async function parsePageHandler({ Body }) {
 
           if (hasAsin) {
             const asin = captureGroup[1];
-            const productTaskId = uuid();
+            const createAndConnectTaskId = uuid();
 
             createAndConnectProducer.send(
               [
                 {
-                  id: taskId,
+                  id: createAndConnectTaskId,
                   body: JSON.stringify({
                     asin,
                     linkId: newLink.id,
                     jobId,
-                    taskId: productTaskId,
+                    taskId: createAndConnectTaskId,
                   }),
                 },
               ],
@@ -167,7 +165,7 @@ async function parsePageHandler({ Body }) {
               },
             );
 
-            progress.productFetchAdded({ jobId, taskId: productTaskId });
+            progress.productConnectAdded({ jobId, taskId: createAndConnectTaskId });
           }
         }
       }

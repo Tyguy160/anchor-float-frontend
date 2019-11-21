@@ -35,6 +35,9 @@ const SITEMAP_PARSE_COMPLETED = 'sitemapParseCompleted';
 const PAGE_PARSE_ADDED = 'pageParseAdded';
 const PAGE_PARSE_COMPLETED = 'pageParseCompleted';
 
+const PRODUCT_CONNECT_ADDED = 'productConnectAdded';
+const PRODUCT_CONNECT_COMPLETED = 'productConnectCompleted';
+
 const PRODUCT_FETCH_ADDED = 'productFetchAdded';
 const PRODUCT_FETCH_COMPLETED = 'productFetchCompleted';
 
@@ -55,6 +58,14 @@ class ProgressManager extends EventEmitter {
 
   pageParseCompleted(eventInfo) {
     this.emit(PAGE_PARSE_COMPLETED, eventInfo);
+  }
+
+  productConnectAdded(eventInfo) {
+    this.emit(PRODUCT_CONNECT_ADDED, eventInfo);
+  }
+
+  productConnectCompleted(eventInfo) {
+    this.emit(PRODUCT_CONNECT_COMPLETED, eventInfo);
   }
 
   productFetchAdded(eventInfo) {
@@ -97,7 +108,7 @@ progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
 // Sitemap
 progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
   if (!userId) {
-    console.log('No userId on sitemap job. No progress tracking');
+    console.log('ERROR: No userId on sitemap job. No progress tracking will occur.');
     return;
   }
 
@@ -107,29 +118,21 @@ progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
   redisClient.hmset(metaKey, { // Set to nothing completed
     userId,
     hostname,
-    sitemapComplete: 0,
-    pagesComplete: 0,
-    productsComplete: 0,
   });
 });
 
 progMan.on(SITEMAP_PARSE_COMPLETED, ({ jobId }) => {
-  console.log(`Sitemap parse completed for jobId: ${jobId}\n`);
-
   const metaKey = `${jobId}:meta`;
   redisClient.hlen(metaKey, (err, length) => { // Make sure job is being tracked
     if (length > 0) {
-      console.log(`Sitemap complete: ${jobId}`);
       redisClient.hmset(metaKey, {
-        sitemapComplete: 1,
+        sitemapComplete: 'true',
       });
     }
   });
 });
 
 progMan.on(PAGE_PARSE_ADDED, ({ jobId, taskId }) => {
-  console.log(`Page parse added: ${jobId}\ntaskId: ${taskId}\n`);
-
   const pagesKey = `${jobId}:pages`;
   redisClient.sadd(pagesKey, taskId);
 });
@@ -138,19 +141,16 @@ progMan.on(PAGE_PARSE_ADDED, ({ jobId, taskId }) => {
 progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
   const pagesKey = `${jobId}:pages`;
 
-  console.log(`Page parse completed: ${jobId}\ntaskId: ${taskId}\n`);
-
   redisClient.srem(pagesKey, taskId);
 
   redisClient.scard(pagesKey, (err, pagesRemainingCount) => {
     if (pagesRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'sitemapComplete', (err, isComplete) => {
+      redisClient.hexists(metaKey, 'sitemapComplete', (errFromHget, isComplete) => {
         if (isComplete) {
-          console.log(`Page parsing complete: ${jobId}`);
           redisClient.hmset(metaKey, {
-            pagesComplete: 1,
+            pagesComplete: 'true',
           });
         }
       });
@@ -158,16 +158,49 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
   });
 });
 
-progMan.on(PRODUCT_FETCH_ADDED, ({ jobId, taskId }) => {
-  console.log(`Product fetch added: ${jobId}\ntaskId: ${taskId}\n`);
-  const productsKey = `${jobId}:products`;
-  redisClient.sadd(productsKey, taskId);
+// Create Product and link to Link
+progMan.on(PRODUCT_CONNECT_ADDED, ({ jobId, taskId }) => {
+  const connectKey = `${jobId}:connections`;
+
+  redisClient.sadd(connectKey, taskId);
+});
+
+progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
+  const connectKey = `${jobId}:connections`;
+
+  redisClient.srem(connectKey, taskId);
+
+  redisClient.scard(connectKey, (err, connectionsRemainingCount) => {
+    if (connectionsRemainingCount === 0) {
+      const metaKey = `${jobId}:meta`;
+
+      redisClient.hexists(metaKey, 'pagesComplete', (errFromHget, isPageParsingComplete) => {
+        if (isPageParsingComplete) {
+          redisClient.hmset(metaKey, {
+            connectionsComplete: 'true', // connections only complete if page parsing is
+          });
+
+          // Check if product fetching is already done
+          redisClient.hexists(metaKey, 'productsComplete', (errFromOtherHget, isProductFetchingComplete) => {
+            if (isProductFetchingComplete) {
+              console.log(`FULL SITE COMPLETE (connections): ${jobId}`);
+              progMan.emit(FULL_SITE_COMPLETED, { jobId });
+            }
+          });
+        }
+      });
+    }
+  });
 });
 
 // Product
-progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
-  console.log(`Product fetch completed: ${jobId}\ntaskId: ${taskId}\n`);
+progMan.on(PRODUCT_FETCH_ADDED, ({ jobId, taskId }) => {
+  const productsKey = `${jobId}:products`;
 
+  redisClient.sadd(productsKey, taskId);
+});
+
+progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
   const productsKey = `${jobId}:products`;
 
   redisClient.srem(productsKey, taskId);
@@ -176,13 +209,13 @@ progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
     if (productsRemainingCount === 0) {
       const metaKey = `${jobId}:meta`;
 
-      redisClient.hget(metaKey, 'pagesComplete', (errFromHget, isComplete) => {
-        if (isComplete) {
+      redisClient.hexists(metaKey, 'connectionsComplete', (errFromHget, connectionsComplete) => {
+        if (connectionsComplete) {
           redisClient.hmset(metaKey, {
-            productsComplete: 1,
+            productsComplete: 'true',
           });
 
-          console.log(`FULL SITE COMPLETE: ${jobId}`);
+          console.log(`FULL SITE COMPLETE (products): ${jobId}`);
           progMan.emit(FULL_SITE_COMPLETED, { jobId });
         }
       });

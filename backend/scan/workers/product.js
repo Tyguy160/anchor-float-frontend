@@ -89,7 +89,9 @@ async function parseProductHandler(messages) {
           name,
         },
       });
+
       productCache.setProductUpdated(asin);
+      productCache.deleteProductQueued(asin);
 
       const tasksForProduct = asinToMessageDataMap[asin];
 

@@ -1,3 +1,5 @@
+
+const uuid = require('uuid/v4');
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const productCache = require('../productCache');
@@ -20,47 +22,67 @@ async function createAndConnectProductHandler({ Body }) {
   });
 
   if (!dbProduct) {
-    dbProduct = await db.products.create({
+    try {
+      dbProduct = await db.products.create({
+        data: {
+          asin,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      throw new Error('There was an error creating a new DB product');
+    }
+  }
+
+  try {
+    await db.links.update({
+      where: { id: linkId },
       data: {
-        asin,
+        product: {
+          connect: {
+            id: dbProduct.id,
+          },
+        },
       },
     });
+  } catch (err) {
+    console.log(err);
+    throw new Error('There was an error updating the given link');
   }
 
-  await db.links.update({
-    where: { id: linkId },
-    data: {
-      product: {
-        connect: {
-          id: dbProduct.id,
-        },
-      },
-    },
-  });
+  progress.productConnectCompleted({ jobId, taskId });
+
+  const productIsAlreadyQueued = await productCache.isAlreadyQueued(asin);
+  if (productIsAlreadyQueued) {
+    return;
+  }
 
   const productUpdatedRecently = await productCache.isRecentlyUpdated(asin);
-
   if (productUpdatedRecently) {
-    console.log(`${asin} UPDATED RECENTLY - SKIPPING`);
-    progress.productFetchCompleted({ jobId, taskId });
-  } else {
-    console.log(`${asin} NOT UPDATED - ADDING`);
-    productProducer.send(
-      [
-        {
-          id: taskId,
-          body: JSON.stringify({
-            asin,
-            jobId,
-            taskId,
-          }),
-        },
-      ],
-      (err) => {
-        if (err) console.log(err);
-      },
-    );
+    return;
   }
+
+  const productFetchTaskId = uuid();
+
+  progress.productFetchAdded({ jobId, taskId: productFetchTaskId });
+
+  productProducer.send(
+    [
+      {
+        id: productFetchTaskId,
+        body: JSON.stringify({
+          asin,
+          jobId,
+          taskId: productFetchTaskId,
+        }),
+      },
+    ],
+    (err) => {
+      if (err) console.log(err);
+    },
+  );
+
+  productCache.setProductQueued(asin);
 }
 
 module.exports = { createAndConnectProductHandler };
