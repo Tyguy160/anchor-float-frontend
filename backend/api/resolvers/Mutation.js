@@ -458,40 +458,34 @@ const Mutation = {
 
 
     const accountCredits = dbUser.creditsRemaining;
-    console.log(accountCredits);
 
-    if (accountCredits > 0) {
-      sitemapProducer.send(
-        [
-          {
-            id: uuid(),
-            body: JSON.stringify({
-              userId,
-              url: 'https://www.aroundthebats.com/sitemap_index.xml',
-            }),
-          },
-        ],
-        (err) => {
-          if (err) console.log(err);
-        },
-      );
-
-      await db.users.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          creditsRemaining: accountCredits - 1,
-        },
-      });
-      console.log(
-        `You've queued up a report and now you only have ${accountCredits
-          - 1} credits left`,
-      );
-    } else {
+    if (!(accountCredits > 0)) {
       throw new Error("You don't have enough credits to generate this report");
     }
-    return 0;
+
+    sitemapProducer.send(
+      [
+        {
+          id: uuid(),
+          body: JSON.stringify({
+            userId,
+            url: 'https://www.aroundthebats.com/sitemap_index.xml',
+          }),
+        },
+      ],
+      (err) => {
+        if (err) console.log(err);
+      },
+    );
+
+    await db.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        creditsRemaining: accountCredits - 1,
+      },
+    });
   },
 };
 
