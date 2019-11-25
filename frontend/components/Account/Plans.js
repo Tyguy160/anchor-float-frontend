@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import Link from "next/link";
-import { useMutation, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import toasts from "../Misc/Toasts";
-import PlanComponent from "./PlanComponent";
-import Router from "next/router";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import toasts from '../Misc/Toasts';
+import PlanComponent from './PlanComponent';
+import Router from 'next/router';
 
 import {
   GET_CURRENT_USER,
   CREATE_STRIPE_SESSION_MUTATION,
-  UPDATE_STRIPE_SUBSCRIPTION_MUTATION
-} from "../resolvers/resolvers";
+  UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
+} from '../resolvers/resolvers';
 
 import {
   PricingContainer,
@@ -26,12 +26,12 @@ import {
   StyledHeading,
   PageSection,
   CenteredHeading,
-  ContinueButton
-} from "../styles/styles";
+  ContinueButton,
+} from '../styles/styles';
 
 const Plans = () => {
   const currentUser = useQuery(GET_CURRENT_USER);
-  const [selectedPlan, setSelectedPlan] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState('');
   const [stripeSubscriptionId, setStripeSubscriptionId] = useState(
     currentUser.stripeSubscriptionId
   );
@@ -39,7 +39,7 @@ const Plans = () => {
   const [createStripeSession, { error, data }] = useMutation(
     CREATE_STRIPE_SESSION_MUTATION,
     {
-      variables: { input: { stripePlanId: selectedPlan } }
+      variables: { input: { stripePlanId: selectedPlan } },
     }
   );
 
@@ -47,8 +47,8 @@ const Plans = () => {
     UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
     {
       variables: {
-        input: { stripePlanId: selectedPlan }
-      }
+        input: { stripePlanId: selectedPlan },
+      },
     }
   );
 
@@ -58,31 +58,32 @@ const Plans = () => {
   };
 
   const handlePlanContinue = async e => {
-    if (selectedPlan === "") {
+    if (selectedPlan === '') {
       return;
     }
 
     // Update plan or create new subscription
-
     console.log(currentUser.data.me.plan.level);
     if (currentUser.data.me.plan.level > 0) {
+      console.log('Updating subscription');
       let res = await updateStripeSubscription();
       console.log(res);
       if (res) {
         Router.push({
-          pathname: "/account"
+          pathname: '/account',
         });
         toasts.successMessage(res.data.updateStripeSubscription.message);
       } else {
-        toasts.errorMessage("Something went wrong...");
+        toasts.errorMessage('Something went wrong...');
       }
     } else {
+      console.log('Creating new subscription');
       let res = await createStripeSession();
-      var stripe = Stripe("pk_test_mqMxPm3hGXqDIiwIVvAME4Af");
+      var stripe = Stripe('pk_test_mqMxPm3hGXqDIiwIVvAME4Af');
 
       stripe
         .redirectToCheckout({
-          sessionId: res.data.createStripeSession.stripeSessionId
+          sessionId: res.data.createStripeSession.stripeSessionId,
         })
         .then(function(result) {
           if (result.error) {
@@ -126,13 +127,12 @@ const Plans = () => {
         type="submit"
         value="Continue"
         onClick={handlePlanContinue}
-        disabled={!selectedPlan}
-      >
+        disabled={!selectedPlan}>
         {!currentUser.loading && currentUser.data.me
           ? currentUser.data.me.plan.level == 0
             ? `Continue`
             : `Update`
-          : "Continue"}
+          : 'Continue'}
       </ContinueButton>
     </PageSection>
   );
