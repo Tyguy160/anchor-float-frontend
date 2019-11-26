@@ -1,19 +1,23 @@
-// ! NOT WORKING YET
-import React from "react";
-import styled from "styled-components";
-import { useQuery } from "@apollo/react-hooks";
-import { GET_CURRENT_USER } from "../resolvers/resolvers";
-import Link from "next/link";
+import React from 'react';
+import styled from 'styled-components';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import toasts from '../Misc/Toasts';
+import {
+  GET_CURRENT_USER,
+  DELETE_STRIPE_SUBSCRIPTION_MUTATION,
+} from '../resolvers/resolvers';
+import Link from 'next/link';
 import {
   ComponentContainer,
   CenteredH2,
   StyledButton,
   DeleteButton,
-  PageSection
-} from "../styles/styles";
+  PageSection,
+} from '../styles/styles';
 
-import ChangePassword from "./ChangePassword";
-import PlanComponent from "./PlanComponent";
+import ChangePassword from './ChangePassword';
+import PlanComponent from './PlanComponent';
 
 const SubscriptionInfoContainer = styled.div`
   /* max-width: 1200px; */
@@ -45,6 +49,19 @@ const ButtonContainer = styled(ComponentContainer)`
 
 const SubscriptionInfo = () => {
   const { loading, data } = useQuery(GET_CURRENT_USER);
+  const [deleteStripeSubscription] = useMutation(
+    DELETE_STRIPE_SUBSCRIPTION_MUTATION
+  );
+
+  const cancelSubsciption = async () => {
+    const res = await deleteStripeSubscription();
+    console.log(res);
+    if (res) {
+      toasts.successMessage(res.data.deleteStripeSubscription.message);
+    } else {
+      toasts.errorMessage('Something went wrong...');
+    }
+  };
   const plan = data && data.me && data.me.plan;
   const user = data && data.me;
   const creditsRemaining = data && data.me && data.me.creditsRemaining;
@@ -60,7 +77,7 @@ const SubscriptionInfo = () => {
     );
   }
 
-  if (!plan || typeof creditsRemaining !== "number") {
+  if (!plan || typeof creditsRemaining !== 'number') {
     return null;
   }
 
@@ -76,9 +93,8 @@ const SubscriptionInfo = () => {
               style={{ flex: `1 100%` }}
               planId={plan.stripePlanId}
               planTitle={plan.name}
-              planPrice={plan.stripePlanId == "free" ? "$0" : "More than $0"}
-              planCredits={plan.creditsPerMonth}
-            ></PlanComponent>
+              planPrice={plan.stripePlanId == 'free' ? '$0' : 'More than $0'}
+              planCredits={plan.creditsPerMonth}></PlanComponent>
           </ComponentContainer>
           <SubscriptionDetailsContainer>
             <ComponentContainer>
@@ -100,7 +116,9 @@ const SubscriptionInfo = () => {
                   Change Plan
                 </StyledButton>
               </Link>
-              <DeleteButton style={{ width: `100%` }}>
+              <DeleteButton
+                style={{ width: `100%` }}
+                onClick={cancelSubsciption}>
                 Cancel Subscription
               </DeleteButton>
             </ButtonContainer>

@@ -25,6 +25,7 @@ const typeDefs = gql`
     updateStripeSubscription(
       input: UpdateStripeSubscriptionInput!
     ): SuccessMessage
+    deleteStripeSubscription: SuccessMessage
     runSiteReport(input: RunSiteReportInput!): RunSiteReportPayload
   }
 

@@ -447,6 +447,69 @@ const Mutation = {
 
     return { message: `Changed to the ${res.plan.nickname} plan` };
   },
+  async deleteStripeSubscription(parent, { input }, { user, db }) {
+    if (!user) {
+      throw new Error(SIGN_IN_REQUIRED);
+    }
+
+    const { userId } = user;
+
+    const dbUser = await db.users
+      .findOne({
+        where: {
+          id: userId,
+        },
+      })
+      .catch(() => {
+        throw new Error('Unknown database error');
+      });
+
+    if (!dbUser) {
+      throw new Error(EMAIL_NOT_FOUND);
+    }
+
+    if (!dbUser.stripeCustomerId) {
+      throw new Error('An existing subscription was not found');
+    }
+
+    // Get the subscription item ID
+    let subscriptionList = await stripe.subscriptions.list({
+      customer: dbUser.stripeCustomerId,
+    });
+
+    if (!subscriptionList) {
+      throw new Error('Error encountered with payment processor');
+    }
+
+    // Get the subscription ID
+    const subscriptionItemId = subscriptionList.data[0].items.data[0].id;
+
+    // Ask Stripe to cancel the plan
+    const res = await stripe.subscriptions.del(dbUser.stripeSubscriptionId);
+    console.log(res);
+
+    // Verify the cancellation
+    subscriptionList = await stripe.subscriptions.list({
+      customer: dbUser.stripeCustomerId,
+    });
+    console.log(subscriptionList.data.length);
+    if (subscriptionList.data.length === 0) {
+      // Update the user with the free plan
+      console.log('Switching to the free plan');
+      await db.users.update({
+        where: { stripeCustomerId: dbUser.stripeCustomerId },
+        data: {
+          plan: {
+            connect: { stripePlanId: 'free' },
+          },
+        },
+      });
+    } else {
+      throw Error('Still have a subscription...');
+    }
+
+    return { message: `Canceled your ${res.plan.nickname} plan` };
+  },
 
   async runSiteReport(parent, args, { user, db }) {
     if (!user) {
