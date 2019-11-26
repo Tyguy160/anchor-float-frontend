@@ -359,30 +359,36 @@ const Mutation = {
       throw new Error(EMAIL_NOT_FOUND);
     }
 
+    const { stripePlanId } = input;
+    let stripeCheckoutCreateObject = {
+      payment_method_types: ['card'],
+      subscription_data: {
+        items: [
+          {
+            plan: stripePlanId,
+          },
+        ],
+      },
+      success_url:
+        'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'http://localhost:3000/cancel',
+      client_reference_id: user.userId,
+    };
+
     if (dbUser.stripeCustomerId) {
-      throw new Error('A subscription for this account already exists');
+      // pass the existing Stripe customer id
+      stripeCheckoutCreateObject.customer = dbUser.stripeCustomerId;
+    } else {
+      stripeCheckoutCreateObject.customer_email = dbUser.email;
     }
 
-    const { stripePlanId } = input;
     let stripeSession;
 
     // Create a new subscription
     try {
-      stripeSession = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        subscription_data: {
-          items: [
-            {
-              plan: stripePlanId,
-            },
-          ],
-        },
-        success_url:
-          'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: 'http://localhost:3000/cancel',
-        client_reference_id: user.userId,
-        customer_email: dbUser.email,
-      });
+      stripeSession = await stripe.checkout.sessions.create(
+        stripeCheckoutCreateObject
+      );
     } catch (err) {
       console.log(err);
       throw new Error('There was an error creating a checkout session');
