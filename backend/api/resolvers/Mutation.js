@@ -23,9 +23,7 @@ const {
 
 const Mutation = {
   async signUp(parent, { input }, context) {
-    const {
-      email, password, firstName, lastName,
-    } = input;
+    const { email, password, firstName, lastName } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await context.db.users
@@ -42,7 +40,7 @@ const Mutation = {
           },
         },
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         throw new Error(EMAIL_TAKEN);
       });
@@ -84,7 +82,7 @@ const Mutation = {
   async addUserSite(
     parent,
     { input: { hostname, apiKey, minimumReview } },
-    { user, db },
+    { user, db }
   ) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
@@ -135,12 +133,8 @@ const Mutation = {
   // Update UserSite
   async updateUserSite(
     parent,
-    {
-      input: {
-        hostname, associatesApiKey, minimumReview, runningReport,
-      },
-    },
-    { user, db },
+    { input: { hostname, associatesApiKey, minimumReview, runningReport } },
+    { user, db }
   ) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
@@ -158,7 +152,7 @@ const Mutation = {
     });
 
     if (userSites.length) {
-      userSites.map(async (userSite) => {
+      userSites.map(async userSite => {
         await db.userSites.update({
           where: {
             id: userSite.id,
@@ -237,7 +231,7 @@ const Mutation = {
       html: emailTemplate(
         `Your password reset token is here.
           \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
-            Click here</a> to reset your password.`,
+            Click here</a> to reset your password.`
       ),
     });
 
@@ -365,30 +359,36 @@ const Mutation = {
       throw new Error(EMAIL_NOT_FOUND);
     }
 
+    const { stripePlanId } = input;
+    let stripeCheckoutCreateObject = {
+      payment_method_types: ['card'],
+      subscription_data: {
+        items: [
+          {
+            plan: stripePlanId,
+          },
+        ],
+      },
+      success_url:
+        'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'http://localhost:3000/cancel',
+      client_reference_id: user.userId,
+    };
+
     if (dbUser.stripeCustomerId) {
-      throw new Error('A subscription for this account already exists');
+      // pass the existing Stripe customer id
+      stripeCheckoutCreateObject.customer = dbUser.stripeCustomerId;
+    } else {
+      stripeCheckoutCreateObject.customer_email = dbUser.email;
     }
 
-    const { stripePlanId } = input;
     let stripeSession;
 
     // Create a new subscription
     try {
-      stripeSession = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        subscription_data: {
-          items: [
-            {
-              plan: stripePlanId,
-            },
-          ],
-        },
-        success_url:
-          'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: 'http://localhost:3000/cancel',
-        client_reference_id: user.userId,
-        customer_email: dbUser.email,
-      });
+      stripeSession = await stripe.checkout.sessions.create(
+        stripeCheckoutCreateObject
+      );
     } catch (err) {
       console.log(err);
       throw new Error('There was an error creating a checkout session');
@@ -433,12 +433,88 @@ const Mutation = {
 
     const subscriptionItemId = subscriptionList.data[0].items.data[0].id;
 
+    // Query stripe and update the user's subscription to the specified plan
     const res = await stripe.subscriptions.update(dbUser.stripeSubscriptionId, {
       prorate: false,
       items: [{ id: subscriptionItemId, plan: stripePlanId }],
     });
 
+    // If we get a response and the Stripe plan is what we want, update the DB
+    if (res && res.plan.id === stripePlanId) {
+      await db.users.update({
+        where: { stripeCustomerId: dbUser.stripeCustomerId },
+        data: {
+          plan: {
+            connect: { stripePlanId },
+          },
+        },
+      });
+    }
+
     return { message: `Changed to the ${res.plan.nickname} plan` };
+  },
+  async deleteStripeSubscription(parent, { input }, { user, db }) {
+    if (!user) {
+      throw new Error(SIGN_IN_REQUIRED);
+    }
+
+    const { userId } = user;
+
+    const dbUser = await db.users
+      .findOne({
+        where: {
+          id: userId,
+        },
+      })
+      .catch(() => {
+        throw new Error('Unknown database error');
+      });
+
+    if (!dbUser) {
+      throw new Error(EMAIL_NOT_FOUND);
+    }
+
+    if (!dbUser.stripeCustomerId) {
+      throw new Error('An existing subscription was not found');
+    }
+
+    // Get the subscription item ID
+    let subscriptionList = await stripe.subscriptions.list({
+      customer: dbUser.stripeCustomerId,
+    });
+
+    if (!subscriptionList) {
+      throw new Error('Error encountered with payment processor');
+    }
+
+    // Get the subscription ID
+    const subscriptionItemId = subscriptionList.data[0].items.data[0].id;
+
+    // Ask Stripe to cancel the plan
+    const res = await stripe.subscriptions.del(dbUser.stripeSubscriptionId);
+    console.log(res);
+
+    // Verify the cancellation
+    subscriptionList = await stripe.subscriptions.list({
+      customer: dbUser.stripeCustomerId,
+    });
+    console.log(subscriptionList.data.length);
+    if (subscriptionList.data.length === 0) {
+      // Update the user with the free plan
+      console.log('Switching to the free plan');
+      await db.users.update({
+        where: { stripeCustomerId: dbUser.stripeCustomerId },
+        data: {
+          plan: {
+            connect: { stripePlanId: 'free' },
+          },
+        },
+      });
+    } else {
+      throw Error('Still have a subscription...');
+    }
+
+    return { message: `Canceled your ${res.plan.nickname} plan` };
   },
 
   async runSiteReport(parent, args, { user, db }) {
@@ -456,7 +532,6 @@ const Mutation = {
         throw new Error('There was an issue finding your account details');
       });
 
-
     const accountCredits = dbUser.creditsRemaining;
 
     if (!(accountCredits > 0)) {
@@ -473,9 +548,9 @@ const Mutation = {
           }),
         },
       ],
-      (err) => {
+      err => {
         if (err) console.log(err);
-      },
+      }
     );
 
     await db.users.update({

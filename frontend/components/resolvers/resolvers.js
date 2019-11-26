@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 const GET_CURRENT_USER = gql`
   query me {
@@ -104,6 +104,14 @@ const UPDATE_STRIPE_SUBSCRIPTION_MUTATION = gql`
   }
 `;
 
+const DELETE_STRIPE_SUBSCRIPTION_MUTATION = gql`
+  mutation deleteStripeSubscription {
+    deleteStripeSubscription {
+      message
+    }
+  }
+`;
+
 const RUN_SITE_REPORT_MUTATION = gql`
   mutation RUN_SITE_REPORT_MUTATION($input: RunSiteReportInput!) {
     runSiteReport(input: $input) {
@@ -122,5 +130,6 @@ export {
   DELETE_USERSITE_MUTATION,
   CREATE_STRIPE_SESSION_MUTATION,
   UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
-  RUN_SITE_REPORT_MUTATION
+  DELETE_STRIPE_SUBSCRIPTION_MUTATION,
+  RUN_SITE_REPORT_MUTATION,
 };
