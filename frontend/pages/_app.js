@@ -1,28 +1,28 @@
-import App from 'next/app';
-import Page from '../components/Misc/Page';
-import { ApolloProvider } from '@apollo/react-hooks';
-import withData from '../lib/withData';
-import { createGlobalStyle } from 'styled-components';
+import App from "next/app";
+import Page from "../components/Misc/Page";
+import { ApolloProvider } from "@apollo/react-hooks";
+import withData from "../lib/withData";
+import { createGlobalStyle } from "styled-components";
 
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { css } from 'glamor';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { css } from "glamor";
 
 toast.configure({
   className: css({
-    borderRadius: '5px',
-  }),
+    borderRadius: "5px"
+  })
 });
 
 const GlobalStyle = createGlobalStyle`
+  @import url(https://fonts.googleapis.com/css?family=Assistant);
+  @import url(https://fonts.googleapis.com/css?family=Quicksand);
   html, body {
-    @import url(https://fonts.googleapis.com/css?family=Assistant);
-    @import url(https://fonts.googleapis.com/css?family=Quicksand);
     font-family: 'Quicksand','Assistant', sans-serif;
     padding: 0;
     margin: 0;
     color: #383838;
-    background-color: whitesmoke
+    background-color: whitesmoke;
   }
 `;
 
