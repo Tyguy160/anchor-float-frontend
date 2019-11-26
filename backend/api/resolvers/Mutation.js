@@ -23,9 +23,7 @@ const {
 
 const Mutation = {
   async signUp(parent, { input }, context) {
-    const {
-      email, password, firstName, lastName,
-    } = input;
+    const { email, password, firstName, lastName } = input;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await context.db.users
@@ -42,7 +40,7 @@ const Mutation = {
           },
         },
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         throw new Error(EMAIL_TAKEN);
       });
@@ -84,7 +82,7 @@ const Mutation = {
   async addUserSite(
     parent,
     { input: { hostname, apiKey, minimumReview } },
-    { user, db },
+    { user, db }
   ) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
@@ -135,12 +133,8 @@ const Mutation = {
   // Update UserSite
   async updateUserSite(
     parent,
-    {
-      input: {
-        hostname, associatesApiKey, minimumReview, runningReport,
-      },
-    },
-    { user, db },
+    { input: { hostname, associatesApiKey, minimumReview, runningReport } },
+    { user, db }
   ) {
     if (!user) {
       throw new Error(SIGN_IN_REQUIRED);
@@ -158,7 +152,7 @@ const Mutation = {
     });
 
     if (userSites.length) {
-      userSites.map(async (userSite) => {
+      userSites.map(async userSite => {
         await db.userSites.update({
           where: {
             id: userSite.id,
@@ -237,7 +231,7 @@ const Mutation = {
       html: emailTemplate(
         `Your password reset token is here.
           \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
-            Click here</a> to reset your password.`,
+            Click here</a> to reset your password.`
       ),
     });
 
@@ -433,10 +427,23 @@ const Mutation = {
 
     const subscriptionItemId = subscriptionList.data[0].items.data[0].id;
 
+    // Query stripe and update the user's subscription to the specified plan
     const res = await stripe.subscriptions.update(dbUser.stripeSubscriptionId, {
       prorate: false,
       items: [{ id: subscriptionItemId, plan: stripePlanId }],
     });
+
+    // If we get a response and the Stripe plan is what we want, update the DB
+    if (res && res.plan.id === stripePlanId) {
+      await db.users.update({
+        where: { stripeCustomerId: dbUser.stripeCustomerId },
+        data: {
+          plan: {
+            connect: { stripePlanId },
+          },
+        },
+      });
+    }
 
     return { message: `Changed to the ${res.plan.nickname} plan` };
   },
@@ -456,7 +463,6 @@ const Mutation = {
         throw new Error('There was an issue finding your account details');
       });
 
-
     const accountCredits = dbUser.creditsRemaining;
 
     if (!(accountCredits > 0)) {
@@ -473,9 +479,9 @@ const Mutation = {
           }),
         },
       ],
-      (err) => {
+      err => {
         if (err) console.log(err);
-      },
+      }
     );
 
     await db.users.update({
