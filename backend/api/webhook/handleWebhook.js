@@ -1,34 +1,30 @@
 const stripe = require('stripe')('sk_test_b0MPemUYvtnsaU6aaHzyMKUA');
+const { getDBConnection } = require('../createServer');
 
-const handleWebhook = async (req, res, api) => {
+const handleWebhook = async (req, res) => {
   res.status(200).send(); // Stripe wants to see a response right away
 
   if (req.body.type === 'checkout.session.completed') {
+    const db = await getDBConnection();
     const stripeSession = req.body.data.object;
     const { id: sessionId, subscription } = stripeSession;
 
     stripe.checkout.sessions.retrieve(sessionId, async (err, session) => {
       const { id: stripePlanId } = session.display_items[0].plan;
-      console.log(`Stripe plan ID: ${stripePlanId}`);
 
-      let { db } = await api;
-
-      const plan = await db.plans
+      const { creditsPerMonth } = await db.plans
         .findOne({
-          where: { stripePlanId: stripePlanId },
+          where: { stripePlanId },
         })
-        .catch(() => {
-          throw new Error('No plan found');
-        });
+        .catch(console.log);
 
-      const user = await db.users
+      const { creditsRemaining } = await db.users
         .findOne({
           where: { id: session.client_reference_id },
         })
         .catch(console.log);
 
-      const updatedCreditsRemaining =
-        plan.creditsPerMonth + user.creditsRemaining;
+      const updatedCreditsRemaining = creditsPerMonth + creditsRemaining;
 
       await db.users.update({
         where: { id: session.client_reference_id },
@@ -43,9 +39,9 @@ const handleWebhook = async (req, res, api) => {
   }
 
   if (req.body.type === 'customer.subscription.updated') {
+    const db = await getDBConnection();
     const stripeSubscription = req.body.data.object;
 
-    let { db } = await api;
     // Update plan ID in DB
     await db.users.update({
       where: { stripeCustomerId: stripeSubscription.customer },
