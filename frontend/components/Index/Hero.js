@@ -24,7 +24,7 @@ const Hero = () => {
           <HeroCTAButton>Learn more</HeroCTAButton>
         </Link>
         <Link href="/signup" passHref>
-          <HeroCTAButton>Sign up</HeroCTAButton>
+          <HeroCTAButton>Sign up NOW</HeroCTAButton>
         </Link>
       </HeroCTAButtonContainer>
     </HeroContainer>
