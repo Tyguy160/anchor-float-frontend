@@ -45,7 +45,6 @@ const DomainSettings = props => {
             hostname: domain,
             associatesApiKey: apiKey,
             minimumReview,
-            runningReport: false,
           },
         },
       });
@@ -131,18 +130,18 @@ const DomainSettings = props => {
           </Formik>
         </FormContainer>
       ) : (
-        <p
-          style={{
-            justifySelf: `center`,
-            alignSelf: `center`,
-            paddingBottom: `40px`,
-            paddingLeft: `10px`,
-            paddingRight: `10px`,
-            textAlign: `center`,
-          }}>
-          Please select a domain to see the settings
+          <p
+            style={{
+              justifySelf: `center`,
+              alignSelf: `center`,
+              paddingBottom: `40px`,
+              paddingLeft: `10px`,
+              paddingRight: `10px`,
+              textAlign: `center`,
+            }}>
+            Please select a domain to see the settings
         </p>
-      )}
+        )}
     </ComponentContainer>
   );
 };
