@@ -18,7 +18,6 @@ const typeDefs = gql`
     requestReset(input: RequestResetInput!): SuccessMessage
     resetPassword(input: ResetPasswordInput!): User!
     updateUserPassword(input: UpdatePasswordInput!): UpdatePasswordPayload
-    updateUserPlan(input: UpdateUserPlanInput!): UpdateUserPlanPayload
     createStripeSession(
       input: CreateStripeSessionInput!
     ): CreateStripeSessionPayload
@@ -54,19 +53,10 @@ const typeDefs = gql`
     message: String
   }
 
-  input UpdateUserPlanInput {
-    level: Int
-  }
-
-  type UpdateUserPlanPayload {
-    level: Int
-  }
-
   input UpdateUserSiteInput {
     hostname: String!
     associatesApiKey: String!
     minimumReview: Float!
-    runningReport: Boolean!
   }
 
   type UpdateUserSitePayload {
@@ -122,7 +112,6 @@ const typeDefs = gql`
     hostname: String!
     apiKey: String!
     minimumReview: Float!
-    runningReport: Boolean!
   }
 
   input DeleteUserSiteInput {

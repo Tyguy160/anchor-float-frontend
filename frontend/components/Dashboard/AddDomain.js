@@ -46,7 +46,6 @@ const AddDomain = props => {
             hostname: host,
             apiKey,
             minimumReview,
-            runningReport: false
           }
         }
       });

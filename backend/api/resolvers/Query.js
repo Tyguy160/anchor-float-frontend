@@ -19,6 +19,7 @@ const Query = {
     if (!user) {
       throw new Error('You must be signed in');
     }
+
     const userSites = await db.userSites.findMany({
       where: { user: { id: user.userId } },
       select: {
@@ -28,6 +29,7 @@ const Query = {
         runningReport: true,
       },
     });
+
     const sites = userSites.map(userSite => ({
       hostname: userSite.site.hostname,
       associatesApiKey: userSite.associatesApiKey,
