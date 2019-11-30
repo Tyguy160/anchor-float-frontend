@@ -22,7 +22,7 @@ async function addUserSite(
     throw new Error(INVALID_HOSTNAME);
   }
 
-  console.log(`Hostname: ${hostname}`);
+  // Get the sitemap URL from the hostname
   const sitemapUrl = await getRootSitemap(hostname);
   console.log(`Sitemap URL: ${sitemapUrl}`);
 
