@@ -40,4 +40,4 @@ async function requestReset(parent, { input }, context) {
   return { message: 'Please check your email for a reset link' };
 }
 
-module.exports = requestReset;
+module.exports = { requestReset };

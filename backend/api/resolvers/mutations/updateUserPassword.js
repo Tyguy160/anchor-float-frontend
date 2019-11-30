@@ -47,4 +47,4 @@ async function updateUserPassword(parent, { input }, { user, db }) {
   return { message: 'Updated password' };
 }
 
-module.exports = updateUserPassword;
+module.exports = { updateUserPassword };
