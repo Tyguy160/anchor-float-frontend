@@ -40,12 +40,13 @@ const AddDomain = props => {
   const addDomainToUser = async (values, formik) => {
     const { domain, apiKey, minimumReview } = values;
     const { host } = url.parse(domain);
+    console.log(url.parse(domain));
 
     try {
       const res = await addUserSite({
         variables: {
           input: {
-            hostname: host,
+            hostname: domain,
             apiKey,
             minimumReview,
           },
