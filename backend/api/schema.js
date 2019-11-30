@@ -163,6 +163,7 @@ const typeDefs = gql`
   type Site {
     pages: [Page]
     hostname: String
+    sitemapUrl: String
   }
 
   type Page {
