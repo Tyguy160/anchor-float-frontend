@@ -8,22 +8,28 @@ const plansToAdd = [
     stripePlanId: 'free',
   },
   {
-    name: 'Basic',
+    name: 'Economy',
     level: 1,
+    creditsPerMonth: 1,
+    stripePlanId: 'plan_GGjkWrQ9lZNBwI',
+  },
+  {
+    name: 'Basic',
+    level: 2,
     creditsPerMonth: 3,
-    stripePlanId: 'plan_FyidUQxlYdDu28',
+    stripePlanId: 'plan_GGjlaO7xQD0kk8',
   },
   {
     name: 'Standard',
-    level: 2,
+    level: 3,
     creditsPerMonth: 5,
-    stripePlanId: 'plan_FyiUKqbkV2ROuY',
+    stripePlanId: 'plan_GGjlQ5w2ioUStl',
   },
   {
     name: 'Pro',
-    level: 3,
+    level: 4,
     creditsPerMonth: 10,
-    stripePlanId: 'plan_FyiUoIdKqgbIfv',
+    stripePlanId: 'plan_GGjljwH7KKU8qR',
   },
 ];
 
@@ -31,7 +37,7 @@ const db = getDB();
 
 db.connect()
   .then(() => {
-    plansToAdd.forEach((plan) => {
+    plansToAdd.forEach(plan => {
       console.log(plan);
       db.plans
         .create({
@@ -45,9 +51,13 @@ db.connect()
         .catch(console.error);
     });
 
-    setTimeout(() => db.plans.findMany().then((plans) => {
-      console.log(plans);
-      process.exit(0);
-    }), 3000);
+    setTimeout(
+      () =>
+        db.plans.findMany().then(plans => {
+          console.log(plans);
+          process.exit(0);
+        }),
+      3000
+    );
   })
   .catch(console.err);
