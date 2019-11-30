@@ -42,7 +42,6 @@ async function parsePageHandler({ Body }) {
   const site = await db.sites.findOne({
     where: { hostname: url.origin },
   });
-  console.log(site);
 
   const newOrExistingPage = await db.pages
     .upsert(
