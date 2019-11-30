@@ -39,14 +39,10 @@ async function parsePageHandler({ Body }) {
   }
 
   // TODO: Is this even needed...?
-  const newOrExistingSite = await db.sites.upsert(
-    {
-      where: { hostname: url.hostname },
-      create: { hostname: url.hostname },
-      update: {},
-    },
-    () => console.log('upserted site')
-  );
+  const site = await db.sites.findOne({
+    where: { hostname: url.origin },
+  });
+  console.log(site);
 
   const newOrExistingPage = await db.pages
     .upsert(
@@ -56,14 +52,14 @@ async function parsePageHandler({ Body }) {
           url: url.href,
           site: {
             connect: {
-              id: newOrExistingSite.id,
+              id: site.id,
             },
           },
         },
         update: {
           site: {
             connect: {
-              id: newOrExistingSite.id,
+              id: site.id,
             },
           },
         },
