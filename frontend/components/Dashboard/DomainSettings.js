@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import toasts from '../Misc/Toasts';
 import { Formik } from 'formik';
+import Router from 'next/router';
 import {
   USERSITES_QUERY,
   UPDATE_USERSITE_MUTATION,
@@ -35,7 +36,16 @@ const DomainSettings = props => {
     refetchQueries: ['userSites'],
   });
 
-  const updateDomain = async (values, e) => {
+  const resetForms = (props, formik) => {
+    // Reset the selected userSite dropdown
+    props.setSelectedDomain(null);
+    props.setSelectedUserSite(null);
+
+    // Reset the domain settings form
+    formik.resetForm();
+  };
+
+  const updateDomain = async (values, formik) => {
     const { domain, apiKey, minimumReview } = values;
     console.log(values);
     try {
@@ -50,12 +60,11 @@ const DomainSettings = props => {
       });
 
       toasts.successMessage('Domain has been updated.');
-
-      // TODO: Reset the selected userSite
-      props.setSelectedUserSite(null);
+      resetForms(props, formik);
     } catch (err) {
       console.log(err);
       toasts.errorMessage('There was an error updating this domain.');
+      resetForms(props, formik);
     }
   };
 
@@ -116,10 +125,14 @@ const DomainSettings = props => {
                       e.preventDefault();
                       try {
                         const res = await deleteUserSite();
-                        props.setSelectedUserSite(null);
                         toasts.successMessage('Domain has been deleted.');
+                        resetForms(props, formik);
                       } catch (err) {
                         console.log(err);
+                        toasts.errorMessage(
+                          'There was an error deleting this domain.'
+                        );
+                        resetForms(props, formik);
                       }
                     }}>
                     Delete Site
@@ -130,18 +143,18 @@ const DomainSettings = props => {
           </Formik>
         </FormContainer>
       ) : (
-          <p
-            style={{
-              justifySelf: `center`,
-              alignSelf: `center`,
-              paddingBottom: `40px`,
-              paddingLeft: `10px`,
-              paddingRight: `10px`,
-              textAlign: `center`,
-            }}>
-            Please select a domain to see the settings
+        <p
+          style={{
+            justifySelf: `center`,
+            alignSelf: `center`,
+            paddingBottom: `40px`,
+            paddingLeft: `10px`,
+            paddingRight: `10px`,
+            textAlign: `center`,
+          }}>
+          Please select a domain to see the settings
         </p>
-        )}
+      )}
     </ComponentContainer>
   );
 };

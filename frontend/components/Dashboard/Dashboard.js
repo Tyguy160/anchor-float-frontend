@@ -45,6 +45,8 @@ const Dashboard = () => {
       </DomainDataContainer>
       <DomainSettingsContainer>
         <DomainSettings
+          selectedDomain={selectedDomain}
+          setSelectedDomain={setSelectedDomain}
           selectedUserSite={selectedUserSite}
           setSelectedUserSite={setSelectedUserSite}
         />
