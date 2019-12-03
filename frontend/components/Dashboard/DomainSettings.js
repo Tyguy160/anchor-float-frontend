@@ -47,7 +47,6 @@ const DomainSettings = props => {
 
   const updateDomain = async (values, formik) => {
     const { domain, apiKey, minimumReview } = values;
-    console.log(values);
     try {
       await updateUserSite({
         variables: {
@@ -73,7 +72,6 @@ const DomainSettings = props => {
       <CenteredH2>Domain Settings</CenteredH2>
       {props.selectedUserSite ? (
         <FormContainer style={{ border: `none` }}>
-          {console.log(props.selectedUserSite)}
           <Formik
             initialValues={{
               domain: props.selectedUserSite

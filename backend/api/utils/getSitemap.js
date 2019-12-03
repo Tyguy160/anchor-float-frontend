@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-async function getRootSitemap(domain) {
-  const url = new URL(domain);
+async function getRootSitemap(hostname) {
+  const url = new URL('http://' + hostname);
   const sitemapExtensions = ['/sitemap.xml', '/sitemap_index.xml'];
   for (const extension of sitemapExtensions) {
     try {

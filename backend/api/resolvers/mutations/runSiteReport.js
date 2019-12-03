@@ -3,7 +3,7 @@ const uuid = require('uuid/v4');
 const { sitemapProducer } = require('../../../scan/producers');
 const { SIGN_IN_REQUIRED } = require('../../errors');
 
-async function runSiteReport(parent, args, { user, db }) {
+async function runSiteReport(parent, { input: { hostname } }, { user, db }) {
   if (!user) {
     throw new Error(SIGN_IN_REQUIRED);
   }
@@ -18,6 +18,11 @@ async function runSiteReport(parent, args, { user, db }) {
       throw new Error('There was an issue finding your account details');
     });
 
+  // Get the site so we can get the sitemap URL
+  const site = await db.sites.findOne({
+    where: { hostname },
+  });
+
   const accountCredits = dbUser.creditsRemaining;
 
   if (!(accountCredits > 0)) {
@@ -30,15 +35,16 @@ async function runSiteReport(parent, args, { user, db }) {
         id: uuid(),
         body: JSON.stringify({
           userId,
-          url: 'https://www.aroundthebats.com/sitemap_index.xml', // TODO: get the sitemap url on Site
+          url: site.sitemapUrl,
         }),
       },
     ],
-    (err) => {
+    err => {
       if (err) console.log(err);
-    },
+    }
   );
 
+  // TODO: Only update the credits after the report has been stored
   await db.users.update({
     where: {
       id: userId,
