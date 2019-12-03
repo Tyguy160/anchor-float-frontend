@@ -55,7 +55,7 @@ function parseMarkup(markupString, options = {}) {
   return { links, pageTitle, wordCount };
 }
 
-// Should handle anything that's a valid value to an href attribtue
+// Should handle anything that's a valid value to an href attribute
 // href refers to the href attribute on the link, origin should include the protocol and host
 function parseHref(href, origin) {
   const jsHref = /^javascript/;
@@ -88,9 +88,7 @@ function parseHref(href, origin) {
     }
     throw err;
   }
-  const {
-    hostname, pathname, protocol, hash,
-  } = url;
+  const { hostname, pathname, protocol, hash } = url;
   const params = new Map(url.searchParams);
   return {
     isValid,

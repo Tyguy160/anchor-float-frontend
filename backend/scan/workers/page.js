@@ -38,9 +38,8 @@ async function parsePageHandler({ Body }) {
     return;
   }
 
-  // TODO: Is this even needed...?
   const site = await db.sites.findOne({
-    where: { hostname: url.origin },
+    where: { hostname: url.hostname },
   });
 
   const newOrExistingPage = await db.pages
