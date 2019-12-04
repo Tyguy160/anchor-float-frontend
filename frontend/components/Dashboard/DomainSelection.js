@@ -1,20 +1,14 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
-import { Domain } from 'domain';
-import styled from 'styled-components';
-import toasts from '../Misc/Toasts';
-import {
-  USERSITES_QUERY,
-  SITEPAGES_QUERY,
-  RUN_SITE_REPORT_MUTATION,
-} from '../resolvers/resolvers';
-import Select from 'react-select';
+import React, { useState } from "react";
+import { useMutation } from "@apollo/react-hooks";
+import toasts from "../Misc/Toasts";
+import { RUN_SITE_REPORT_MUTATION } from "../resolvers/resolvers";
+import Select from "react-select";
 
 import {
   StyledButton,
   StyledDropdown,
-  ComponentContainer,
-} from '../styles/styles';
+  ComponentContainer
+} from "../styles/styles";
 
 const DomainSelection = props => {
   const [runSiteReport, { error, data }] = useMutation(
@@ -22,9 +16,9 @@ const DomainSelection = props => {
     {
       variables: {
         input: {
-          hostname: props.selectedDomain ? props.selectedDomain.value : null,
-        },
-      },
+          hostname: props.selectedDomain ? props.selectedDomain.value : null
+        }
+      }
     }
   );
   return (
@@ -38,8 +32,11 @@ const DomainSelection = props => {
               userSite => userSite.hostname === selectedOption.value
             );
 
-            //   // Sets the domain information in state
-            //   props.setDomain(selectedSite.hostname);
+            // Refetch the userSites on change in selection
+            props.refetchUserSites();
+
+            // Sets the domain information in state
+            // props.setDomain(selectedSite.hostname);
             props.setSelectedUserSite(selectedSite);
 
             // Sets the domain option in the dropdown
@@ -49,25 +46,37 @@ const DomainSelection = props => {
             props.userSites.userSites &&
             props.userSites.userSites.map(site => ({
               value: site.hostname,
-              label: site.hostname,
+              label: site.hostname
             }))
           }
         />
       </StyledDropdown>
       <StyledButton
-        disabled={props.selectedDomain ? false : true}
+        disabled={
+          // Check if userSites and selectedDomain exist,
+          // then find the selectedDomain in the list of userSites,
+          // then check to see if a report is currently runnning
+          props.userSites.userSites && props.selectedDomain
+            ? props.userSites.userSites.find(
+                site => site.hostname === props.selectedDomain.value
+              ).runningReport
+            : true
+        }
         onClick={async () => {
           try {
-            toasts.successMessage(
-              'Queued up your report. Please check back shortly!'
-            );
             await runSiteReport();
+            await props.refetchUserSites();
+            toasts.successMessage(
+              "Queued up your report. Please check back shortly!"
+            );
           } catch (err) {
+            console.log(err);
             toasts.errorMessage(
               `You don't have enough credits to generate this report`
             );
           }
-        }}>
+        }}
+      >
         Run report
       </StyledButton>
     </ComponentContainer>

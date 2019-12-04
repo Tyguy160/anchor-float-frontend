@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/react-hooks';
-import { USERSITES_QUERY, GET_CURRENT_USER } from '../resolvers/resolvers';
-import AddDomain from './AddDomain';
-import DomainSettings from './DomainSettings';
-import DomainData from './DomainData';
-import DomainSelection from './DomainSelection';
+import React, { useState } from "react";
+import { useQuery } from "@apollo/react-hooks";
+import { USERSITES_QUERY, GET_CURRENT_USER } from "../resolvers/resolvers";
+import AddDomain from "./AddDomain";
+import DomainSettings from "./DomainSettings";
+import DomainData from "./DomainData";
+import DomainSelection from "./DomainSelection";
 import {
   DashboardContainer,
   DomainSettingsContainer,
-  DomainDataContainer,
-} from '../styles/styles';
+  DomainDataContainer
+} from "../styles/styles";
 
 const Dashboard = () => {
-  const { loading: domainsLoading, data: userSites } = useQuery(
+  const { loading: domainsLoading, data: userSites, refetch } = useQuery(
     USERSITES_QUERY
   );
 
@@ -28,10 +28,10 @@ const Dashboard = () => {
     <DashboardContainer>
       <DomainDataContainer>
         <div>
-          Credits remaining:{' '}
+          Credits remaining:{" "}
           {!userLoading && userData
             ? userData.me.creditsRemaining
-            : 'Loading...'}
+            : "Loading..."}
         </div>
         <DomainSelection
           selectedDomain={selectedDomain}
@@ -40,6 +40,7 @@ const Dashboard = () => {
           selectedUserSite={selectedUserSite}
           setSelectedUserSite={setSelectedUserSite}
           userData={userData}
+          refetchUserSites={refetch}
         />
         <DomainData selectedDomain={selectedDomain} />
       </DomainDataContainer>
