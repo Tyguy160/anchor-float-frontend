@@ -5,7 +5,6 @@ const redis = require('redis');
 
 const uuid = require('uuid/v4');
 const { reportProducer } = require('../report/producers');
-const { getDB } = require('../prisma/db');
 
 // Will likely need some config later
 const redisClient = redis.createClient({
@@ -81,35 +80,14 @@ class ProgressManager extends EventEmitter {
 const progMan = new ProgressManager();
 
 // To trigger report generation
-progMan.on(FULL_SITE_COMPLETED, async ({ jobId }) => {
+progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
   const metaKey = `${jobId}:meta`;
-  const db = await getDB();
   redisClient.hgetall(metaKey, (err, metaInfo) => {
     const { userId, hostname } = metaInfo;
 
     console.log(
-      `Site complete.\nAdding report generation job for: ${hostname}\nUser: ${userId}\n`
+      `Site complete.\nAdding report generation job for: ${hostname}\nUser: ${userId}\n`,
     );
-
-
-    // Get the list of all of the user's userSites, including sites
-    const userSites = await db.userSites.findMany({
-      include: { site: true },
-    });
-    console.log(userSites)
-
-    // Find the userSite that matches the selected hostname
-    const userSite = userSites.find(
-      userSite => userSite.site.hostname === hostname
-    );
-
-    // Set the flag for running report to true
-    await db.userSites.update({
-      where: { id: userSite.id },
-      data: {
-        runningReport: false,
-      },
-    });
 
     const taskId = uuid();
 
@@ -125,9 +103,9 @@ progMan.on(FULL_SITE_COMPLETED, async ({ jobId }) => {
           }),
         },
       ],
-      producerError => {
+      (producerError) => {
         if (producerError) console.log(producerError);
-      }
+      },
     );
   });
 });
@@ -136,13 +114,13 @@ progMan.on(FULL_SITE_COMPLETED, async ({ jobId }) => {
 progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
   if (!userId) {
     console.log(
-      'ERROR: No userId on sitemap job. No progress tracking will occur.'
+      'ERROR: No userId on sitemap job. No progress tracking will occur.',
     );
     return;
   }
 
   console.log(
-    `Sitemap starting for jobId: ${jobId}\nuserId: ${userId}\nhostname: ${hostname}\n`
+    `Sitemap starting for jobId: ${jobId}\nuserId: ${userId}\nhostname: ${hostname}\n`,
   );
 
   const metaKey = `${jobId}:meta`;
@@ -189,7 +167,7 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
               pagesComplete: 'true',
             });
           }
-        }
+        },
       );
     }
   });
@@ -229,22 +207,19 @@ progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
                   console.log(`FULL SITE COMPLETE (connections): ${jobId}`);
                   progMan.emit(FULL_SITE_COMPLETED, { jobId });
                 }
-              }
+              },
             );
 
-
-            console.log('Checking for products in queue')
             // Check if no products were added to fetch (recently updated)
             const productsKey = `${jobId}:products`;
-              redisClient.scard(productsKey, (errFromScard, productsRemainingCount) => {
-                console.log(`Callback value: ${productsRemainingCount}`)
-                if (productsRemainingCount === 0) {
-                  console.log(`FULL SITE COMPLETE (no products fetched): ${jobId}`);
-                  progMan.emit(FULL_SITE_COMPLETED, { jobId });
-                }
-              })
+            redisClient.scard(productsKey, (errFromScard, productsRemainingCount) => {
+              if (productsRemainingCount === 0) {
+                console.log(`FULL SITE COMPLETE (no products fetched): ${jobId}`);
+                progMan.emit(FULL_SITE_COMPLETED, { jobId });
+              }
+            });
           }
-        }
+        },
       );
     }
   });
@@ -278,7 +253,7 @@ progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
             console.log(`FULL SITE COMPLETE (products): ${jobId}`);
             progMan.emit(FULL_SITE_COMPLETED, { jobId });
           }
-        }
+        },
       );
     }
   });

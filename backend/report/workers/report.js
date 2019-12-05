@@ -113,6 +113,13 @@ async function reportHandler({ Body }) {
           },
         },
       });
+
+      await db.userSites.update({
+        where: { id: userSites[0].id },
+        data: {
+          runningReport: false,
+        },
+      });
     });
 }
 
