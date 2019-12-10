@@ -10,23 +10,24 @@ const {
 const asins = ['B0793HHZF7'];
 
 async function main() {
-  // const requestUrl = await createRequestFromAsins(asins);
-  // let apiResp;
-  // try {
-  //   apiResp = await getItemsPromise(requestUrl);
-  // } catch (err) {
-  //   console.log(err);
-  // }
+  const requestUrl = createRequestFromAsins(asins);
+  let apiResp;
+  try {
+    apiResp = await getItemsPromise(requestUrl);
+  } catch (err) {
+    console.log(err);
+  }
 
-  // console.log('Here are results from the API:');
-  // console.log(JSON.stringify(apiResp, null, 1));
+  console.log('getItems results:');
+  console.log(JSON.stringify(apiResp, null, 1));
 
-  const variationReq = await createVariationsRequestFromAsin(asins[0]);
+  const variationReq = createVariationsRequestFromAsin(asins[0]);
   let varRes;
   try {
     varRes = await getVariationReq(variationReq);
     const { items, errors } = varRes;
-    console.log(items);
+    console.log('getVariations results:');
+    console.log(JSON.stringify(items, null, 1));
   } catch (err) {
     console.log(err);
   }

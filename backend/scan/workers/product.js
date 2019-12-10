@@ -1,6 +1,11 @@
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
-const { createRequestFromAsins, getItemsPromise } = require('../../amazon/amzApi');
+const {
+  createRequestFromAsins,
+  getItemsPromise,
+  createVariationsRequestFromAsin,
+  getVariationReq,
+} = require('../../amazon/amzApi');
 const progress = require('../../progress/index');
 const productCache = require('../productCache');
 
@@ -36,7 +41,7 @@ async function parseProductHandler(messages) {
   const asinToMessageDataMap = parsedMessages.reduce(keyByAsinReducer, {});
 
   const uniqueAsins = [...new Set(parsedMessages.map(info => info.asin))];
-  const requestUrl = await createRequestFromAsins(uniqueAsins); // create the request object
+  const requestUrl = createRequestFromAsins(uniqueAsins); // create the request object
 
   let apiResponse;
   try {
@@ -50,11 +55,11 @@ async function parseProductHandler(messages) {
 
   if (items) {
     items.forEach(async (item) => {
-      const { offers, name, asin } = item;
+      const {
+        offers, name, asin, parentAsin,
+      } = item;
 
-      // If the product doesn't exist yet, we're going to create it
       let availability;
-
       if (offers) {
         const {
           IsAmazonFulfilled,
@@ -66,6 +71,21 @@ async function parseProductHandler(messages) {
         } else {
           availability = 'THIRDPARTY'; // LOW-CONV
         }
+      } else if (parentAsin === null) { // ASIN is a parent, so we fetch the children/variations
+        const variationReq = createVariationsRequestFromAsin(asin);
+
+        const variationRes = getVariationReq(variationReq);
+        if (!variationRes.length) return;
+
+        variationRes.some(({ offers: variationOffers }) => {
+          variationOffers.some(({ DeliveryInfo: variationDeliveryInfo }) => {
+            const {
+              IsAmazonFulfilled,
+              IsFreeShippingEligible,
+              IsPrimeEligible,
+            } = variationDeliveryInfo;
+          });
+        });
       } else {
         availability = 'UNAVAILABLE';
       }

@@ -1,6 +1,6 @@
 const ProductAdvertisingAPIv1 = require('./src/index');
 
-async function createRequestFromAsins(asins) {
+function createRequestFromAsins(asins) {
   const configuredRequest = new ProductAdvertisingAPIv1.GetItemsRequest();
 
   configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
@@ -30,7 +30,7 @@ async function createRequestFromAsins(asins) {
   return configuredRequest;
 }
 
-async function createVariationsRequestFromAsin(asin) {
+function createVariationsRequestFromAsin(asin) {
   const configuredRequest = new ProductAdvertisingAPIv1.GetVariationsRequest();
 
   configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
@@ -88,14 +88,14 @@ async function getItemsPromise(apiRequest) {
       }
 
       const errors = data.Errors
-        ? data.Errors.map(amazonError => {
-            const { Code: code } = amazonError;
-            const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
-            return {
-              asin,
-              code,
-            };
-          })
+        ? data.Errors.map((amazonError) => {
+          const { Code: code } = amazonError;
+          const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
+          return {
+            asin,
+            code,
+          };
+        })
         : null;
 
       return resolve({ items, errors });
@@ -130,14 +130,14 @@ async function getVariationReq(apiRequest) {
       }
 
       const errors = data.Errors
-        ? data.Errors.map(amazonError => {
-            const { Code: code } = amazonError;
-            const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
-            return {
-              asin,
-              code,
-            };
-          })
+        ? data.Errors.map((amazonError) => {
+          const { Code: code } = amazonError;
+          const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
+          return {
+            asin,
+            code,
+          };
+        })
         : null;
 
       return resolve({ items, errors });
