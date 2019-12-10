@@ -3,6 +3,7 @@ import { useMutation } from "@apollo/react-hooks";
 import toasts from "../Misc/Toasts";
 import { RUN_SITE_REPORT_MUTATION } from "../resolvers/resolvers";
 import Select from "react-select";
+import Loader from "react-loader-spinner";
 
 import {
   StyledButton,

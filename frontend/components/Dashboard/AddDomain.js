@@ -33,7 +33,7 @@ import {
 const AddDomain = props => {
   const { loading: userLoading, data: user } = useQuery(GET_CURRENT_USER);
 
-  const [addUserSite] = useMutation(ADD_USERSITE_MUTATION, {
+  const [addUserSite, { loading }] = useMutation(ADD_USERSITE_MUTATION, {
     refetchQueries: ["userSites"]
   });
 
@@ -91,6 +91,7 @@ const AddDomain = props => {
                 style={{ marginTop: `10px` }}
                 type="submit"
                 value="Add domain"
+                disabled={formik.isSubmitting || loading}
               >
                 Add domain
               </ContinueButton>
