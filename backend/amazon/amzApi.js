@@ -30,6 +30,32 @@ async function createRequestFromAsins(asins) {
   return configuredRequest;
 }
 
+async function createVariationsRequestFromAsin(asin) {
+  const configuredRequest = new ProductAdvertisingAPIv1.GetVariationsRequest();
+
+  configuredRequest.PartnerTag = process.env.AMAZON_ASSOCIATES_PARTNER_TAG;
+  configuredRequest.PartnerType = process.env.AMAZON_ASSOCIATES_PARTNER_TYPE;
+
+  configuredRequest.ASIN = asin; // Items to request as an array of ASINs
+
+  configuredRequest.Condition = process.env.AMAZON_ASSOCIATES_ITEM_CONDITION;
+
+  configuredRequest.Resources = [
+    'Offers.Listings.Availability.Message',
+    'Offers.Listings.Availability.Type',
+    'Offers.Listings.Condition',
+    'Offers.Listings.DeliveryInfo.IsAmazonFulfilled',
+    'Offers.Listings.DeliveryInfo.IsFreeShippingEligible',
+    'Offers.Listings.DeliveryInfo.IsPrimeEligible',
+    'Offers.Listings.IsBuyBoxWinner',
+    'Offers.Listings.Price',
+    'Offers.Summaries.OfferCount',
+    'ParentASIN',
+  ];
+
+  return configuredRequest;
+}
+
 async function getItemsPromise(apiRequest) {
   const defaultClient = ProductAdvertisingAPIv1.ApiClient.instance;
 
@@ -71,4 +97,27 @@ async function getItemsPromise(apiRequest) {
   });
 }
 
-module.exports = { createRequestFromAsins, getItemsPromise };
+async function getVariationReq(apiRequest) {
+  const defaultClient = ProductAdvertisingAPIv1.ApiClient.instance;
+
+  defaultClient.accessKey = process.env.AMAZON_ASSOCIATES_ACCESS_KEY;
+  defaultClient.secretKey = process.env.AMAZON_ASSOCIATES_SECRET_KEY;
+
+  defaultClient.host = process.env.AMAZON_ASSOCIATES_HOST;
+  defaultClient.region = process.env.AMAZON_ASSOCIATES_REGION;
+
+  const api = new ProductAdvertisingAPIv1.DefaultApi();
+  return new Promise((resolve, reject) => {
+    api.getVariations(apiRequest, (error, data) => {
+      if (error) { // Usually a 429 error (too many requests)
+        return reject(error);
+      }
+
+      return resolve({ data });
+    });
+  });
+}
+
+module.exports = {
+  createRequestFromAsins, getItemsPromise, createVariationsRequestFromAsin, getVariationReq,
+};
