@@ -24,6 +24,7 @@ async function createRequestFromAsins(asins) {
     'Offers.Listings.IsBuyBoxWinner',
     'Offers.Listings.Price',
     'Offers.Summaries.OfferCount',
+    'ParentASIN',
   ];
 
   return configuredRequest;
@@ -51,6 +52,7 @@ async function getItemsPromise(apiRequest) {
           asin: item.ASIN,
           name: item.ItemInfo.Title.DisplayValue,
           offers: item.Offers ? item.Offers.Listings : null,
+          parentAsin: item.ParentASIN ? item.ParentASIN : null,
         }));
       }
 
