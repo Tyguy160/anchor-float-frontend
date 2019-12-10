@@ -1,7 +1,10 @@
 require('dotenv').config();
 
 const {
-  createRequestFromAsins, getItemsPromise, createVariationsRequestFromAsin, getVariationReq,
+  createRequestFromAsins,
+  getItemsPromise,
+  createVariationsRequestFromAsin,
+  getVariationReq,
 } = require('./amzApi');
 
 const asins = ['B0793HHZF7'];
@@ -18,11 +21,12 @@ async function main() {
   // console.log('Here are results from the API:');
   // console.log(JSON.stringify(apiResp, null, 1));
 
-  const variationReq = await createVariationsRequestFromAsin(asins);
+  const variationReq = await createVariationsRequestFromAsin(asins[0]);
   let varRes;
   try {
     varRes = await getVariationReq(variationReq);
-    console.log(varRes);
+    const { items, errors } = varRes;
+    console.log(items);
   } catch (err) {
     console.log(err);
   }

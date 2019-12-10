@@ -41,6 +41,10 @@ async function createVariationsRequestFromAsin(asin) {
   configuredRequest.Condition = process.env.AMAZON_ASSOCIATES_ITEM_CONDITION;
 
   configuredRequest.Resources = [
+    'CustomerReviews.Count',
+    'CustomerReviews.StarRating',
+    'Images.Primary.Medium',
+    'ItemInfo.Title',
     'Offers.Listings.Availability.Message',
     'Offers.Listings.Availability.Type',
     'Offers.Listings.Condition',
@@ -68,7 +72,8 @@ async function getItemsPromise(apiRequest) {
   const api = new ProductAdvertisingAPIv1.DefaultApi();
   return new Promise((resolve, reject) => {
     api.getItems(apiRequest, (error, data) => {
-      if (error) { // Usually a 429 error (too many requests)
+      if (error) {
+        // Usually a 429 error (too many requests)
         return reject(error);
       }
 
@@ -82,15 +87,16 @@ async function getItemsPromise(apiRequest) {
         }));
       }
 
-
-      const errors = data.Errors ? data.Errors.map((amazonError) => {
-        const { Code: code } = amazonError;
-        const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
-        return {
-          asin,
-          code,
-        };
-      }) : null;
+      const errors = data.Errors
+        ? data.Errors.map(amazonError => {
+            const { Code: code } = amazonError;
+            const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
+            return {
+              asin,
+              code,
+            };
+          })
+        : null;
 
       return resolve({ items, errors });
     });
@@ -109,15 +115,39 @@ async function getVariationReq(apiRequest) {
   const api = new ProductAdvertisingAPIv1.DefaultApi();
   return new Promise((resolve, reject) => {
     api.getVariations(apiRequest, (error, data) => {
-      if (error) { // Usually a 429 error (too many requests)
+      if (error) {
+        // Usually a 429 error (too many requests)
         return reject(error);
       }
+      let items = null;
+      if (data.VariationsResult && data.VariationsResult.Items) {
+        items = data.VariationsResult.Items.map(item => ({
+          asin: item.ASIN,
+          name: item.ItemInfo.Title.DisplayValue,
+          offers: item.Offers ? item.Offers.Listings : null,
+          parentAsin: item.ParentASIN ? item.ParentASIN : null,
+        }));
+      }
 
-      return resolve({ data });
+      const errors = data.Errors
+        ? data.Errors.map(amazonError => {
+            const { Code: code } = amazonError;
+            const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
+            return {
+              asin,
+              code,
+            };
+          })
+        : null;
+
+      return resolve({ items, errors });
     });
   });
 }
 
 module.exports = {
-  createRequestFromAsins, getItemsPromise, createVariationsRequestFromAsin, getVariationReq,
+  createRequestFromAsins,
+  getItemsPromise,
+  createVariationsRequestFromAsin,
+  getVariationReq,
 };
