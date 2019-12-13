@@ -88,14 +88,14 @@ async function getItemsPromise(apiRequest) {
       }
 
       const errors = data.Errors
-        ? data.Errors.map((amazonError) => {
-          const { Code: code } = amazonError;
-          const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
-          return {
-            asin,
-            code,
-          };
-        })
+        ? data.Errors.map(amazonError => {
+            const { Code: code } = amazonError;
+            const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
+            return {
+              asin,
+              code,
+            };
+          })
         : null;
 
       return resolve({ items, errors });
@@ -129,16 +129,9 @@ async function getVariationReq(apiRequest) {
         }));
       }
 
-      const errors = data.Errors
-        ? data.Errors.map((amazonError) => {
-          const { Code: code } = amazonError;
-          const asin = amazonError.Message.match(/ItemId\s(\S+)/)[1];
-          return {
-            asin,
-            code,
-          };
-        })
-        : null;
+      console.log({ errors: data.Errors });
+
+      const errors = data.Errors ? true : false;
 
       return resolve({ items, errors });
     });

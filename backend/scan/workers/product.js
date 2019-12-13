@@ -18,22 +18,26 @@ async function parseProductHandler(messages) {
     taskId: getDataFromMessage(Body, 'taskId'),
   }));
 
-  const keyByAsinReducer = (dict, {
-    asin, jobId, taskId,
-  }) => {
+  const keyByAsinReducer = (dict, { asin, jobId, taskId }) => {
     if (dict[asin]) {
       return {
         ...dict,
         [asin]: dict[asin].concat({
-          asin, jobId, taskId,
+          asin,
+          jobId,
+          taskId,
         }),
       };
     }
     return {
       ...dict,
-      [asin]: [{
-        asin, jobId, taskId,
-      }],
+      [asin]: [
+        {
+          asin,
+          jobId,
+          taskId,
+        },
+      ],
     };
   };
 
@@ -54,10 +58,8 @@ async function parseProductHandler(messages) {
   const { items, errors } = apiResponse;
 
   if (items) {
-    items.forEach(async (item) => {
-      const {
-        offers, name, asin, parentAsin,
-      } = item;
+    items.forEach(async item => {
+      const { offers, name, asin, parentAsin } = item;
 
       let availability;
       if (offers) {
@@ -71,21 +73,45 @@ async function parseProductHandler(messages) {
         } else {
           availability = 'THIRDPARTY'; // LOW-CONV
         }
-      } else if (parentAsin === null) { // ASIN is a parent, so we fetch the children/variations
+      } else if (parentAsin === null) {
+        const sleep = milliseconds => {
+          return new Promise(resolve => setTimeout(resolve, milliseconds));
+        };
+        // ASIN is a parent, so we fetch the children/variations
         const variationReq = createVariationsRequestFromAsin(asin);
 
-        const variationRes = getVariationReq(variationReq);
-        if (!variationRes.length) return;
+        var nonErrorRes = false;
+        var response;
+        while (!nonErrorRes) {
+          response = await getVariationReq(variationReq);
+          if (!response.errors) {
+            nonErrorRes = true;
+            console.log('Got response');
+          } else {
+            console.log('Sleeping');
+            sleep(3000);
+          }
+        }
 
-        variationRes.some(({ offers: variationOffers }) => {
-          variationOffers.some(({ DeliveryInfo: variationDeliveryInfo }) => {
-            const {
-              IsAmazonFulfilled,
-              IsFreeShippingEligible,
-              IsPrimeEligible,
-            } = variationDeliveryInfo;
+        const { items } = response;
+
+        if (!items || !items.length) {
+          availability = 'UNAVAILABLE';
+        } else {
+          const varAvailable = items.some(({ offers: variationOffers }) => {
+            return variationOffers.some(
+              ({ DeliveryInfo: variationDeliveryInfo }) => {
+                const {
+                  IsAmazonFulfilled,
+                  IsFreeShippingEligible,
+                  IsPrimeEligible,
+                } = variationDeliveryInfo;
+              }
+            );
           });
-        });
+
+          availability = varAvailable ? 'AMAZON' : 'UNAVAILABLE';
+        }
       } else {
         availability = 'UNAVAILABLE';
       }
@@ -97,7 +123,9 @@ async function parseProductHandler(messages) {
       });
 
       if (!existingProduct) {
-        console.log(`ERR: Product ${asin} should already exist in DB but was not found`);
+        console.log(
+          `ERR: Product ${asin} should already exist in DB but was not found`
+        );
         return;
       }
 
@@ -116,15 +144,19 @@ async function parseProductHandler(messages) {
       const tasksForProduct = asinToMessageDataMap[asin];
 
       if (tasksForProduct.length > 0) {
-        tasksForProduct.forEach(async (task) => {
-          progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
+        tasksForProduct.forEach(async task => {
+          progress.productFetchCompleted({
+            jobId: task.jobId,
+            taskId: task.taskId,
+          });
         });
       }
     });
   }
 
-  if (errors) { // Usually items no longer sold
-    errors.forEach(async (err) => {
+  if (errors) {
+    // Usually items no longer sold
+    errors.forEach(async err => {
       // Update items as unavailable
       const { asin } = err;
 
@@ -137,7 +169,9 @@ async function parseProductHandler(messages) {
       });
 
       if (!existingProduct) {
-        console.log(`ERR: Product ${asin} should already exist in DB but was not found`);
+        console.log(
+          `ERR: Product ${asin} should already exist in DB but was not found`
+        );
         return;
       }
 
@@ -150,8 +184,11 @@ async function parseProductHandler(messages) {
       const tasksForProduct = asinToMessageDataMap[asin];
 
       if (tasksForProduct.length > 0) {
-        tasksForProduct.forEach(async (task) => {
-          progress.productFetchCompleted({ jobId: task.jobId, taskId: task.taskId });
+        tasksForProduct.forEach(async task => {
+          progress.productFetchCompleted({
+            jobId: task.jobId,
+            taskId: task.taskId,
+          });
         });
       }
     });
