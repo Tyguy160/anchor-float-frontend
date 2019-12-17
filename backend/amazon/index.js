@@ -1,11 +1,16 @@
 require('dotenv').config();
 
-const { createRequestFromAsins, getItemsPromise } = require('./amzApi');
+const {
+  createRequestFromAsins,
+  getItemsPromise,
+  createVariationsRequestFromAsin,
+  getVariationReq,
+} = require('./amzApi');
 
-const asins = ['B00005UP2P', 'B002T45X1G'];
+const asins = ['B0793HHZF7'];
 
 async function main() {
-  const requestUrl = await createRequestFromAsins(asins);
+  const requestUrl = createRequestFromAsins(asins);
   let apiResp;
   try {
     apiResp = await getItemsPromise(requestUrl);
@@ -13,33 +18,46 @@ async function main() {
     console.log(err);
   }
 
+  console.log('getItems results:');
   console.log(JSON.stringify(apiResp, null, 1));
 
-  let availability;
-  const { offers } = apiResp ? apiResp[0] : null;
-  if (offers) {
-    const { IsAmazonFulfilled, IsFreeShippingEligible, IsPrimeEligible } = offers[0].DeliveryInfo;
-    if (IsAmazonFulfilled || IsFreeShippingEligible || IsPrimeEligible) {
-      availability = 'HIGH_CONV';
-    } else {
-      availability = 'LOW_CONV';
-    }
-  } else {
-    availability = 'UNAVAILABLE';
+  const variationReq = createVariationsRequestFromAsin(asins[0]);
+  let varRes;
+  try {
+    varRes = await getVariationReq(variationReq);
+    const { items, errors } = varRes;
+    console.log('getVariations results:');
+    console.log(JSON.stringify(items, null, 1));
+  } catch (err) {
+    console.log(err);
   }
 
-  console.log(`Availability: ${availability}`);
+  // const { items, errors } = apiResp;
 
-  // 1) Is there a product with this ASIN?
-  // 2) Does the product have any offers? --> if no, unavailable
-  // 3) If the product has offers,
-  // "in stock"
-  // "usually ships within 6 to 10 days"
-  // ""
+  // if (items) {
+  //   items.forEach(async (item) => {
+  //     const { offers, name, asin } = item;
 
-  // DeliveryInfo
-  // IsAmazonFullfilled || IsFreeShippingEligible || IsPrimeEligible --> High converting or Low converting
-  //
+  //     // If the product doesn't exist yet, we're going to create it
+  //     let availability;
+
+  //     if (offers) {
+  //       const {
+  //         IsAmazonFulfilled,
+  //         IsFreeShippingEligible,
+  //         IsPrimeEligible,
+  //       } = offers[0].DeliveryInfo;
+  //       if (IsAmazonFulfilled || IsFreeShippingEligible || IsPrimeEligible) {
+  //         availability = 'AMAZON'; // HIGH-CONV
+  //       } else {
+  //         availability = 'THIRDPARTY'; // LOW-CONV
+  //       }
+  //     } else {
+  //       availability = 'UNAVAILABLE';
+  //     }
+  //     console.log(`Availability: ${availability}`);
+  //   });
+  // }
 }
 
 main();
