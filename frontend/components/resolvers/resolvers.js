@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 const GET_CURRENT_USER = gql`
   query me {
@@ -54,6 +54,18 @@ const SITEPAGES_QUERY = gql`
           }
         }
       }
+    }
+  }
+`;
+
+const SUBSCRIPTION_PLANS_QUERY = gql`
+  query SUBSCRIPTION_PLANS_QUERY {
+    subscriptionPlans {
+      name
+      level
+      creditsPerMonth
+      stripePlanId
+      pricePerMonth
     }
   }
 `;
@@ -125,11 +137,12 @@ export {
   USERSITES_QUERY,
   REPORTS_QUERY,
   SITEPAGES_QUERY,
+  SUBSCRIPTION_PLANS_QUERY,
   ADD_USERSITE_MUTATION,
   UPDATE_USERSITE_MUTATION,
   DELETE_USERSITE_MUTATION,
   CREATE_STRIPE_SESSION_MUTATION,
   UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
   DELETE_STRIPE_SUBSCRIPTION_MUTATION,
-  RUN_SITE_REPORT_MUTATION,
+  RUN_SITE_REPORT_MUTATION
 };

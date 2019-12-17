@@ -6,6 +6,7 @@ const typeDefs = gql`
     userSites: [UserSite]
     sitePages(input: SitePagesInput!): SitePagesPayload
     siteReports(input: SiteReportsInput): SiteReportsPayload
+    subscriptionPlans: [Plan]
   }
 
   type Mutation {
@@ -77,6 +78,7 @@ const typeDefs = gql`
     level: Int
     creditsPerMonth: Int
     stripePlanId: String
+    pricePerMonth: Float
   }
 
   type UserSite {

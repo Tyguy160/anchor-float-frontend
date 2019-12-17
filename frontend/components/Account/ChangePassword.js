@@ -20,10 +20,9 @@ import TextInput from "../Misc/TextInput";
 const ChangePasswordSchema = Yup.object().shape({
   currentPassword: Yup.string().required("Required"),
   newPassword: Yup.string().required("Required"),
-  confirmNewPassword: Yup.string().oneOf(
-    [Yup.ref("newPassword"), null],
-    "Passwords must match"
-  )
+  confirmNewPassword: Yup.string()
+    .oneOf([Yup.ref("currentPassword")], "Cannot use current password")
+    .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
 });
 
 const CHANGE_PASSWORD_MUTATION = gql`
@@ -38,12 +37,11 @@ const ChangePassword = () => {
   const [changePassword, { loading, error }] = useMutation(
     CHANGE_PASSWORD_MUTATION,
     {
-      // variables: { input: { currentPassword, newPassword } },
       refetchQueries: ["me"]
     }
   );
 
-  const handleChangePassword = async (values, e) => {
+  const handleChangePassword = async (values, formik) => {
     console.log(`Changing password`);
 
     const { currentPassword, newPassword, confirmNewPassword } = values;
@@ -60,14 +58,17 @@ const ChangePassword = () => {
 
         if (res) {
           toasts.successMessage("Changed password successfully.");
+          formik.resetForm();
         } else {
           toasts.errorMessage("Something went wrong...");
+          formik.resetForm();
         }
       }
     } catch (err) {
       toasts.errorMessage(
         "Something went wrong...is your password correct? 😉"
       );
+      formik.resetForm();
       console.log(err);
     }
   };

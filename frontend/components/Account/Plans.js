@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-import toasts from '../Misc/Toasts';
-import PlanComponent from './PlanComponent';
-import Router from 'next/router';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useMutation, useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
+import toasts from "../Misc/Toasts";
+import PlanComponent from "./PlanComponent";
+import Router from "next/router";
 
 import {
   GET_CURRENT_USER,
   CREATE_STRIPE_SESSION_MUTATION,
   UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
-} from '../resolvers/resolvers';
+  SUBSCRIPTION_PLANS_QUERY
+} from "../resolvers/resolvers";
 
 import {
   PricingContainer,
@@ -26,12 +27,13 @@ import {
   StyledHeading,
   PageSection,
   CenteredHeading,
-  ContinueButton,
-} from '../styles/styles';
+  ContinueButton
+} from "../styles/styles";
 
 const Plans = () => {
   const currentUser = useQuery(GET_CURRENT_USER);
-  const [selectedPlan, setSelectedPlan] = useState('');
+  const { data: plans } = useQuery(SUBSCRIPTION_PLANS_QUERY);
+  const [selectedPlan, setSelectedPlan] = useState("");
   const [stripeSubscriptionId, setStripeSubscriptionId] = useState(
     currentUser.stripeSubscriptionId
   );
@@ -39,7 +41,7 @@ const Plans = () => {
   const [createStripeSession, { error, data }] = useMutation(
     CREATE_STRIPE_SESSION_MUTATION,
     {
-      variables: { input: { stripePlanId: selectedPlan } },
+      variables: { input: { stripePlanId: selectedPlan } }
     }
   );
 
@@ -47,8 +49,8 @@ const Plans = () => {
     UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
     {
       variables: {
-        input: { stripePlanId: selectedPlan },
-      },
+        input: { stripePlanId: selectedPlan }
+      }
     }
   );
 
@@ -58,7 +60,7 @@ const Plans = () => {
   };
 
   const handlePlanContinue = async e => {
-    if (selectedPlan === '') {
+    if (selectedPlan === "") {
       return;
     }
 
@@ -70,19 +72,19 @@ const Plans = () => {
       console.log(res);
       if (res) {
         Router.push({
-          pathname: '/account',
+          pathname: "/account"
         });
         toasts.successMessage(res.data.updateStripeSubscription.message);
       } else {
-        toasts.errorMessage('Something went wrong...');
+        toasts.errorMessage("Something went wrong...");
       }
     } else {
       let res = await createStripeSession();
-      var stripe = Stripe('pk_test_mqMxPm3hGXqDIiwIVvAME4Af');
+      var stripe = Stripe("pk_test_mqMxPm3hGXqDIiwIVvAME4Af");
 
       stripe
         .redirectToCheckout({
-          sessionId: res.data.createStripeSession.stripeSessionId,
+          sessionId: res.data.createStripeSession.stripeSessionId
         })
         .then(function(result) {
           if (result.error) {
@@ -97,7 +99,24 @@ const Plans = () => {
       <CenteredHeading>Plans</CenteredHeading>
       <p>Select a plan below and click Continue.</p>
       <PricingContainer>
-        <PlanComponent
+        {console.log(plans)}
+        {plans.subscriptionPlans
+          ? plans.subscriptionPlans
+              .filter(plan => plan.name !== "Free") // Remove the free plan from the list
+              .sort((a, b) => (a.level > b.level ? 1 : -1)) // Sort the list of plans by level
+              .map(plan => (
+                <PlanComponent
+                  planId={plan.stripePlanId}
+                  planTitle={plan.name}
+                  planPrice={`$` + plan.pricePerMonth}
+                  planCredits={plan.creditsPerMonth}
+                  onClick={handlePlanSelect}
+                  handlePlanSelect={handlePlanSelect}
+                  key={plan.level}
+                />
+              ))
+          : "Loading"}
+        {/* <PlanComponent
           planId="plan_GGjkWrQ9lZNBwI"
           planTitle="Economy"
           planPrice="$20"
@@ -128,18 +147,19 @@ const Plans = () => {
           planCredits="10"
           onClick={handlePlanSelect}
           handlePlanSelect={handlePlanSelect}
-        />
+        /> */}
       </PricingContainer>
       <ContinueButton
         type="submit"
         value="Continue"
         onClick={handlePlanContinue}
-        disabled={!selectedPlan}>
+        disabled={!selectedPlan}
+      >
         {!currentUser.loading && currentUser.data.me
           ? currentUser.data.me.plan.level == 0
             ? `Continue`
             : `Update`
-          : 'Continue'}
+          : "Continue"}
       </ContinueButton>
     </PageSection>
   );
