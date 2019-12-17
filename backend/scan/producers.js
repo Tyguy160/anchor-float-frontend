@@ -21,9 +21,15 @@ const productProducer = Producer.create({
   region: process.env.AWS_REGION,
 });
 
+const variationProducer = Producer.create({
+  queueUrl: process.env.PARSE_VARIATION_QUEUE_URL,
+  region: process.env.AWS_REGION,
+});
+
 module.exports = {
   sitemapProducer,
   pageProducer,
   createAndConnectProducer,
   productProducer,
+  variationProducer,
 };

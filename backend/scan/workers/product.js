@@ -8,6 +8,7 @@ const {
 } = require('../../amazon/amzApi');
 const progress = require('../../progress/index');
 const productCache = require('../productCache');
+const { variationProducer } = require('../producers');
 
 const db = getDB();
 
