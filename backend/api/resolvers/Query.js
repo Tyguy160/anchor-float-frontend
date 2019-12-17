@@ -68,6 +68,9 @@ const Query = {
 
     return { reports };
   },
+  subscriptionPlans(parent, { input }, { user, db }) {
+    return db.plans.findMany({});
+  },
 };
 
 module.exports = Query;
