@@ -129,7 +129,7 @@ async function getVariationReq(apiRequest) {
         }));
       }
 
-      console.log({ errors: data.Errors });
+      console.log({ variationsErrors: data.Errors });
 
       const errors = data.Errors ? true : false;
 

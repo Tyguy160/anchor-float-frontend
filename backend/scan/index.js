@@ -3,14 +3,18 @@ require('dotenv').config();
 const { Consumer } = require('sqs-consumer');
 const { parseSitemapHandler } = require('./workers/sitemap');
 const { parsePageHandler } = require('./workers/page');
-const { createAndConnectProductHandler } = require('./workers/createAndConnectProduct');
+const {
+  createAndConnectProductHandler,
+} = require('./workers/createAndConnectProduct');
 const { parseProductHandler } = require('./workers/product');
+const { parseVariationsHandler } = require('./workers/variations');
 const { parseShortlinkHandler } = require('./workers/shortlink');
 
 const {
   PARSE_PAGE_QUEUE_URL,
   CREATE_CONNECT_PRODUCT_QUEUE_URL,
   PARSE_PRODUCT_QUEUE_URL,
+  PARSE_VARIATIONS_QUEUE_URL,
   PARSE_SITEMAP_QUEUE_URL,
   PARSE_SHORTLINK_QUEUE_URL,
   AWS_SECRET_ACCESS_KEY,
@@ -23,7 +27,6 @@ const {
   AMAZON_ASSOCIATES_SECRET_KEY,
   AMAZON_ASSOCIATES_HOST,
   AMAZON_ASSOCIATES_REGION,
-
 } = process.env;
 
 // Validate that they all exist
@@ -31,6 +34,7 @@ Object.entries({
   PARSE_PAGE_QUEUE_URL,
   CREATE_CONNECT_PRODUCT_QUEUE_URL,
   PARSE_PRODUCT_QUEUE_URL,
+  PARSE_VARIATIONS_QUEUE_URL,
   PARSE_SITEMAP_QUEUE_URL,
   PARSE_SHORTLINK_QUEUE_URL,
   AWS_SECRET_ACCESS_KEY,
@@ -55,21 +59,21 @@ try {
   const parseSitemapConsumer = Consumer.create({
     queueUrl: PARSE_SITEMAP_QUEUE_URL,
     handleMessage: parseSitemapHandler,
-  }).on('error', (err) => {
+  }).on('error', err => {
     console.error(err.message); // eslint-disable-line no-console
   });
 
   const parsePageConsumer = Consumer.create({
     queueUrl: PARSE_PAGE_QUEUE_URL,
     handleMessage: parsePageHandler,
-  }).on('error', (err) => {
+  }).on('error', err => {
     console.error(err.message); // eslint-disable-line no-console
   });
 
   const createAndConnectProductConsumer = Consumer.create({
     queueUrl: CREATE_CONNECT_PRODUCT_QUEUE_URL,
     handleMessage: createAndConnectProductHandler,
-  }).on('error', (err) => {
+  }).on('error', err => {
     console.error(err.message); // eslint-disable-line no-console
   });
 
@@ -78,14 +82,21 @@ try {
     handleMessageBatch: parseProductHandler,
     batchSize: 10,
     pollingWaitTimeMs: 10000, // 10 second wait between requests
-  }).on('error', (err) => {
+  }).on('error', err => {
+    console.error(err.message); // eslint-disable-line no-console
+  });
+
+  const parseVariationsConsumer = Consumer.create({
+    queueUrl: PARSE_VARIATIONS_QUEUE_URL,
+    handleMessage: parseVariationsHandler,
+  }).on('error', err => {
     console.error(err.message); // eslint-disable-line no-console
   });
 
   const parseShortlinkConsumer = Consumer.create({
     queueUrl: PARSE_SHORTLINK_QUEUE_URL,
     handleMessage: parseShortlinkHandler,
-  }).on('error', (err) => {
+  }).on('error', err => {
     console.error(err.message); // eslint-disable-line no-console
   });
 
@@ -100,6 +111,9 @@ try {
 
   parseProductConsumer.start();
   console.info('Parse product consumer running...'); // eslint-disable-line no-console
+
+  parseVariationsConsumer.start();
+  console.info('Parse variations consumer running...'); // eslint-disable-line no-console
 
   parseShortlinkConsumer.start();
   console.info('Parse shortlink consumer running...'); // eslint-disable-line no-console

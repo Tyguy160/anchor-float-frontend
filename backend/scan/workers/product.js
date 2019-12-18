@@ -1,3 +1,5 @@
+const uuid = require('uuid/v4');
+
 const { getDB } = require('../../prisma/db');
 const { getDataFromMessage } = require('./utils');
 const {
@@ -8,7 +10,7 @@ const {
 } = require('../../amazon/amzApi');
 const progress = require('../../progress/index');
 const productCache = require('../productCache');
-const { variationProducer } = require('../producers');
+const { variationsProducer } = require('../producers');
 
 const db = getDB();
 
@@ -59,11 +61,33 @@ async function parseProductHandler(messages) {
   const { items, errors } = apiResponse;
 
   if (items) {
-    items.forEach(async (item) => {
-      const {
-        offers, name, asin, parentAsin,
-      } = item;
+    items.forEach(async item => {
+      const { offers, name, asin, parentAsin } = item;
 
+      // The asin IS A PARENT if it does not have a value for parentAsin
+      if (parentAsin === null) {
+        const variationsTaskId = uuid();
+
+        variationsProducer.send(
+          [
+            {
+              id: variationsTaskId,
+              body: JSON.stringify({
+                asin,
+                name,
+                jobId: asinToMessageDataMap[asin][0].jobId,
+                taskId: variationsTaskId,
+              }),
+            },
+          ],
+          producerError => {
+            if (producerError) console.log(producerError);
+          }
+        );
+        return; // return early without doing any DB updates
+      }
+
+      // If it's not a parent asin, do other stuff
       let availability;
       if (offers) {
         const {
@@ -76,45 +100,11 @@ async function parseProductHandler(messages) {
         } else {
           availability = 'THIRDPARTY'; // LOW-CONV
         }
-      } else if (parentAsin === null) {
-        const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
-        // ASIN is a parent, so we fetch the children/variations
-        const variationReq = createVariationsRequestFromAsin(asin);
-
-        let nonErrorRes = false;
-        let response;
-        while (!nonErrorRes) {
-          response = await getVariationReq(variationReq);
-          if (!response.errors) {
-            nonErrorRes = true;
-            console.log('Got response');
-          } else {
-            console.log('Sleeping');
-            sleep(3000);
-          }
-        }
-
-        const { items } = response;
-
-        if (!items || !items.length) {
-          availability = 'UNAVAILABLE';
-        } else {
-          const varAvailable = items.some(({ offers: variationOffers }) => variationOffers.some(
-            ({ DeliveryInfo: variationDeliveryInfo }) => {
-              const {
-                IsAmazonFulfilled,
-                IsFreeShippingEligible,
-                IsPrimeEligible,
-              } = variationDeliveryInfo;
-            },
-          ));
-
-          availability = varAvailable ? 'AMAZON' : 'UNAVAILABLE';
-        }
       } else {
         availability = 'UNAVAILABLE';
       }
 
+      // Does the product exist?
       const existingProduct = await db.products.findOne({
         where: {
           asin,
@@ -123,7 +113,7 @@ async function parseProductHandler(messages) {
 
       if (!existingProduct) {
         console.log(
-          `ERR: Product ${asin} should already exist in DB but was not found`,
+          `ERR: Product ${asin} should already exist in DB but was not found`
         );
         return;
       }
@@ -143,7 +133,7 @@ async function parseProductHandler(messages) {
       const tasksForProduct = asinToMessageDataMap[asin];
 
       if (tasksForProduct.length > 0) {
-        tasksForProduct.forEach(async (task) => {
+        tasksForProduct.forEach(async task => {
           progress.productFetchCompleted({
             jobId: task.jobId,
             taskId: task.taskId,
@@ -155,7 +145,7 @@ async function parseProductHandler(messages) {
 
   if (errors) {
     // Usually items no longer sold
-    errors.forEach(async (err) => {
+    errors.forEach(async err => {
       // Update items as unavailable
       const { asin } = err;
 
@@ -169,7 +159,7 @@ async function parseProductHandler(messages) {
 
       if (!existingProduct) {
         console.log(
-          `ERR: Product ${asin} should already exist in DB but was not found`,
+          `ERR: Product ${asin} should already exist in DB but was not found`
         );
         return;
       }
@@ -183,7 +173,7 @@ async function parseProductHandler(messages) {
       const tasksForProduct = asinToMessageDataMap[asin];
 
       if (tasksForProduct.length > 0) {
-        tasksForProduct.forEach(async (task) => {
+        tasksForProduct.forEach(async task => {
           progress.productFetchCompleted({
             jobId: task.jobId,
             taskId: task.taskId,
