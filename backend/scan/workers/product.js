@@ -84,6 +84,21 @@ async function parseProductHandler(messages) {
             if (producerError) console.log(producerError);
           }
         );
+
+        progress.variationsFetchAdded({
+          jobId: asinToMessageDataMap[asin][0].jobId,
+          taskId: variationsTaskId,
+        });
+
+        const tasksForProduct = asinToMessageDataMap[asin];
+        if (tasksForProduct.length > 0) {
+          tasksForProduct.forEach(async task => {
+            progress.productFetchCompleted({
+              jobId: task.jobId,
+              taskId: task.taskId,
+            });
+          });
+        }
         return; // return early without doing any DB updates
       }
 

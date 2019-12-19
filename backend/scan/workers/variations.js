@@ -32,6 +32,7 @@ async function parseVariationsHandler({ Body }) {
   console.log(errors);
   let availability;
   if (errors && errors[0].Code === 'NoResults') {
+    console.log('Unavail due to no results');
     availability = 'UNAVAILABLE';
   } else if (errors) {
     console.log('Throwing because errors');
@@ -75,6 +76,11 @@ async function parseVariationsHandler({ Body }) {
       availability,
       name,
     },
+  });
+
+  progress.variationsFetchCompleted({
+    jobId,
+    taskId,
   });
 
   productCache.setProductUpdated(asin);

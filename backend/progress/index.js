@@ -41,6 +41,9 @@ const PRODUCT_CONNECT_COMPLETED = 'productConnectCompleted';
 const PRODUCT_FETCH_ADDED = 'productFetchAdded';
 const PRODUCT_FETCH_COMPLETED = 'productFetchCompleted';
 
+const VARIATIONS_FETCH_ADDED = 'variationsFetchAdded';
+const VARIATIONS_FETCH_COMPLETED = 'variationsFetchCompleted';
+
 const FULL_SITE_COMPLETED = 'fullSiteCompleted';
 
 class ProgressManager extends EventEmitter {
@@ -75,6 +78,14 @@ class ProgressManager extends EventEmitter {
   productFetchCompleted(eventInfo) {
     this.emit(PRODUCT_FETCH_COMPLETED, eventInfo);
   }
+
+  variationsFetchAdded(eventInfo) {
+    this.emit(VARIATIONS_FETCH_ADDED, eventInfo);
+  }
+
+  variationsFetchCompleted(eventInfo) {
+    this.emit(VARIATIONS_FETCH_COMPLETED, eventInfo);
+  }
 }
 
 const progMan = new ProgressManager();
@@ -86,7 +97,7 @@ progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
     const { userId, hostname } = metaInfo;
 
     console.log(
-      `Site complete.\nAdding report generation job for: ${hostname}\nUser: ${userId}\n`,
+      `Site complete.\nAdding report generation job for: ${hostname}\nUser: ${userId}\n`
     );
 
     const taskId = uuid();
@@ -103,9 +114,9 @@ progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
           }),
         },
       ],
-      (producerError) => {
+      producerError => {
         if (producerError) console.log(producerError);
-      },
+      }
     );
   });
 });
@@ -114,13 +125,13 @@ progMan.on(FULL_SITE_COMPLETED, ({ jobId }) => {
 progMan.on(SITEMAP_PARSE_STARTED, ({ jobId, userId, hostname }) => {
   if (!userId) {
     console.log(
-      'ERROR: No userId on sitemap job. No progress tracking will occur.',
+      'ERROR: No userId on sitemap job. No progress tracking will occur.'
     );
     return;
   }
 
   console.log(
-    `Sitemap starting for jobId: ${jobId}\nuserId: ${userId}\nhostname: ${hostname}\n`,
+    `Sitemap starting for jobId: ${jobId}\nuserId: ${userId}\nhostname: ${hostname}\n`
   );
 
   const metaKey = `${jobId}:meta`;
@@ -167,7 +178,7 @@ progMan.on(PAGE_PARSE_COMPLETED, ({ jobId, taskId }) => {
               pagesComplete: 'true',
             });
           }
-        },
+        }
       );
     }
   });
@@ -204,22 +215,33 @@ progMan.on(PRODUCT_CONNECT_COMPLETED, ({ jobId, taskId }) => {
               'productsComplete',
               (errFromOtherHget, isProductFetchingComplete) => {
                 if (isProductFetchingComplete) {
-                  console.log(`FULL SITE COMPLETE (connections): ${jobId}`);
-                  progMan.emit(FULL_SITE_COMPLETED, { jobId });
+                  redisClient.hexists(
+                    metakey,
+                    'variationsComplete',
+                    (errFromVariationsHget, variationsComplete) => {
+                      console.log(`FULL SITE COMPLETE (connections): ${jobId}`);
+                      progMan.emit(FULL_SITE_COMPLETED, { jobId });
+                    }
+                  );
                 }
-              },
+              }
             );
 
             // Check if no products were added to fetch (recently updated)
             const productsKey = `${jobId}:products`;
-            redisClient.scard(productsKey, (errFromScard, productsRemainingCount) => {
-              if (productsRemainingCount === 0) {
-                console.log(`FULL SITE COMPLETE (no products fetched): ${jobId}`);
-                progMan.emit(FULL_SITE_COMPLETED, { jobId });
+            redisClient.scard(
+              productsKey,
+              (errFromScard, productsRemainingCount) => {
+                if (productsRemainingCount === 0) {
+                  console.log(
+                    `FULL SITE COMPLETE (no products fetched): ${jobId}`
+                  );
+                  progMan.emit(FULL_SITE_COMPLETED, { jobId });
+                }
               }
-            });
+            );
           }
-        },
+        }
       );
     }
   });
@@ -250,10 +272,60 @@ progMan.on(PRODUCT_FETCH_COMPLETED, ({ jobId, taskId }) => {
               productsComplete: 'true',
             });
 
-            console.log(`FULL SITE COMPLETE (products): ${jobId}`);
-            progMan.emit(FULL_SITE_COMPLETED, { jobId });
+            redisClient.hexists(
+              metaKey,
+              'variationsComplete',
+              (errFromVariationsHget, variationsComplete) => {
+                if (variationsComplete) {
+                  console.log(`FULL SITE COMPLETE (products): ${jobId}`);
+                  progMan.emit(FULL_SITE_COMPLETED, { jobId });
+                }
+              }
+            );
           }
-        },
+        }
+      );
+    }
+  });
+});
+
+// Variations
+progMan.on(VARIATIONS_FETCH_ADDED, ({ jobId, taskId }) => {
+  const variationsKey = `${jobId}:variations`;
+
+  redisClient.sadd(variationsKey, taskId);
+});
+
+progMan.on(VARIATIONS_FETCH_COMPLETED, ({ jobId, taskId }) => {
+  const variationsKey = `${jobId}:variations`;
+
+  redisClient.srem(variationsKey, taskId);
+
+  redisClient.scard(variationsKey, (err, variationsRemainingCount) => {
+    if (variationsRemainingCount === 0) {
+      const metaKey = `${jobId}:meta`;
+
+      redisClient.hexists(
+        metaKey,
+        'connectionsComplete',
+        (errFromHget, connectionsComplete) => {
+          if (connectionsComplete) {
+            redisClient.hexists(
+              metaKey,
+              'productsComplete',
+              (errFromProductsHget, productsComplete) => {
+                if (productsComplete) {
+                  redisClient.hmset(metaKey, {
+                    variationsComplete: 'true',
+                  });
+
+                  console.log(`FULL SITE COMPLETE (variations): ${jobId}`);
+                  progMan.emit(FULL_SITE_COMPLETED, { jobId });
+                }
+              }
+            );
+          }
+        }
       );
     }
   });

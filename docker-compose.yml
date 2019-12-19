@@ -28,6 +28,7 @@ services:
       - /opt/app/node_modules # Use node_modules inside the container
       - ./backend/package.json:/opt/app/package.json
       - ./backend/scan:/opt/app/scan # Mount local `scan` source code
+      - ./backend/amazon:/opt/app/amazon # Mount the amazon api files locally
       - ./backend/prisma:/opt/app/prisma
     command: npm run devscan # Defined in backend package.json
   report:
