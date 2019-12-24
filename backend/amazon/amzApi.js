@@ -129,11 +129,13 @@ async function getVariationReq(apiRequest) {
         }));
       }
 
-      console.log({ errors: data.Errors });
+      if (data.Errors && data.Errors[0].Code === 'NoResults') {
+        console.log('Variation errors:');
+        console.log(data.Errors);
+        return resolve({ items, errors: data.Errors });
+      }
 
-      const errors = data.Errors ? true : false;
-
-      return resolve({ items, errors });
+      return resolve({ items, errors: null });
     });
   });
 }
