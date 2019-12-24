@@ -1,0 +1,130 @@
+{
+  "name": "associate-engine-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next -p 3000",
+    "build": "next build",
+    "start": "npm run dev",
+    "test": "NODE_ENV=test jest --watch",
+    "test-win": "SET NODE_ENV=test&& jest --watch",
+    "heroku-postbuild": "next build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/react-hooks": "0.1.0-beta.11",
+    "@fortawesome/fontawesome-svg-core": "^1.2.21",
+    "@fortawesome/free-solid-svg-icons": "^5.10.1",
+    "@fortawesome/react-fontawesome": "^0.1.4",
+    "@zeit/next-css": "^0.2.1-canary.4",
+    "apollo-boost": "^0.1.28",
+    "apollo-client": "^2.6.3",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-plugin-styled-components": "^1.10.6",
+    "date-fns": "^2.0.0-beta.3",
+    "downshift": "^2.2.3",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "formik": "^2.0.4",
+    "glamor": "^2.20.40",
+    "graphql": "^14.4.2",
+    "graphql-tag": "^2.9.2",
+    "lodash.debounce": "^4.0.8",
+    "next": "^9.1.1",
+    "next-with-apollo": "^3.4.0",
+    "nprogress": "^0.2.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.10.2",
+    "react-adopt": "^0.6.0",
+    "react-apollo": "^2.5.8",
+    "react-dom": "^16.10.2",
+    "react-loader-spinner": "^3.1.5",
+    "react-select": "^3.0.8",
+    "react-stripe-checkout": "^2.6.3",
+    "react-table": "^6.10.3",
+    "react-toastify": "^5.4.0",
+    "react-transition-group": "^2.9.0",
+    "styled-components": "^4.3.2",
+    "waait": "^1.0.5",
+    "yup": "^0.27.0"
+  },
+  "devDependencies": {
+    "babel-jest": "^23.6.0",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "babel-plugin-styled-components": "^1.8.0",
+    "casual": "^1.6.2",
+    "css-loader": "^2.1.0",
+    "enzyme-to-json": "^3.4.0",
+    "graphql-tools": "^4.0.5",
+    "jest": "^23.6.0",
+    "jest-transform-graphql": "^2.1.0"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/jest.setup.js",
+    "testPathIgnorePatterns": [
+      "<rootDir>/.next/",
+      "<rootDir>/node_modules/"
+    ],
+    "transform": {
+      "\\.(gql|graphql)$": "jest-transform-graphql",
+      ".*": "babel-jest",
+      "^.+\\.js?$": "babel-jest"
+    }
+  },
+  "//": "This is our babel config, I prefer this over a .babelrc file",
+  "babel": {
+    "env": {
+      "development": {
+        "presets": [
+          "next/babel"
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      },
+      "production": {
+        "presets": [
+          "next/babel"
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      },
+      "test": {
+        "presets": [
+          [
+            "next/babel",
+            {
+              "preset-env": {
+                "modules": "commonjs"
+              }
+            }
+          ]
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      }
+    }
+  }
+}
