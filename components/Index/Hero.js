@@ -14,9 +14,7 @@ const Hero = () => {
   return (
     <HeroContainer>
       <HeroTextContainer>
-        <HeroHeadline>
-          Amazon Associates Amazing Link Health Checks
-        </HeroHeadline>
+        <HeroHeadline>Amazon Associates Link Health Checks</HeroHeadline>
         <HeroSubtext>
           Find out which of your Amazon affiliate links are no longer up-to-date
         </HeroSubtext>
