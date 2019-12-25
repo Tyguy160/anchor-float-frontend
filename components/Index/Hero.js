@@ -1,5 +1,5 @@
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 
 import {
   HeroContainer,
@@ -7,14 +7,16 @@ import {
   HeroHeadline,
   HeroSubtext,
   HeroCTAButton,
-  HeroCTAButtonContainer
-} from "../styles/styles";
+  HeroCTAButtonContainer,
+} from '../styles/styles';
 
 const Hero = () => {
   return (
     <HeroContainer>
       <HeroTextContainer>
-        <HeroHeadline>Amazon Associates Link Health Checks</HeroHeadline>
+        <HeroHeadline>
+          Amazon Associates Amazing Link Health Checks
+        </HeroHeadline>
         <HeroSubtext>
           Find out which of your Amazon affiliate links are no longer up-to-date
         </HeroSubtext>
