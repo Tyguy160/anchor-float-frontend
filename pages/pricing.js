@@ -1,5 +1,14 @@
-import React, { Component } from 'react';
-import Router from 'next/router';
+import React, { Component } from "react";
+import Router from "next/router";
+import { useQuery } from "@apollo/react-hooks";
+import PlanComponent from "../components/Account/PlanComponent";
+
+import {
+  GET_CURRENT_USER,
+  CREATE_STRIPE_SESSION_MUTATION,
+  UPDATE_STRIPE_SUBSCRIPTION_MUTATION,
+  SUBSCRIPTION_PLANS_QUERY
+} from "../components/resolvers/resolvers";
 
 import {
   PricingContainer,
@@ -15,120 +24,38 @@ import {
   StyledHeading,
   StyledButton,
   PageSection,
-  CenteredHeading,
-} from '../components/styles/styles';
+  CenteredHeading
+} from "../components/styles/styles";
 
-class Pricing extends Component {
-  render() {
-    return (
-      <PageSection id="pricing">
-        <CenteredHeading>Pricing</CenteredHeading>
-        <PricingContainer>
-          <StyledTierContainer>
-            <StyledTierHeading>Economy</StyledTierHeading>
-            <StyledPrice>
-              $20
-              <div>per month</div>
-            </StyledPrice>
-            <StyledTierDetails>
-              <li style={{ textAlign: `center` }}>1 site</li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-            </StyledTierDetails>
-          </StyledTierContainer>
-          <StyledTierContainer>
-            <StyledTierHeading>Basic</StyledTierHeading>
-            <StyledPrice>
-              $45
-              <div>per month</div>
-            </StyledPrice>
-            <StyledTierDetails>
-              <li style={{ textAlign: `center` }}>3 sites</li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-            </StyledTierDetails>
-          </StyledTierContainer>
-          <StyledTierContainer>
-            <StyledTierHeading>Standard</StyledTierHeading>
-            <StyledPrice>
-              $60
-              <div>per month</div>
-            </StyledPrice>
-            <StyledTierDetails>
-              <li style={{ textAlign: `center` }}>5 sites</li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-            </StyledTierDetails>
-          </StyledTierContainer>
-          <StyledTierContainer>
-            <StyledTierHeading>Pro</StyledTierHeading>
-            <StyledPrice>
-              $75
-              <div>per month</div>
-            </StyledPrice>
-            <StyledTierDetails>
-              <li style={{ textAlign: `center` }}>10 sites</li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-              <li>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit
-                amet orci urna.
-              </li>
-            </StyledTierDetails>
-          </StyledTierContainer>
-          {/* <EnterpriseStyledTierContainer>
-            <StyledTierHeading>Enterprise</StyledTierHeading>
-            <p style={{ textAlign: `center` }}>
-              Looking to keep track of more than 10 affiliate sites?
-            </p>
-            <StyledPricingCTAButtonContainer>
-              <StyledPricingCTAButton>Contact Us</StyledPricingCTAButton>
-            </StyledPricingCTAButtonContainer>
-          </EnterpriseStyledTierContainer> */}
-        </PricingContainer>
+const Pricing = () => {
+  const { data: plans } = useQuery(SUBSCRIPTION_PLANS_QUERY);
+  return (
+    <PageSection id="pricing">
+      <CenteredHeading>Pricing</CenteredHeading>
+      <PricingContainer>
+        {console.log(plans)}
+        {plans.subscriptionPlans
+          ? plans.subscriptionPlans
+              .filter(plan => plan.name !== "Free") // Remove the free plan from the list
+              .sort((a, b) => (a.level > b.level ? 1 : -1)) // Sort the list of plans by level
+              .map(plan => (
+                <PlanComponent
+                  planId={plan.stripePlanId}
+                  planTitle={plan.name}
+                  planPrice={`$` + plan.pricePerMonth}
+                  planCredits={plan.creditsPerMonth}
+                  key={plan.level}
+                  disabled
+                />
+              ))
+          : "Loading"}
+      </PricingContainer>
 
-        <StyledPricingCTAButton onClick={() => Router.push('/signup')}>
-          Sign Up
-        </StyledPricingCTAButton>
-      </PageSection>
-    );
-  }
-}
+      <StyledPricingCTAButton onClick={() => Router.push("/signup")}>
+        Sign Up
+      </StyledPricingCTAButton>
+    </PageSection>
+  );
+};
 
 export default Pricing;

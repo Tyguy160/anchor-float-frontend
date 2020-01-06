@@ -116,38 +116,6 @@ const Plans = () => {
                 />
               ))
           : "Loading"}
-        {/* <PlanComponent
-          planId="plan_GGjkWrQ9lZNBwI"
-          planTitle="Economy"
-          planPrice="$20"
-          planCredits="1"
-          onClick={handlePlanSelect}
-          handlePlanSelect={handlePlanSelect}
-        />
-        <PlanComponent
-          planId="plan_GGjlaO7xQD0kk8"
-          planTitle="Basic"
-          planPrice="$45"
-          planCredits="3"
-          onClick={handlePlanSelect}
-          handlePlanSelect={handlePlanSelect}
-        />
-        <PlanComponent
-          planId="plan_GGjlQ5w2ioUStl"
-          planTitle="Standard"
-          planPrice="$60"
-          planCredits="5"
-          onClick={handlePlanSelect}
-          handlePlanSelect={handlePlanSelect}
-        />
-        <PlanComponent
-          planId="plan_GGjljwH7KKU8qR"
-          planTitle="Pro"
-          planPrice="$75"
-          planCredits="10"
-          onClick={handlePlanSelect}
-          handlePlanSelect={handlePlanSelect}
-        /> */}
       </PricingContainer>
       <ContinueButton
         type="submit"
