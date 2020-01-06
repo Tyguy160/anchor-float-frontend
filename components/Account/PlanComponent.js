@@ -2,8 +2,8 @@ import {
   StyledTierButton,
   StyledTierHeading,
   StyledPrice,
-  StyledTierDetails,
-} from '../styles/styles';
+  StyledTierDetails
+} from "../styles/styles";
 
 const PlanComponent = props => {
   return (
@@ -15,7 +15,8 @@ const PlanComponent = props => {
       </StyledPrice>
       <StyledTierDetails>
         <li style={{ textAlign: `center` }}>
-          {props.planCredits} credits monthly
+          {props.planCredits} {props.planCredits > 1 ? "credits " : "credit "}
+          monthly
         </li>
         <li>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet
