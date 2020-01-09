@@ -6,6 +6,8 @@ import toasts from "../Misc/Toasts";
 import PlanComponent from "./PlanComponent";
 import Router from "next/router";
 
+import { plans } from "../../pages/pricing";
+
 import {
   GET_CURRENT_USER,
   CREATE_STRIPE_SESSION_MUTATION,
@@ -94,6 +96,8 @@ const Plans = () => {
     }
   };
 
+  const planDescriptions = ["", "", "", ""];
+
   return (
     <PageSection id="pricing">
       <CenteredHeading>Plans</CenteredHeading>
@@ -104,12 +108,13 @@ const Plans = () => {
           ? plans.subscriptionPlans
               .filter(plan => plan.name !== "Free") // Remove the free plan from the list
               .sort((a, b) => (a.level > b.level ? 1 : -1)) // Sort the list of plans by level
-              .map(plan => (
+              .map((plan, i) => (
                 <PlanComponent
                   planId={plan.stripePlanId}
                   planTitle={plan.name}
                   planPrice={`$` + plan.pricePerMonth}
                   planCredits={plan.creditsPerMonth}
+                  planDescription={plans[i].planDescription}
                   onClick={handlePlanSelect}
                   handlePlanSelect={handlePlanSelect}
                   key={plan.level}

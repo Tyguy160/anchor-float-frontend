@@ -25,7 +25,7 @@ import {
   CenteredHeading
 } from "../components/styles/styles";
 
-const plans = [
+export const plans = [
   {
     planId: "0",
     planTitle: "Economy",
