@@ -72,6 +72,7 @@ const Pricing = () => {
               planCredits={plan.planCredits}
               planDescription={plan.planDescription}
               key={plan.planId}
+              selectable={false}
               // disabled
             />
           );
