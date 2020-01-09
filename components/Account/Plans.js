@@ -118,6 +118,7 @@ const Plans = () => {
                   onClick={handlePlanSelect}
                   handlePlanSelect={handlePlanSelect}
                   key={plan.level}
+                  selectable
                 />
               ))
           : "Loading"}

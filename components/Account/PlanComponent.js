@@ -10,7 +10,7 @@ const PlanComponent = props => {
     <StyledTierButton
       id={props.planId}
       onClick={props.handlePlanSelect}
-      style={{ outline: `none` }}
+      style={props.selectable ? {} : { outline: `none` }}
     >
       <StyledTierHeading>{props.planTitle}</StyledTierHeading>
       <StyledPrice>
