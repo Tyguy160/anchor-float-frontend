@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import toasts from "../Misc/Toasts";
 import PlanComponent from "./PlanComponent";
 import Router from "next/router";
 
-import { plans } from "../../pages/pricing";
+import { plans as plansDetails } from "../../pages/pricing";
 
 import {
   GET_CURRENT_USER,
@@ -17,16 +15,6 @@ import {
 
 import {
   PricingContainer,
-  StyledTierButton,
-  EnterpriseStyledTierContainer,
-  StyledTierHeading,
-  StyledPrice,
-  StyledTierDetails,
-  StyledPricingCTAButton,
-  StyledPricingCTAButtonContainer,
-  CTAButton,
-  CTAButtonContainer,
-  StyledHeading,
   PageSection,
   CenteredHeading,
   ContinueButton
@@ -36,11 +24,8 @@ const Plans = () => {
   const currentUser = useQuery(GET_CURRENT_USER);
   const { data: plans } = useQuery(SUBSCRIPTION_PLANS_QUERY);
   const [selectedPlan, setSelectedPlan] = useState("");
-  const [stripeSubscriptionId, setStripeSubscriptionId] = useState(
-    currentUser.stripeSubscriptionId
-  );
 
-  const [createStripeSession, { error, data }] = useMutation(
+  const [createStripeSession] = useMutation(
     CREATE_STRIPE_SESSION_MUTATION,
     {
       variables: { input: { stripePlanId: selectedPlan } }
@@ -96,8 +81,6 @@ const Plans = () => {
     }
   };
 
-  const planDescriptions = ["", "", "", ""];
-
   return (
     <PageSection id="pricing">
       <CenteredHeading>Plans</CenteredHeading>
@@ -114,7 +97,7 @@ const Plans = () => {
                   planTitle={plan.name}
                   planPrice={`$` + plan.pricePerMonth}
                   planCredits={plan.creditsPerMonth}
-                  planDescription={plans[i].planDescription}
+                  planDescription={plansDetails[i].planDescription}
                   onClick={handlePlanSelect}
                   handlePlanSelect={handlePlanSelect}
                   key={plan.level}
