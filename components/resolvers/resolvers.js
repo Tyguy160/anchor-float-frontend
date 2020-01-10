@@ -11,6 +11,7 @@ const GET_CURRENT_USER = gql`
         creditsPerMonth
         name
         stripePlanId
+        pricePerMonth
       }
     }
   }
