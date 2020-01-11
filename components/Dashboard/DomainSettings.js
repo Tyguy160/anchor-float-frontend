@@ -79,10 +79,10 @@ const DomainSettings = props => {
                 : "",
               apiKey: props.selectedUserSite
                 ? props.selectedUserSite.associatesApiKey
-                : "",
-              minimumReview: props.selectedUserSite
-                ? props.selectedUserSite.minimumReview
                 : ""
+              // minimumReview: props.selectedUserSite
+              //   ? props.selectedUserSite.minimumReview
+              //   : ""
             }}
             // TODO: Add a validation schema
             // validationSchema={SignupSchema}
@@ -101,11 +101,6 @@ const DomainSettings = props => {
                   label="API Key"
                   name="apiKey"
                   type="text"
-                ></TextInput>
-                <TextInput
-                  label="Min. Review"
-                  name="minimumReview"
-                  type="number"
                 ></TextInput>
                 {formik.status && formik.status.msg && (
                   <div>{formik.status.msg}</div>

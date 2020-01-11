@@ -10,11 +10,11 @@ import Router from "next/router";
 const DomainSchema = Yup.object().shape({
   domain: Yup.string()
     .url("Enter a valid URL")
-    .required("Required"),
-  minimumReview: Yup.number("Enter a valid number")
-    .lessThan(5, "Minimum review must be less than 5")
-    .min(0, "Enter a positive number")
     .required("Required")
+  // minimumReview: Yup.number("Enter a valid number")
+  //   .lessThan(5, "Minimum review must be less than 5")
+  //   .min(0, "Enter a positive number")
+  //   .required("Required")
 });
 
 import {
@@ -70,7 +70,7 @@ const AddDomain = props => {
           initialValues={{
             domain: "",
             apiKey: "",
-            minimumReview: ""
+            minimumReview: 0
           }}
           validationSchema={DomainSchema}
           onSubmit={(values, e) => addDomainToUser(values, e)}
@@ -79,11 +79,7 @@ const AddDomain = props => {
             <StyledForm onSubmit={formik.handleSubmit}>
               <TextInput label="Domain" name="domain" type="text"></TextInput>
               <TextInput label="API Key" name="apiKey" type="text"></TextInput>
-              <TextInput
-                label="Min. Review"
-                name="minimumReview"
-                type="number"
-              ></TextInput>
+
               {formik.status && formik.status.msg && (
                 <div>{formik.status.msg}</div>
               )}
