@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import {
   PageSection,
   FormContainer,
   ComponentContainer,
-  CenteredH2,
-} from '../styles/styles';
-import styled from 'styled-components';
-import { REPORTS_QUERY } from '../resolvers/resolvers';
+  CenteredH2
+} from "../styles/styles";
+import styled from "styled-components";
+import { REPORTS_QUERY } from "../resolvers/resolvers";
 
 const DataContainer = styled.div`
   min-height: 350px;
@@ -31,13 +31,20 @@ const StyledTable = styled.table`
   }
 `;
 
+const dateOptions = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+};
+
 const DomainData = props => {
   const { loading: userLoading, data: reportData } = useQuery(REPORTS_QUERY, {
     variables: {
       input: {
-        domain: props.selectedDomain ? props.selectedDomain.value : null,
-      },
-    },
+        domain: props.selectedDomain ? props.selectedDomain.value : null
+      }
+    }
   });
   const reports = reportData.siteReports ? reportData.siteReports.reports : [];
 
@@ -56,7 +63,14 @@ const DomainData = props => {
             <tbody>
               {reports.map(report => (
                 <tr key={report.createdAt}>
-                  <td>{Date(report.createdAt)}</td>
+                  <td>
+                    {`${new Date(Number(report.createdAt)).toLocaleDateString(
+                      "en-US",
+                      dateOptions
+                    )} ${new Date(Number(report.createdAt)).toLocaleTimeString(
+                      "en-US"
+                    )}`}
+                  </td>
                   <td>
                     <a href={report.fileUrl}>Download</a>
                   </td>
@@ -72,8 +86,9 @@ const DomainData = props => {
               paddingBottom: `50px`,
               paddingLeft: `10px`,
               paddingRight: `10px`,
-              textAlign: `center`,
-            }}>
+              textAlign: `center`
+            }}
+          >
             When you run a report, it will available for download here!
           </p>
         )}
