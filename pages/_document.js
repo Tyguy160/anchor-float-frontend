@@ -1,7 +1,7 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 import ReactGA from "react-ga";
-ReactGA.initialize("UA-000000-01");
+ReactGA.initialize("UA-139074747-1");
 ReactGA.pageview(window.location.pathname + window.location.search);
 
 export default class MyDocument extends Document {
