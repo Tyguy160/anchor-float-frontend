@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Meta from './Meta';
-import Header from '../Nav/Header';
-import { Footer, FooterText } from '../styles/styles';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Meta from "./Meta";
+import Header from "../Nav/Header";
+import { Footer, FooterText } from "../styles/styles";
 
 class Page extends Component {
   render() {

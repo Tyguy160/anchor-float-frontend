@@ -7,6 +7,11 @@ import { createGlobalStyle } from "styled-components";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { css } from "glamor";
+import Router from "next/router";
+
+import * as gtag from "../lib/analytics";
+
+Router.events.on("routeChangeComplete", url => gtag.pageview(url));
 
 toast.configure({
   className: css({
@@ -36,6 +41,7 @@ class MyApp extends App {
     pageProps.query = ctx.query;
     return { pageProps };
   }
+
   render() {
     const { Component, apollo, pageProps } = this.props;
     return (
