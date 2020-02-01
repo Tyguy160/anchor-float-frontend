@@ -1,5 +1,8 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
+import ReactGA from "react-ga";
+ReactGA.initialize("UA-000000-01");
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -45,14 +48,6 @@ export default class MyDocument extends Document {
               }`
             }}
           ></style>
-          <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139074747-1"></script>
-          <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'UA-139074747-1');
-          </script>
         </Head>
         <body>
           <Main />
