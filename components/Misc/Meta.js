@@ -7,7 +7,7 @@ const Meta = () => {
       <meta charSet="utf-8" />
       <link rel="shortcut icon" href="/favicon.png" />
       <link rel="stylesheet" type="text/css" href="/nprogress.css" />
-      <title>Associate Engine</title>
+      <title>Anchor Float | Amazon Associate Link Checker</title>
       <script src="https://js.stripe.com/v3/"></script>
     </Head>
   );
