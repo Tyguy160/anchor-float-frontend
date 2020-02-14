@@ -3,12 +3,8 @@ import styled from "styled-components";
 import Router from "next/router";
 import {
   PageSection,
-  ComponentContainer,
   CTAButton,
   CTAButtonContainer,
-  CenteredHeading,
-  HeroHeadline,
-  HeroSubtext
 } from "../components/styles/styles";
 
 const AboutSection = styled.div`
@@ -19,14 +15,15 @@ const AboutSection = styled.div`
   padding-bottom: 10px;
 `;
 
-const AboutH1 = styled.h1`
+const AboutH3 = styled.h3`
   text-align: center;
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
 `;
 
-const AboutH2 = styled.h2`
+const AboutHeader = styled.h4`
+  font-size: 1.25rem;
   text-align: center;
   padding-top: 20px;
   padding-left: 20px;
@@ -92,14 +89,14 @@ class About extends Component {
     return (
       <PageSection>
         <AboutSection>
-          <AboutH1>Understanding Your Links</AboutH1>
+          <AboutH3>Understanding Your Associates Links</AboutH3>
           <AboutContent>
             Amazon affiliate links fall into three main categories: available
             products, third-party products, and unavailable products.
           </AboutContent>
         </AboutSection>
         <AboutSection>
-          <AboutH2>Example Amazon Product Availability</AboutH2>
+          <AboutHeader>Amazon Product Availability:</AboutHeader>
           <ProductTypes>
             <ProductType>
               <ProductTypeImg src="/availableProduct.png"></ProductTypeImg>
@@ -143,7 +140,7 @@ class About extends Component {
           </ProductTypes>
         </AboutSection>
         <AboutSection>
-          <AboutH2>How does Anchor Float help?</AboutH2>
+          <AboutHeader>How does Anchor Float help?</AboutHeader>
           <AboutContent>
             We parse your site and send you a report summary and a report
             spreadsheet that contain all the information you need to keep your
@@ -182,7 +179,7 @@ class About extends Component {
           </ReportTypes>
         </AboutSection>
         <AboutSection>
-          <AboutH2>Ready to learn about your links?</AboutH2>
+          <AboutHeader>Ready to learn about your links?</AboutHeader>
           <CTAButtonContainer>
             <CTAButton onClick={() => Router.push("/signup")}>
               Sign Up

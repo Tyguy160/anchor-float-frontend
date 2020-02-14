@@ -208,7 +208,7 @@ const HeroTextContainer = styled.div`
   color: #565656;
 `;
 
-const HeroHeadline = styled.div`
+const HeroHeadline = styled.h1`
   text-align: center;
   align-self: center;
   font-weight: bold;
@@ -224,7 +224,7 @@ const HeroHeadline = styled.div`
   }
 `;
 
-const HeroSubtext = styled.div`
+const HeroSubtext = styled.h2`
   text-align: center;
   align-self: center;
 
